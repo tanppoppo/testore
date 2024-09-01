@@ -42,4 +42,3 @@ letsencrypt/acme.json
 
 ### docker related ###
 docker-compose.yml
-Dockerfile
