@@ -38,7 +38,8 @@ out/
 
 ### env related ###
 .env
-letsencrypt/acme.json
+src/main/resources/application.properties
+build.gradle
 
 ### docker related ###
 docker-compose.yml
