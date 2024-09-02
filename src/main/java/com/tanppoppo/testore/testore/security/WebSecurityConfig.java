@@ -14,9 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
     private static final String[] PUBLIC_URLS = {
             "/"
-            , "/images/**"
-            , "/css/**"
-            , "/js/**"
+            , "/common/**"
     };
 
     @Bean

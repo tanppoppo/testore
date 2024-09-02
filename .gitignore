@@ -38,8 +38,6 @@ out/
 
 ### env related ###
 .env
-src/main/resources/application.properties
-build.gradle
 
 ### docker related ###
 docker-compose.yml
