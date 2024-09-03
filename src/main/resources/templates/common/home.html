@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layouts/layout}"
+      th:with="headerText='Header Text', footerText='Footer Text'"
+      layout:fragment="Content"
+>
 <head>
-    <meta charset="UTF-8">
-    <title>TESTORE</title>
-    <script th:src="@{/common/js/tailwind.js}"></script>
+	<title>TESTORE</title>
 </head>
 <body>
+<div>
+	<h1 class="text-red-500">Content입니다.</h1>
+</div>
 </body>
 </html>

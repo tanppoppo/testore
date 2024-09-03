@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="HeaderFragment(headerTitle)">
+<div>
+	<h1 th:text="${headerTitle} ?: 'TESTORE'"></h1>
+</div>
+</html>

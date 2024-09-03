@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<!--Config-->
+<head th:replace="common/fragments/config :: ConfigFragment">
+</head>
+
+<body>
+<!--Header-->
+<header th:replace="common/fragments/header :: HeaderFragment(${headerText})"></header>
+
+<!--Content-->
+<th:block layout:fragment="Content"></th:block>
+
+<!--Footer-->
+<footer th:replace="common/fragments/footer :: FooterFragment(${footerText})"></footer>
+</body>
+</html>
