@@ -4,10 +4,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.util.Date;
 
 @Data
 @Builder
@@ -17,15 +23,92 @@ import lombok.NoArgsConstructor;
 @Table(name = "member")
 public class MemberEntity {
     @Id
-    @Column(name = "member_id", length = 20)
-    String memberId;
+    @Column(name = "member_id", nullable = false, length = 20)
+    private Long memberId;
 
+    @NotNull
+    @Size(max = 100)
+    @Column(name = "email", unique = true, nullable = false, length = 100)
+    private String email;
+
+    @NotNull
+    @Size(max = 50)
+    @Column(name = "nickname", nullable = false, length = 50)
+    private String nickname;
+
+    @NotNull
+    @Size(max = 100)
     @Column(name = "member_password", nullable = false, length = 100)
-    String memberPassword;
+    private String memberPassword;
 
-    @Column(name = "member_name", nullable = false, length = 20)
-    String memberName;
+    @Size(max = 50)
+    @Column(name = "name", length = 50)
+    private String name;
 
-    @Column(name = "phone", nullable = false, length = 20)
-    String phone;
+    @Size(max = 30)
+    @Column(name = "phone", length = 30)
+    private String phone;
+
+    @Column(name = "birth", columnDefinition = "DATE")
+    private Date birth;
+
+    @Size(max = 100)
+    @Column(name = "address", length = 100)
+    private String address;
+
+    @Column(name = "gender")
+    private Integer gender;
+
+    @Column(name = "status", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+    private Boolean status;
+
+    @CreationTimestamp
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private Date createdDate;
+
+    @UpdateTimestamp
+    @Column(name = "updated_date")
+    private Date updatedDate;
+
+    @Column(name = "last_login_date")
+    private Date lastLoginDate;
+
+    @Size(max = 100)
+    @Column(name = "country", length = 100)
+    private String country;
+
+    @Column(name = "image_path")
+    private String imagePath;
+
+    @Column(name = "membership_level", nullable = false, columnDefinition = "TINYINT DEFAULT 0")
+    private Integer membershipLevel;
+
+    @Size(max = 10)
+    @Column(name = "language", length = 10)
+    private String language;
+
+    @Column(name = "language_level")
+    private Integer languageLevel;
+
+    @Column(name = "notification_option", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private Boolean notificationOption;
+
+    @Column(name = "marketing_option", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    private Boolean marketingOption;
+
+    @Size(max = 10)
+    @Column(name = "social_login_provider", length = 10)
+    private String socialLoginProvider;
+
+    @Size(max = 100)
+    @Column(name = "social_login_id", length = 100)
+    private String socialLoginId;
+
+    @Size(max = 10)
+    @Column(name = "referral_code", length = 10)
+    private String referralCode;
+
+    @Size(max = 100)
+    @Column(name = "referral_id", length = 100)
+    private String referralId;
 }
