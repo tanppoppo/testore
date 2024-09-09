@@ -1,25 +1,23 @@
 package com.tanppoppo.testore.testore.member.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
+@Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "member")
 public class MemberEntity {
     @Id
@@ -62,16 +60,14 @@ public class MemberEntity {
     @Column(name = "status", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
     private Boolean status;
 
-    @CreationTimestamp
-    @Column(name = "created_date", nullable = false, updatable = false)
-    private Date createdDate;
+    @Column(name = "created_date", columnDefinition = "timestamp default current_timestamp")
+    private LocalDateTime createdDate;
 
-    @UpdateTimestamp
     @Column(name = "updated_date")
-    private Date updatedDate;
+    private LocalDateTime updateDate;
 
     @Column(name = "last_login_date")
-    private Date lastLoginDate;
+    private LocalDateTime lastLoginDate;
 
     @Size(max = 100)
     @Column(name = "country", length = 100)
