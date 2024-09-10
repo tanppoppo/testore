@@ -7,13 +7,16 @@
 </head>
 
 <body>
-<!--Header-->
-<header th:replace="common/fragments/header :: HeaderFragment(${headerText})"></header>
+<!--Layout-->
+<div class="max-w-[600px] min-w-[320px] mx-auto h-screen">
+  <!--Header-->
+  <header th:replace="common/fragments/header :: HeaderFragment(${headerText})"></header>
 
-<!--Content-->
-<th:block layout:fragment="Content"></th:block>
+  <!--Content-->
+  <th:block layout:fragment="Content"></th:block>
 
-<!--Footer-->
-<footer th:replace="common/fragments/footer :: FooterFragment(${footerText})"></footer>
+  <!--Footer Navigation-->
+  <footer th:replace="common/fragments/footer :: FooterFragment(${footerText})"></footer>
+</div>
 </body>
 </html>
