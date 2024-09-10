@@ -55,7 +55,7 @@ public class ExamPaperEntity {
     private Integer membershipLevel;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)  // 최적화
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "creator_id", nullable = false, referencedColumnName = "member_id")
     private MemberEntity creatorId;
 
@@ -63,7 +63,7 @@ public class ExamPaperEntity {
     @Column(name = "owner_id", nullable = false)
     private Integer ownerId;
 
-    @Column(name = "image_path") // 바차 길이지정 여부
+    @Column(name = "image_path")
     private String imagePath;
 
     @Column(name = "public_option", columnDefinition = "BOOLEAN default false")
