@@ -39,8 +39,11 @@ public class ExamResultEntity {
     @Column(name = "exam_score", nullable = false)
     private Integer examScore;
 
+    @NotNull
+    @Column(name = "exam_duration", nullable = false)
+    private Integer examDuration;
+
     @Column(name = "created_date", columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime createdDate;
 
 }
-
