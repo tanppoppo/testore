@@ -17,6 +17,7 @@ public class ExamResultDTO {
     private Integer memberId;
     private Integer examPaperId;
     private Integer examScore;
+    private Integer examDuration;
     private LocalDateTime createdDate;
 
 }
