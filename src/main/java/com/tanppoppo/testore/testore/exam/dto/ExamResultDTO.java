@@ -12,9 +12,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExamResultDTO {
+
     private Integer examResultId;
     private Integer memberId;
     private Integer examPaperId;
     private Integer examScore;
     private LocalDateTime createdDate;
+
 }

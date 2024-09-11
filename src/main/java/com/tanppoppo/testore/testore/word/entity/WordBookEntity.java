@@ -66,4 +66,5 @@ public class WordBookEntity {
 
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
+
 }

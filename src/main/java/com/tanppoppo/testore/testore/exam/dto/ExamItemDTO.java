@@ -23,4 +23,5 @@ public class ExamItemDTO {
     private String text4;
     private String text5;
     private Integer itemScore;
+
 }

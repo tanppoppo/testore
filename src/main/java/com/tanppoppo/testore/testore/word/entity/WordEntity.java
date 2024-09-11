@@ -46,4 +46,5 @@ public class WordEntity {
     @NotNull
     @Column(name = "checked", nullable = false, columnDefinition = "BOOLEAN default false")
     private Boolean checked;
+
 }

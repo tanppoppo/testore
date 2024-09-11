@@ -58,4 +58,5 @@ public class ExamItemEntity {
     @NotNull
     @Column(name = "item_score", nullable = false)
     private Integer itemScore;
+
 }

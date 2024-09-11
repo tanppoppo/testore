@@ -29,4 +29,5 @@ public class ExamPaperDTO {
     private LocalDateTime studiedDate;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
+
 }

@@ -18,4 +18,5 @@ public class WordDTO {
     private String text3;
     private String notes;
     private Boolean checked;
+
 }

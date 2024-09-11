@@ -26,4 +26,5 @@ public class WordBookDTO {
     private LocalDateTime studiedDate;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+
 }

@@ -22,7 +22,7 @@ import java.util.Date;
 public class MemberEntity {
     @Id
     @Column(name = "member_id", nullable = false, length = 20)
-    private Long memberId;
+    private Integer memberId;
 
     @NotNull
     @Size(max = 100)

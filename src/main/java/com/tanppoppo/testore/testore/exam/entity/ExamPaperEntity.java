@@ -77,4 +77,5 @@ public class ExamPaperEntity {
 
     @Column(name = "updated_date")
     private LocalDateTime updateDate;
+
 }

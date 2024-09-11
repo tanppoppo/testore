@@ -41,5 +41,6 @@ public class ExamResultEntity {
 
     @Column(name = "created_date", columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime createdDate;
+
 }
 

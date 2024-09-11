@@ -15,6 +15,7 @@ public class WebSecurityConfig {
     private static final String[] PUBLIC_URLS = {
             "/"
             , "/common/**"
+            , "/member/joinForm"
     };
 
     @Bean

@@ -21,4 +21,5 @@ public class MemberController {
     public String joinForm() {
         return "member/joinForm";
     }
+
 }
