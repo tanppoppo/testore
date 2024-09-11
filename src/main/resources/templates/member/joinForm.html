@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layouts/layout}"
+      th:with="headerText='JOIN', footerText=''"
+      layout:fragment="Content"
+>
+<body>
+<div class="font-bold p-14 text-gray-600">환영합니다<br><span class="font-medium">계정을 생성해보세요.</span></div>
+<form class="max-w-md mx-auto mt-2">
+  <label for="email" class="block mb-2 text-sm font-bold text-gray-400">이메일</label>
+  <input type="email" id="email" name="email"
+         class="py-2.5 px-0 w-full text-md text-gray-900 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-gray-500"/>
+  <label for="email" class="block mt-6 mb-2 text-sm font-bold text-gray-400">닉네임</label>
+  <input type="text" id="nickname" name="nickname"
+         class="py-2.5 px-0 w-full text-md text-gray-900 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-gray-500"/>
+  <label for="email" class="block mt-6 mb-2 text-sm font-bold text-gray-400">비밀번호</label>
+  <input type="password" id="password" name="password"
+         class="py-2.5 px-0 w-full text-md text-gray-900 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-gray-500"/>
+  <label for="email" class="block mt-6 mb-2 text-sm font-bold text-gray-400">비밀번호 확인</label>
+  <input type="password" id="confirmPassword"
+         class="py-2.5 px-0 w-full text-md text-gray-900 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-gray-500"/>
+  <button type="submit" class="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm w-full px-5 mt-12 py-4 text-center">회원가입</button>
+</form>
+</body>
+</html>

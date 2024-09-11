@@ -2,9 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org"
       th:fragment="HeaderFragment(headerTitle)">
 <div class="flex justify-between items-center h-14 py-3">
-  <a th:href="@{/}">
+  <a th:if="${headerTitle == 'TESTORE'}" th:href="@{/}">
     <span class="text-xl font-bold ml-2" th:text="${headerTitle} ?: ''"></span>
   </a>
+  <span th:unless="${headerTitle == 'TESTORE'}" class="flex items-center">
+    <svg class="w-[30px] h-[30px] text-gray-700 inline-block cursor-pointer" onclick="history.back();" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+         width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>
+    </svg>
+    <span class="text-xl font-bold ml-2" th:text="${headerTitle} ?: ''"></span>
+  </span>
   <a th:href="@{alarm}">
     <svg class="w-[27px] h-[27px] text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
          height="24" fill="none" viewBox="0 0 24 24">
