@@ -3,20 +3,20 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <!--Config-->
-<head th:replace="common/fragments/config :: ConfigFragment">
+<head th:replace="~{common/fragments/config :: ConfigFragment}">
 </head>
 
 <body>
 <!--Layout-->
 <div class="max-w-[600px] min-w-[320px] mx-auto h-screen px-4">
   <!--Header-->
-  <header th:replace="common/fragments/header :: HeaderFragment(${headerText})"></header>
+  <header th:replace="~{common/fragments/header :: HeaderFragment(${headerText})}"></header>
 
   <!--Content-->
   <th:block layout:fragment="Content"></th:block>
 
   <!--Footer Navigation-->
-  <footer th:replace="common/fragments/footer :: FooterFragment(${footerText})"></footer>
+  <footer th:replace="~{common/fragments/footer :: FooterFragment(${footerText})}"></footer>
 </div>
 </body>
 </html>

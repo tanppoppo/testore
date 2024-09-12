@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:fragment="HeaderFragment(headerTitle)">
-<div class="flex justify-between items-center h-14 py-3">
+<div class="flex justify-between items-center h-14 py-3 px-2">
   <a th:if="${headerTitle == 'TESTORE'}" th:href="@{/}">
     <span class="text-xl font-bold ml-2" th:text="${headerTitle} ?: ''"></span>
   </a>
