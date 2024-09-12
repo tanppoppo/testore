@@ -21,6 +21,7 @@ import java.util.Date;
 @Table(name = "member")
 public class MemberEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id", nullable = false, length = 20)
     private Integer memberId;
 
@@ -57,7 +58,7 @@ public class MemberEntity {
     @Column(name = "gender")
     private Integer gender;
 
-    @Column(name = "status", nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+    @Column(name = "status", columnDefinition = "BOOLEAN DEFAULT true")
     private Boolean status;
 
     @Column(name = "created_date", columnDefinition = "timestamp default current_timestamp")
@@ -76,7 +77,7 @@ public class MemberEntity {
     @Column(name = "image_path")
     private String imagePath;
 
-    @Column(name = "membership_level", nullable = false, columnDefinition = "TINYINT DEFAULT 0")
+    @Column(name = "membership_level", columnDefinition = "TINYINT DEFAULT 0")
     private Integer membershipLevel;
 
     @Size(max = 10)
@@ -86,10 +87,10 @@ public class MemberEntity {
     @Column(name = "language_level")
     private Integer languageLevel;
 
-    @Column(name = "notification_option", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    @Column(name = "notification_option", columnDefinition = "BOOLEAN DEFAULT false")
     private Boolean notificationOption;
 
-    @Column(name = "marketing_option", nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
+    @Column(name = "marketing_option", columnDefinition = "BOOLEAN DEFAULT false")
     private Boolean marketingOption;
 
     @Size(max = 10)

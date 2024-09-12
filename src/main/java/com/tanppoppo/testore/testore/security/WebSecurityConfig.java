@@ -16,6 +16,7 @@ public class WebSecurityConfig {
             "/"
             , "/common/**"
             , "/member/joinForm"
+            , "/member/join"
     };
 
     @Bean
