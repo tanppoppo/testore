@@ -6,9 +6,9 @@
       th:with="headerText='JOIN', footerText=''"
       layout:fragment="Content"
 >
-<div class="font-bold max-w-md mx-auto mt-8 text-gray-600">환영합니다<br><span class="font-medium">계정을 생성해보세요.</span></div>
-<form class="max-w-md mx-auto mt-8" th:action="@{join}" method="post">
-  <label for="email" class="block mb-1 text-sm font-bold text-gray-400">이메일</label>
+<form class="max-w-lg mx-auto mt-8 px-6" th:action="@{join}" method="post">
+  <div class="font-bold text-gray-600">환영합니다<br><span class="font-medium">계정을 생성해보세요.</span></div>
+  <label for="email" class="block mt-8 mb-1 text-sm font-bold text-gray-400">이메일</label>
   <input type="email" id="email" name="email"
          class="py-2.5 px-0 w-full text-md text-gray-900 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:ring-0 focus:border-gray-500"/>
   <label for="email" class="block mt-6 mb-1 text-sm font-bold text-gray-400">닉네임</label>
