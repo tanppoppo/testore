@@ -21,6 +21,7 @@ public class WebSecurityConfig {
 
     @Bean
     protected SecurityFilterChain config(HttpSecurity http) throws Exception {
+
         http
                 .authorizeHttpRequests(author -> author
                         .requestMatchers(PUBLIC_URLS).permitAll()
@@ -29,8 +30,8 @@ public class WebSecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(formLogin -> formLogin
                         .loginPage("/member/loginForm")
-                        .usernameParameter("id")
-                        .passwordParameter("password")
+                        .usernameParameter("email")
+                        .passwordParameter("memberPassword")
                         .loginProcessingUrl("/member/login")
                         .defaultSuccessUrl("/", true)
                         .permitAll()
@@ -45,6 +46,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
+
     }
 
     @Bean

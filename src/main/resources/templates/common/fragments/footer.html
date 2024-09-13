@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:fragment="FooterFragment(footerText)">
-<div class="fixed z-50 w-full h-16 max-w-[600px] -translate-x-1/2 bg-white bottom-0 left-1/2">
+<div class="fixed z-40 w-full h-16 max-w-[600px] -translate-x-1/2 bg-white bottom-0 left-1/2">
   <div class="grid h-full max-w-[600px] grid-cols-4 mx-auto">
     <button type="button" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 group" onclick="location.href='/'">
       <svg class="w-6 h-6 mb-1 text-gray-400 group-hover:text-gray-600" th:classappend="${footerText == 'Home' ? 'text-gray-600' : ''}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">

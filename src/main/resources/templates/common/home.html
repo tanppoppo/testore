@@ -36,4 +36,10 @@
     </div>
   </div>
 </div>
+<div class="p-4 text-xl font-bold text-gray-600">
+  <div sec:authorize="isAuthenticated()">
+    <th:block th:text="${#authentication.principal.nickname}"/>님 환영합니다.
+  </div>
+  <div sec:authorize="not isAuthenticated()"><a th:href="@{/member/loginForm}" class="underline">로그인</a> 해주세요.</div>
+</div>
 </html>
