@@ -31,7 +31,7 @@ public class ExamItemEntity {
 
     @NotNull
     @Column(name = "answer", columnDefinition = "TINYINT")
-    private Integer answer;
+    private Byte answer;
 
     @Column(name = "paragraph_description")
     private String paragraphDescription;

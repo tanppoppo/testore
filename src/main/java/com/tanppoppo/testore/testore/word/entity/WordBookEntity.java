@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -38,10 +39,10 @@ public class WordBookEntity {
     private String language;
 
     @Column(name = "language_level", columnDefinition = "TINYINT DEFAULT 0")
-    private Integer languageLevel;
+    private Byte languageLevel;
 
     @Column(name = "membership_level", columnDefinition = "TINYINT DEFAULT 0")
-    private Integer membershipLevel;
+    private Byte membershipLevel;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,10 +62,17 @@ public class WordBookEntity {
     @Column(name = "studied_date")
     private LocalDateTime studiedDate;
 
-    @Column(name = "created_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreatedDate
+    @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
 
+    @PrePersist
+    public void prePersist() {
+        languageLevel = 0;
+        membershipLevel = 0;
+        publicOption = false;
+    }
 }

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "member")
 public class MemberEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id", nullable = false, length = 20)
@@ -61,7 +63,8 @@ public class MemberEntity {
     @Column(name = "status", columnDefinition = "BOOLEAN DEFAULT true")
     private Boolean status;
 
-    @Column(name = "created_date", columnDefinition = "timestamp default current_timestamp")
+    @CreatedDate
+    @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
     @Column(name = "updated_date")
@@ -78,7 +81,7 @@ public class MemberEntity {
     private String imagePath;
 
     @Column(name = "membership_level", columnDefinition = "TINYINT DEFAULT 0")
-    private Integer membershipLevel;
+    private Byte membershipLevel;
 
     @Size(max = 10)
     @Column(name = "language", length = 10)
@@ -108,4 +111,13 @@ public class MemberEntity {
     @Size(max = 100)
     @Column(name = "referral_id", length = 100)
     private String referralId;
+
+    @PrePersist
+    public void prePersist() {
+        status = true;
+        membershipLevel = 0;
+        notificationOption = false;
+        marketingOption = false;
+    }
+
 }

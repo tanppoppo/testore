@@ -47,4 +47,8 @@ public class WordEntity {
     @Column(name = "checked", nullable = false, columnDefinition = "BOOLEAN default false")
     private Boolean checked;
 
+    @PrePersist
+    public void prePersist() {
+        checked = false;
+    }
 }
