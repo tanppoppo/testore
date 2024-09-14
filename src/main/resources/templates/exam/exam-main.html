@@ -3,14 +3,8 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{common/layouts/layout}"
-      th:with="headerText='Header Text', footerText='Footer Text'"
+      th:with="headerText='EXAM', footerText='Exam'"
       layout:fragment="Content"
 >
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
+<th:block th:replace="~{common/fragments/twin-menu :: TwinMenuFragment('내 시험지', '시험지 찾아보기', 'exam', 'exam/search', 1)}"></th:block>
 </html>
