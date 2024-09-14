@@ -17,19 +17,20 @@ public class AuthenticatedUserDetailsService implements UserDetailsService {
 	private final MemberRepository memberRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        log.info("로그인 시도 : {}", id);
+        log.info("로그인 시도 : {}", email);
 
-        MemberEntity memberEntity = memberRepository.findByEmail(id)
+        MemberEntity memberEntity = memberRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    return new UsernameNotFoundException(id + " : 없는 ID입니다.");
+                    return new UsernameNotFoundException(email + " : 없는 ID입니다.");
                 });
 
         log.debug("조회정보 : {}", memberEntity);
 
         AuthenticatedUser user = AuthenticatedUser.builder()
-                .id(memberEntity.getEmail())
+                .id(memberEntity.getMemberId())
+                .email(memberEntity.getEmail())
                 .password(memberEntity.getMemberPassword())
                 .nickname(memberEntity.getNickname())
                 .status(memberEntity.getStatus())
