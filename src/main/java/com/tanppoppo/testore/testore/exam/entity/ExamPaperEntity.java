@@ -37,12 +37,10 @@ public class ExamPaperEntity {
     @Column(name = "content", nullable = false, length = 100)
     private String content;
 
-    @NotNull
-    @Column(name = "time_limit", nullable = false)
+    @Column(name = "time_limit")
     private Integer timeLimit;
 
-    @NotNull
-    @Column(name = "pass_score", nullable = false)
+    @Column(name = "pass_score")
     private Integer passScore;
 
     @Size(max = 10)
