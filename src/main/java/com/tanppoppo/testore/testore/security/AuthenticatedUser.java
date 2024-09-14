@@ -19,7 +19,8 @@ public class AuthenticatedUser implements UserDetails {
 	
 	private static final long serialVersionUID = -2757521351355190L;
 
-	String id;
+	Integer id;
+	String email;
 	String password;
 	String nickname;
 	boolean status;
@@ -36,7 +37,7 @@ public class AuthenticatedUser implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return this.id;
+		return this.email;
 	}
 
 	@Override
