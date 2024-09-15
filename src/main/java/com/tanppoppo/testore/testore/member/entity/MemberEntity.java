@@ -24,7 +24,7 @@ public class MemberEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id", nullable = false, length = 20)
+    @Column(name = "member_id", nullable = false)
     private Integer memberId;
 
     @NotNull
