@@ -13,7 +13,7 @@
 <div th:unless="${#lists.isEmpty(items)}">
   <th:block
           th:each="item : ${items}"
-          th:replace="~{common/fragments/list-item :: ListItemFragment(${item}, ${count}, ${like}, ${share})}">
+          th:replace="~{common/fragments/list-item :: ListItemFragment(${item})}">
   </th:block>
 </div>
 <th:block th:replace="~{common/fragments/create-button :: CreateButtonFragment('createButton', 'createButton', '시험지 생성', '/exam/createForm')}"></th:block>
