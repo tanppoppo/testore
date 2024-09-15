@@ -13,7 +13,7 @@
             [&::-webkit-scrollbar-thumb]:rounded-full
             [&::-webkit-scrollbar-thumb]:bg-gray-300">
 <!--Layout-->
-<div class="max-w-[600px] min-w-[320px] h-screen mx-auto px-4">
+<div class="max-w-[600px] min-w-[320px] h-screen mx-auto px-4 break-all">
   <!--Header-->
   <header th:replace="~{common/fragments/header :: HeaderFragment(${headerText})}"></header>
 
@@ -23,7 +23,14 @@
   </div>
 
   <!--Modal-->
-  <th:block th:replace="~{common/fragments/modal :: ModalFragment('타입', '제목', '내용')}"></th:block>
+  <th:block th:if="${modalShown}">
+    <th:block th:replace="~{common/fragments/modal :: ModalFragment(${modalMessage}, ${canCancel})}"></th:block>
+  </th:block>
+
+  <!--Toast-->
+  <th:block th:if="${toastShown}">
+    <th:block th:replace="~{common/fragments/toast :: ToastFragment(${toastMessage}, ${isSuccess})}"></th:block>
+  </th:block>
 </div>
 
 <!--Footer Navigation-->
