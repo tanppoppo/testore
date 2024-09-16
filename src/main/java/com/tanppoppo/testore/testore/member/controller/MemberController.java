@@ -24,6 +24,16 @@ public class MemberController {
     private final MemberService ms;
 
     /**
+     * 계정 페이지 이동
+     * @author gyahury
+     * @return 계정 페이지를 반환합니다.
+     */
+    @GetMapping("info")
+    public String info() {
+        return "member/info-main";
+    }
+
+    /**
      * 로그인 페이지 이동
      * @author gyahury
      * @return 로그인 페이지를 반환합니다.

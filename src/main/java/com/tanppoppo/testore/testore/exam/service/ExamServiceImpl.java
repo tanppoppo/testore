@@ -54,11 +54,9 @@ public class ExamServiceImpl implements ExamService {
 
     }
 
-    /* 시험지 메인 페이지 이동시 List 객체 반환 */
-
     /**
      * 시험지 메인 페이지 이동
-     * @return List<ExamPaperDTO> items 를 반환합니다.
+     * @return items 를 반환합니다.
      */
     @Override
     public List<ExamPaperDTO> getListItems() {

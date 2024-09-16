@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layouts/layout}"
+      th:with="headerText='INFO', footerText='Info'"
+      layout:fragment="Content"
+>
+<div class="flex items-center min-h-[calc(6rem+4vw)] px-10">
+
+  <div class="flex flex-col justify-center gap-2 w-full px-4 font-bold">
+    <div class="text-[calc(0.7rem+0.4vw)] text-gray-700">rudgns1243@naver.com</div>
+    <div class="text-[calc(0.6rem+0.5vw)] text-gray-500 font-medium break-all">gyahury</div>
+    <div class="text-[calc(0.5rem+0.4vw)] text-gray-500">
+      단어장 : <span>2</span> | 시험지 : <span>2</span> | 포인트 : <span>234</span>p</div>
+  </div>
+  <svg class="w-[calc(2rem+1vw)] h-[calc(2rem+1vw)] text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+       height="24" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+  </svg>
+</div>
+<hr>
+<div class="flex flex-col gap-6 px-14 py-8 font-bold">
+  <span class="text-gray-500">관리</span>
+  <a class="text-neutral-500 text-sm">내가 본 시험</a>
+</div>
+<hr>
+<div class="flex flex-col gap-6 px-14 py-8 font-bold">
+  <span class="text-gray-500">정보</span>
+  <a class="text-neutral-500 text-sm">개인정보처리방침</a>
+  <a class="text-neutral-500 text-sm">서비스이용약관</a>
+</div>
+<hr>
+<div class="flex flex-col gap-6 px-14 py-8 font-bold">
+  <span class="text-gray-500">회원</span>
+  <a th:href="@{/member/logout}" class="text-neutral-500 text-sm">로그아웃</a>
+</div>
+</html>
