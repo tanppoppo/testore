@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:fragment="HeaderFragment(headerTitle)">
-<div class="flex justify-between items-center h-14 py-3">
+<div class="fixed -translate-x-1/2 left-1/2 top-0 flex w-full max-w-[600px] justify-between items-center bg-white h-14 px-5 py-3 z-40">
   <span class="flex items-center">
     <svg th:classappend="'w-[30px] h-[30px] text-gray-700 inline-block cursor-pointer'
                         + (${headerTitle == 'TESTORE' ? ' hidden' : ''})"
