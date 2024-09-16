@@ -9,11 +9,14 @@
     <div class="text-[calc(0.7rem+0.3vw)] text-gray-500 font-medium"
          th:text="${item.content} ?: '내용'"></div>
     <div class="text-[calc(0.4rem+0.4vw)] text-gray-500">
-      문제수 : <span th:text="${item.examItemCount} ?: '0'"></span> / 추천수 : <span th:text="${item.likeCount} ?: '0'"></span> / 공유 : <span th:text="${item.shareCount} ?: '0'"></span></div>
+      문제수 : <span th:text="${item.examItemCount} ?: '0'"></span> / 추천수 : <span
+            th:text="${item.likeCount} ?: '0'"></span> / 공유 : <span th:text="${item.shareCount} ?: '0'"></span></div>
   </div>
-  <svg class="w-[48px] h-[48px] text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
-       height="24" fill="none" viewBox="0 0 24 24">
-    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
-  </svg>
+  <a th:href="'exam/detail?paper='+${item.examPaperId}">
+    <svg class="w-[48px] h-[48px] text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+         height="24" fill="none" viewBox="0 0 24 24">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+    </svg>
+  </a>
 </div>
 </html>
