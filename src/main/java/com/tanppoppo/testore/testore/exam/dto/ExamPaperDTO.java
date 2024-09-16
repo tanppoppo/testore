@@ -35,4 +35,8 @@ public class ExamPaperDTO {
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
 
+    private Integer examItemCount;
+    private Integer likeCount;
+    private Integer shareCount;
+
 }
