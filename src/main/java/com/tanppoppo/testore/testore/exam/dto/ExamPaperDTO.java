@@ -1,6 +1,5 @@
 package com.tanppoppo.testore.testore.exam.dto;
 
-import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * 시험지 정보 데이터 전송 객체
+ * @version 0.1.0
+ * @since 0.1.0
+ * @author KIMGEON64
+ */
 @Data
 @Builder
 @NoArgsConstructor

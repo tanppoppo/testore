@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * 좋아요 정보 데이터 전송 객체
+ * @version 0.1.0
+ * @since 0.1.0
+ * @author gyahury
+ */
 @Data
 @Builder
 @NoArgsConstructor

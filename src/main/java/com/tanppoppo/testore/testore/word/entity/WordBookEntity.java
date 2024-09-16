@@ -12,6 +12,12 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
+/**
+ * 단어장 정보를 저장하는 엔티티 클래스
+ * @version 0.1.0
+ * @since 0.1.0
+ * @author MinCheolHa
+ */
 @Entity
 @Data
 @Builder

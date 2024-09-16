@@ -7,6 +7,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 시험 문제 정보를 저장하는 엔티티 클래스
+ * @version 0.1.0
+ * @since 0.1.0
+ * @author KIMGEON64
+ */
 @Entity
 @Data
 @Builder
