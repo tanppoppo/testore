@@ -1,13 +1,17 @@
 package com.tanppoppo.testore.testore.member.controller;
 
 import com.tanppoppo.testore.testore.member.dto.MemberDTO;
+import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * 회원 관리를 위한 컨트롤러 클래스
@@ -60,11 +64,49 @@ public class MemberController {
      * @return 루트 리다이렉트를 반환합니다.
      */
     @PostMapping("join")
-    public String join(MemberDTO memberDTO){
+    public String join(MemberDTO memberDTO, RedirectAttributes redirectAttributes){
 
         ms.joinMember(memberDTO);
+        redirectAttributes.addFlashAttribute("toastShown",true);
+        redirectAttributes.addFlashAttribute("toastMessage","이메일 인증을 완료해주세요.");
+        redirectAttributes.addFlashAttribute("isSuccess",true);
         return "redirect:/";
 
+    }
+
+    /**
+     * 이메일 인증을 처리
+     * 이메일 인증 토큰을 확인하고 인증 성공 시 성공 페이지로,
+     * 실패 시 에러 페이지로 리다이렉트
+     *
+     * @author dhkdtjs1541
+     * @param token 이메일 인증 토큰
+     * @param model 이메일을 담는 모델 객체
+     * @return 인증 성공 시 성공 페이지, 실패 시 에러 페이지로 리다이렉트
+     */
+    @GetMapping("verify-email")
+    public String verify(@RequestParam("token") String token, Model model, RedirectAttributes redirectAttributes) {
+        log.info("Verify token: {}", token);
+        try {
+            boolean isVerified = ms.verifyEmail(token);
+            log.info("Email verification result: {}", isVerified);
+            if (isVerified) {
+                redirectAttributes.addFlashAttribute("toastShown",true);
+                redirectAttributes.addFlashAttribute("toastMessage","인증이 완료되었습니다.");
+                redirectAttributes.addFlashAttribute("isSuccess",true);
+                return "redirect:/";
+            } else {
+                redirectAttributes.addFlashAttribute("toastShown",true);
+                redirectAttributes.addFlashAttribute("toastMessage","인증에 실패했습니다.");
+                redirectAttributes.addFlashAttribute("isSuccess",true);
+                return "redirect:/";
+            }
+        } catch (IllegalStateException e) {
+            log.error("토큰이 만료되었습니다 : {}", e.getMessage());
+            MemberEntity member = ms.findByEmailVerificationToken(token);
+            model.addAttribute("email", member.getEmail());
+            return "redirect:/member/join";
+        }
     }
 
 }
