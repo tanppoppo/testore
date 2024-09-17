@@ -17,6 +17,8 @@ public class WebSecurityConfig {
             , "/common/**"
             , "/member/joinForm"
             , "/member/join"
+            , "/member/verify-email"
+            , "/member/resend-verification"
     };
 
     @Bean

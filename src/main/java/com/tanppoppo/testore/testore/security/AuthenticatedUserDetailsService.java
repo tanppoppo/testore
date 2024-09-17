@@ -26,6 +26,11 @@ public class AuthenticatedUserDetailsService implements UserDetailsService {
                     return new UsernameNotFoundException(email + " : 없는 ID입니다.");
                 });
 
+        if (!memberEntity.getStatus()) {
+            log.error("이메일 인증이 완료되지 않았습니다. 이메일 : {}", email);
+            throw new UsernameNotFoundException("이메일 인증이 완료되지 않았습니다.");
+        }
+
         log.debug("조회정보 : {}", memberEntity);
 
         AuthenticatedUser user = AuthenticatedUser.builder()

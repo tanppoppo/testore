@@ -118,9 +118,16 @@ public class MemberEntity {
     @Column(name = "referral_id", length = 100)
     private String referralId;
 
+    @Size(max = 100)
+    @Column(name = "email_verification_token", length = 100)
+    private String emailVerificationToken;
+
+    @Column(name = "token_expiration_time")
+    private LocalDateTime tokenExpirationTime;
+
     @PrePersist
     public void prePersist() {
-        status = true;
+        status = false;
         membershipLevel = 0;
         notificationOption = false;
         marketingOption = false;
