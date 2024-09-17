@@ -6,7 +6,7 @@
         th:name="${name} ?: ''"
         th:text="${text} ?: ''"
         th:attr="onclick=|location.href='${link}'|"
-        th:classappend="'focus:outline-none font-medium rounded-lg text-md w-full px-5 mt-12 py-4 text-center'
+        th:classappend="'focus:outline-none font-medium rounded-lg text-sm w-full px-5 mt-12 py-4 text-center'
                        + (${isBlack} ? ' text-white bg-gray-800 hover:bg-gray-900 ' : ' text-gray-600 bg-white border-2 border-gray-300 hover:bg-gray-100')">
 </button>
 </html>
