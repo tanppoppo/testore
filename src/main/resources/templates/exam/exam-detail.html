@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layouts/layout}"
+      th:with="headerText='EXAM', footerText='Exam'"
+      layout:fragment="Content"
+>
+<div class="relative">
+  <div class="absolute top-2 right-2 z-10 block h-12 w-9 text-left">
+    <div>
+      <button type="button"
+              class="inline-flex w-full justify-center rounded-xl bg-transparent px-2 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50"
+              id="toggleMenuButton">
+        <svg class="h-[30px] w-[30px] text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+             height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-width="1.4" d="M5 7h14M5 12h14M5 17h10"/>
+        </svg>
+      </button>
+    </div>
+    <div class="absolute right-2 z-10 mt-1 w-32 origin-top-right rounded-md bg-white shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:w-44">
+      <button
+              class="block w-full px-4 py-3 text-left text-xs text-gray-600 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              id="toggleDrawButton">좋아요
+      </button>
+      <button
+              class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              id="controlAutoProgressButton">수정하기
+      </button>
+      <button
+              class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              id="shuffleButton">공개 설정하기
+      </button>
+      <button
+              class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              id="excludeWordButton">리뷰 남기기
+      </button>
+    </div>
+
+  </div>
+</div>
+<div class="flex flex-col items-center mt-12">
+  <img class="w-20 object-contain" th:src="@{/common/image/exam-main.png}">
+  <div class="flex flex-col gap-2 w-full font-bold text-lg text-center text-gray-700 mt-10">
+    스쿠스쿠 23과
+    <div class="font-bold text-sm text-gray-400">제작자 : gyahury</div>
+    <div class="font-bold text-sm text-gray-400">만든 날짜 : 2024년 9월 16일</div>
+  </div>
+  <div class="flex flex-col gap-2 font-bold text-sm text-center text-gray-400 mt-20">
+    DSA 13기를 위한<br>
+    09-17일 시험
+  </div>
+  <hr class="w-full mt-20">
+  <div class="flex justify-center text-center items-center w-[85%] text-sm font-bold text-gray-600 mt-4 gap-5 p-3">
+    <div class="flex flex-col w-1/4">
+      <div class="flex justify-center items-center w-full h-auto aspect-square">
+        <img class="w-3/4 h-3/4" th:src="@{/common/image/word-number.png}">
+      </div>
+      <span class="mt-1">문제수</span>
+      <span class="mt-1">4</span>
+    </div>
+    <div class="flex flex-col w-1/4">
+      <div class="flex justify-center items-center w-full h-auto aspect-square">
+        <img class="w-3/4 h-3/4" th:src="@{/common/image/like.png}">
+      </div>
+      <span class="mt-1">좋아요</span>
+      <span class="mt-1">4</span>
+    </div>
+    <div class="flex flex-col w-1/4">
+      <div class="flex justify-center items-center w-full h-auto aspect-square">
+        <img class="w-3/4 h-3/4" th:src="@{/common/image/share.png}">
+      </div>
+      <span class="mt-1">공유</span>
+      <span class="mt-1">4</span>
+    </div>
+    <div class="flex flex-col w-1/4">
+      <div class="flex justify-center items-center w-full h-auto aspect-square">
+        <img class="w-3/4 h-3/4" th:src="@{/common/image/review.png}">
+      </div>
+      <span class="mt-1">리뷰</span>
+      <span class="mt-1">4</span>
+    </div>
+  </div>
+  <div class="flex gap-3 w-full px-7">
+    <th:block
+            th:replace="~{common/fragments/button :: ButtonFragment('button', 'button', 'button', '응시', 'get', true)}"></th:block>
+    <th:block
+            th:replace="~{common/fragments/button :: ButtonFragment('button', 'button', 'button', '생성', 'get', true)}"></th:block>
+  </div>
+</div>
+</html>

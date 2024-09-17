@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:fragment="ListItemFragment(item)">
-<div class="flex items-center min-h-52 py-8 px-2 border-b-2 border-gray-100">
+<div class="flex items-center min-h-48 py-8 px-2 border-b-2 border-gray-100">
   <img class="w-20 object-contain" th:src="${item.imagePath} ?: ''">
   <div class="flex flex-col justify-center gap-4 w-full px-8 font-bold">
     <div class="text-[calc(0.8rem+0.2vw)] text-gray-800"

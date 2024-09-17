@@ -12,7 +12,7 @@
     <span class="text-xl font-bold ml-2"
           th:text="${headerTitle} ?: ''"></span>
   </span>
-  <a th:href="@{alarm}">
+  <a th:href="@{/member/notification}">
     <svg th:classappend="'w-[27px] h-[27px] text-gray-700'
                         + (${headerTitle == 'LOGIN' || headerTitle == 'JOIN' ? ' hidden' : ''})"
          aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">

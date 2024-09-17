@@ -1,10 +1,14 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{common/layouts/layout}"
-      th:with="headerText='EXAM', footerText='Exam'"
+      th:with="headerText='NOTIFICATION', footerText=''"
       layout:fragment="Content"
 >
-
+<div class="mt-6">
+  <th:block
+          th:replace="~{common/fragments/notification-item :: NotificationItemFragment()}"></th:block>
+</div>
 </html>
