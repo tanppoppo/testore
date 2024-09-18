@@ -2,6 +2,7 @@ package com.tanppoppo.testore.testore.security;
 
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,8 +28,7 @@ public class AuthenticatedUserDetailsService implements UserDetailsService {
                 });
 
         if (!memberEntity.getStatus()) {
-            log.error("이메일 인증이 완료되지 않았습니다. 이메일 : {}", email);
-            throw new UsernameNotFoundException("이메일 인증이 완료되지 않았습니다.");
+            throw new DisabledException("인증되지 않은 회원입니다.");
         }
 
         log.debug("조회정보 : {}", memberEntity);
