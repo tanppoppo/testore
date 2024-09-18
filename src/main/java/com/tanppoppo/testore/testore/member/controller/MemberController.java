@@ -57,6 +57,11 @@ public class MemberController {
                     model.addAttribute("toastMessage", "계정이 인증되지 않았습니다.");
                     model.addAttribute("isSuccess", false);
                     break;
+                case "badcredential":
+                    model.addAttribute("toastShown", true);
+                    model.addAttribute("toastMessage", "아이디 또는 비밀번호가<br>잘못되었습니다.");
+                    model.addAttribute("isSuccess", false);
+                    break;
                 default:
                     model.addAttribute("toastShown", true);
                     model.addAttribute("toastMessage", "로그인에 실패했습니다.");
