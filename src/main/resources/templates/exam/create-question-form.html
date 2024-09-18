@@ -6,5 +6,12 @@
       th:with="headerText='EXAM', footerText='Exam'"
       layout:fragment="Content"
 >
+<div class="pb-60">
+  <form id="questionForm" th:action="@{createQuestion}" method="post">
+    <th:block th:replace="~{common/fragments/floating-button :: FloatingButtonFragment('addButton', '', '문제 생성', false)}"></th:block>
+    <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit', 'submitButton', '', '문제 제출', '', true)}"></th:block>
+  </form>
+</div>
 
+<script th:src="@{/exam/js/create-question-form.js}"></script>
 </html>
