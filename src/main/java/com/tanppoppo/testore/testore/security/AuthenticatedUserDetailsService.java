@@ -2,7 +2,7 @@ package com.tanppoppo.testore.testore.security;
 
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
-import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,7 +28,7 @@ public class AuthenticatedUserDetailsService implements UserDetailsService {
                 });
 
         if (!memberEntity.getStatus()) {
-            throw new DisabledException("인증되지 않은 회원입니다.");
+            throw new InternalAuthenticationServiceException("인증되지 않은 회원입니다.");
         }
 
         log.debug("조회정보 : {}", memberEntity);

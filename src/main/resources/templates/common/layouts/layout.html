@@ -24,7 +24,7 @@
 
   <!--Modal-->
   <th:block th:if="${modalShown}">
-    <th:block th:replace="~{common/fragments/modal :: ModalFragment(${modalMessage}, ${canCancel})}"></th:block>
+    <th:block th:replace="~{common/fragments/modal :: ModalFragment(${modalMessage}, ${canCancel}, ${link})}"></th:block>
   </th:block>
 
   <!--Toast-->

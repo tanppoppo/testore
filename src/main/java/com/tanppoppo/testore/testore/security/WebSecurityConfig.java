@@ -2,6 +2,7 @@ package com.tanppoppo.testore.testore.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,6 +16,7 @@ public class WebSecurityConfig {
     private static final String[] PUBLIC_URLS = {
             "/"
             , "/common/**"
+            , "/member/loginForm"
             , "/member/joinForm"
             , "/member/join"
             , "/member/verify-email"
@@ -35,6 +37,13 @@ public class WebSecurityConfig {
                         .usernameParameter("email")
                         .passwordParameter("memberPassword")
                         .loginProcessingUrl("/member/login")
+                        .failureHandler((request, response, exception) -> {
+                            if (exception instanceof InternalAuthenticationServiceException) {
+                                response.sendRedirect("/member/loginForm?error=unverified");
+                            } else {
+                                response.sendRedirect("/member/loginForm?error=true");
+                            }
+                        })
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
