@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.lang.reflect.Member;
+
 /**
  * 회원 관리를 위한 컨트롤러 클래스
- * @version 0.1.0
- * @since 0.1.0
+ * @version 0.1.1
+ * @since 0.1.1
  * @author gyahury
  */
 @Controller
@@ -33,7 +35,10 @@ public class MemberController {
      * @return 계정 페이지를 반환합니다.
      */
     @GetMapping("info")
-    public String info() {
+    public String info(Model model) {
+//        MemberEntity loggedInMember = ms.getLoggedInMember();
+//        model.addAttribute("email", loggedInMember.getEmail());
+
         return "member/info-main";
     }
 
@@ -55,6 +60,16 @@ public class MemberController {
     @GetMapping("joinForm")
     public String joinForm() {
         return "member/joinForm";
+    }
+
+    /**
+     * 알림 페이지 이동
+     * @author dhkdtjs1541
+     * @return 알림 페이지를 반환합니다.
+     */
+    @GetMapping("notification")
+    public String notification() {
+        return "member/notification";
     }
 
     /**
