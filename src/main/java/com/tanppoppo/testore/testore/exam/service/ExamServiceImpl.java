@@ -16,7 +16,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -56,13 +58,14 @@ public class ExamServiceImpl implements ExamService {
 
     /**
      * 시험지 메인 페이지 이동
-     * @return items 를 반환합니다.
+     * @param user 인증된 회원 정보를 가져옵니다.
+     * @return List형식의 items를 반환합니다.
      */
     @Override
-    public List<ExamPaperDTO> getListItems() {
+    public List<ExamPaperDTO> getListItems(AuthenticatedUser user) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, "examPaperId");
-        List<ExamPaperEntity> examPaperEntityList = epr.findAll(sort);
+        List<ExamPaperEntity> examPaperEntityList = epr.findByOwnerId(user.getId(), sort);
         List<ExamPaperDTO> items = new ArrayList<>();
 
         for (ExamPaperEntity entity : examPaperEntityList) {
@@ -79,6 +82,42 @@ public class ExamServiceImpl implements ExamService {
         }
 
         return items;
+
+    }
+
+    /**
+     * 시험지 상세 페이지 이동
+     * @param examPaperId examPaperId 시험지 키값을 가져옵니다.
+     * @return Map 객체 detail 을 반환합니다.
+     */
+    @Override
+    public Map<String, Object>  selectPaperDetail(int examPaperId) {
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = memberRepository.findById(examPaperEntity.getCreatorId().getMemberId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
+                .creatorId(examPaperEntity.getCreatorId().getMemberId())
+                .imagePath(examPaperEntity.getImagePath())
+                .title(examPaperEntity.getTitle())
+                .createdDate(examPaperEntity.getCreatedDate())
+                .content(examPaperEntity.getContent())
+                .ownerId(examPaperEntity.getOwnerId())
+                .publicOption(examPaperEntity.getPublicOption())
+                .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
+                .likeCount(epr.getLikeCount(examPaperEntity.getExamPaperId()))
+                .shareCount(epr.getShareCount(examPaperEntity.getCreatorId().getMemberId()))
+                .build();
+
+        Map<String, Object> detail = new HashMap<>();
+        detail.put("examPaperDTO", examPaperDTO);
+        detail.put("nickName", examPaperEntity.getCreatorId().getNickname());
+        detail.put("reviewCount", epr.getReviewCount(examPaperId));
+        detail.put("likeState", epr.getLikeState(memberEntity.getMemberId(), examPaperId));
+        return detail;
 
     }
 

@@ -4,10 +4,14 @@ import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExamService {
 
     int examCreate(ExamPaperDTO examPaperDTO, AuthenticatedUser user);
 
-    List<ExamPaperDTO> getListItems();
+    List<ExamPaperDTO> getListItems(AuthenticatedUser user);
+
+    Map<String, Object> selectPaperDetail(int examPaperId);
+
 }
