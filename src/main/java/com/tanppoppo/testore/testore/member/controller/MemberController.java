@@ -86,6 +86,7 @@ public class MemberController {
      */
     @GetMapping("verify-email")
     public String verify(@RequestParam("token") String token, Model model, RedirectAttributes redirectAttributes) {
+
         log.info("Verify token: {}", token);
         try {
             boolean isVerified = ms.verifyEmail(token);
@@ -107,6 +108,38 @@ public class MemberController {
             model.addAttribute("email", member.getEmail());
             return "redirect:/member/join";
         }
+
+    }
+
+    /**
+     * 이메일 인증 재전송 처리 메서드
+     * 만료된 인증 토큰에 대해 새로운 이메일 인증을 요청
+     *
+     * @author dhkdtjs1541
+     * @param email 재인증을 요청하는 이메일 주소
+     * @param model 오류 메시지를 담느 모델 객체
+     * @return 재인증 처리 후 성공 또는 실패 페이지 경로
+     */
+    @PostMapping("resend-verification")
+    public String resendVerification(@RequestParam("email") String email, Model model) {
+
+        try {
+            MemberEntity member = ms.findByEmail(email);
+
+            if (member != null && !member.getStatus()) {
+                String newToken = ms.generateNewEmailVerificationToken(member);
+                ms.sendEmailVerification(member.getEmail(), newToken);
+                return "redirect:/";
+            } else {
+                throw new IllegalArgumentException("이메일 주소가 잘못되었거나 이미 인증된 이메일입니다.");
+            }
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            log.error("이메일 재인증 오류 : {}", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("email", email);
+            return "redirect:/";
+        }
+
     }
 
 }
