@@ -15,19 +15,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExamItemDTO {
+public class ExamQuestionDTO {
 
-    private Integer examItemId;
+    private Integer examQuestionId;
     private Integer examPaperId;
-    private String question;
-    private Integer answer;
-    private String paragraphDescription;
-    private String paragraphContent;
-    private String text1;
-    private String text2;
-    private String text3;
-    private String text4;
-    private String text5;
-    private Integer itemScore;
+    private String questionType;
+    private Integer questionScore;
+    private Integer questionOrder;
 
 }

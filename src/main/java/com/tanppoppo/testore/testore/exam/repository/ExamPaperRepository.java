@@ -16,7 +16,7 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     List<ExamPaperEntity> findByOwnerId(Integer memberId, Sort sort);
 
     // count : 문제수 [검증]
-    @Query("SELECT COUNT(ei) FROM ExamItemEntity ei WHERE ei.examPaperId.examPaperId = :examPaperId")
+    @Query("SELECT COUNT(ei) FROM ExamQuestionEntity ei WHERE ei.examPaperId.examPaperId = :examPaperId")
     Integer getExamItemCount(@Param("examPaperId") Integer examPaperId);
 
     // like  : 좋아요수 [검증]

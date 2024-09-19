@@ -2,7 +2,7 @@ package com.tanppoppo.testore.testore.exam.service;
 
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
 import com.tanppoppo.testore.testore.exam.entity.ExamPaperEntity;
-import com.tanppoppo.testore.testore.exam.repository.ExamItemRepository;
+import com.tanppoppo.testore.testore.exam.repository.ExamQuestionRepository;
 import com.tanppoppo.testore.testore.exam.repository.ExamPaperRepository;
 import com.tanppoppo.testore.testore.exam.repository.ExamResultRepository;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class ExamServiceImpl implements ExamService {
 
     private final ExamPaperRepository epr;
-    private final ExamItemRepository eir;
+    private final ExamQuestionRepository eir;
     private final ExamResultRepository err;
     private final MemberRepository memberRepository;
 
