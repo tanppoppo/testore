@@ -121,4 +121,16 @@ public class ExamServiceImpl implements ExamService {
 
     }
 
+    /**
+     *  특정 사용자가 소유한 시험지의 총 개수를 반환함.
+     *
+     * @author dhkdtjs1541
+     * @param memberId 시험지를 소유한 사용자의 ID
+     * @return 사용자가 소유한 시험지의 개수
+     */
+    @Override
+    public Integer countExamPapersByOwnerId(Integer memberId) {
+        return epr.countExamPapersByOwnerId(memberId);
+    }
+
 }

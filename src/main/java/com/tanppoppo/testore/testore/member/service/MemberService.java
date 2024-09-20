@@ -11,5 +11,6 @@ public interface MemberService {
     MemberEntity findByEmailVerificationToken(String token);
     String generateEmailVerificationToken(MemberEntity member);
     void sendEmailVerification(String email, String newToken);
+    int getPointSumByMemberId(int memberId);
 
 }

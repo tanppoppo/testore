@@ -14,4 +14,5 @@ public interface ExamService {
 
     Map<String, Object> selectPaperDetail(int examPaperId);
 
+    Integer countExamPapersByOwnerId(Integer memberId);
 }

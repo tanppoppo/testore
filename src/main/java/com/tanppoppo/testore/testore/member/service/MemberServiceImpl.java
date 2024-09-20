@@ -2,7 +2,9 @@ package com.tanppoppo.testore.testore.member.service;
 
 import com.tanppoppo.testore.testore.member.dto.MemberDTO;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
+import com.tanppoppo.testore.testore.member.entity.PointEntity;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
+import com.tanppoppo.testore.testore.member.repository.PointRepository;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,6 +27,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository mr;
     private final BCryptPasswordEncoder PasswordEncoder;
     private final JavaMailSender mailSender;
+    private final PointRepository pr;
 
     @Override
     public void joinMember(MemberDTO memberDTO) {
@@ -153,6 +157,22 @@ public class MemberServiceImpl implements MemberService {
         String newToken = generateEmailVerificationToken(member);
         sendEmailVerification(member.getEmail(), newToken);
 
+    }
+
+    /**
+     * 회원의 포인트 합계를 계산하는 메서드
+     *
+     * @author dhkdtjs1541
+     * @param memberId 회원의 ID
+     * @return 회원의 포인트 합계
+     * @throws RuntimeException 회원을 찾을 수 없을 경우 발생
+     */
+    @Override
+    public int getPointSumByMemberId(int memberId) {
+        MemberEntity member = mr.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+        List<PointEntity> points = pr.findByMemberId(member);
+        return points.stream().mapToInt(PointEntity::getPointChange).sum(); // 포인트의 합계 계산
     }
 
     /**
