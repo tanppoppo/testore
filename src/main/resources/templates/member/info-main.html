@@ -9,10 +9,10 @@
 <div class="flex items-center min-h-[calc(6rem+4vw)] px-10">
 
   <div class="flex flex-col justify-center gap-2 w-full px-4 font-bold">
-    <div class="text-[calc(0.7rem+0.4vw)] text-gray-700">rudgns1243@naver.com</div>
-    <div class="text-[calc(0.6rem+0.5vw)] text-gray-400 font-medium break-all">gyahury</div>
+    <div class="text-[calc(0.7rem+0.4vw)] text-gray-700" th:text="${email}"></div>
+    <div class="text-[calc(0.6rem+0.5vw)] text-gray-400 font-medium break-all" th:text="${nickname}"></div>
     <div class="text-[calc(0.5rem+0.4vw)] text-gray-400">
-      단어장 : <span>2</span> | 시험지 : <span>2</span> | 포인트 : <span>234</span>p</div>
+      단어장 : <span th:text="${wordBookCount}"></span> | 시험지 : <span th:text="${examPaperCount}"></span> | 포인트 : <span th:text="${pointCount}"></span>p</div>
   </div>
   <svg class="w-[calc(2rem+1vw)] h-[calc(2rem+1vw)] text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
        height="24" fill="none" viewBox="0 0 24 24">

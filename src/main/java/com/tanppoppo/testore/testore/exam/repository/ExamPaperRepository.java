@@ -35,4 +35,7 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     @Query("SELECT COUNT(le) > 0 FROM ItemLikeEntity le WHERE le.memberId.memberId = :memberId AND le.itemId = :examPaperId")
     Boolean getLikeState(@Param("memberId") Integer memberId, @Param("examPaperId") Integer examPaperId);
 
+    @Query("SELECT COUNT(ep) FROM ExamPaperEntity ep WHERE ep.ownerId = :memberId")
+    Integer countExamPapersByOwnerId(@Param("memberId") Integer memberId);
+
 }

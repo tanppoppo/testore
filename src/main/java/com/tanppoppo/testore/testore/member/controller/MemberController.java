@@ -1,10 +1,14 @@
 package com.tanppoppo.testore.testore.member.controller;
 
+import com.tanppoppo.testore.testore.exam.service.ExamService;
 import com.tanppoppo.testore.testore.member.dto.MemberDTO;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.service.MemberService;
+import com.tanppoppo.testore.testore.security.AuthenticatedUser;
+import com.tanppoppo.testore.testore.word.service.WordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +33,8 @@ import java.lang.reflect.Member;
 public class MemberController {
 
     private final MemberService ms;
+    private final ExamService es;
+    private final WordService ws;
 
     /**
      * 계정 페이지 이동
@@ -36,9 +42,16 @@ public class MemberController {
      * @return 계정 페이지를 반환합니다.
      */
     @GetMapping("info")
-    public String info(Model model) {
-//        MemberEntity loggedInMember = ms.getLoggedInMember();
-//        model.addAttribute("email", loggedInMember.getEmail());
+    public String info(Model model, @AuthenticationPrincipal AuthenticatedUser user) {
+        Integer examPaperCount = es.countExamPapersByOwnerId(user.getId());
+        Integer wordBookCount = ws.countWordBooksByOwnerId(user.getId());
+        Integer pointCount = ms.getPointSumByMemberId(user.getId());
+
+        model.addAttribute("email", user.getEmail());
+        model.addAttribute("nickname", user.getNickname());
+        model.addAttribute("examPaperCount", examPaperCount);
+        model.addAttribute("wordBookCount", wordBookCount);
+        model.addAttribute("pointCount", pointCount);
 
         return "member/info-main";
     }
