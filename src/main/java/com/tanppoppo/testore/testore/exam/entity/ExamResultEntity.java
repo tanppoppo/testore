@@ -3,6 +3,7 @@ package com.tanppoppo.testore.testore.exam.entity;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -49,6 +50,18 @@ public class ExamResultEntity {
     @NotNull
     @Column(name = "exam_duration", nullable = false)
     private Integer examDuration;
+
+    @NotNull
+    @Column(name = "start_time", nullable = false, updatable = false)
+    private LocalDateTime startTime;
+
+    @Column(name = "end_time")
+    private LocalDateTime endTime;
+
+    @NotNull
+    @Size(max = 10)
+    @Column(name = "status", nullable = false, length = 10)
+    private String status;
 
     @CreatedDate
     @Column(name = "created_date", nullable = false, updatable = false)
