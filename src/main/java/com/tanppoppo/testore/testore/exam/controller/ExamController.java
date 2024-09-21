@@ -13,10 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.tanppoppo.testore.testore.util.MessageUtil.*;
 
@@ -104,14 +102,22 @@ public class ExamController {
      * @author KIMGEON64
      */
     @GetMapping("detail")
-    public String paper(Model model, @RequestParam(name = "paper") int examPaperId) {
+    public String paper(Model model, RedirectAttributes redirectAttributes, @RequestParam(name = "paper") int examPaperId, @AuthenticationPrincipal AuthenticatedUser user) {
 
-        Map<String, Object> detail = es.selectPaperDetail(examPaperId);
-        model.addAttribute("examPaperDTO", detail.get("examPaperDTO"));
-        model.addAttribute("nickname", detail.get("nickname"));
-        model.addAttribute("reviewCount", detail.get("reviewCount"));
-        model.addAttribute("likeState", detail.get("likeState"));
-        return "exam/exam-detail";
+        try {
+            Map<String, Object> detail = es.selectPaperDetail(examPaperId, user);
+            model.addAttribute("examPaperDTO", detail.get("examPaperDTO"));
+            model.addAttribute("nickname", detail.get("nickname"));
+            model.addAttribute("reviewCount", detail.get("reviewCount"));
+            model.addAttribute("likeState", detail.get("likeState"));
+            return "exam/exam-detail";
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "공개된 시험지가 아닙니다.");
+        } catch (Exception e) {
+            setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생했습니다.");
+        }
+
+        return "redirect:/";
 
     }
 
@@ -129,20 +135,17 @@ public class ExamController {
     @GetMapping("examTake")
     public String examTake(Model model, RedirectAttributes redirectAttributes, @RequestParam(name = "paper") int examPaperId, @AuthenticationPrincipal AuthenticatedUser user) {
 
-        Map<Integer, List<QuestionParagraphDTO>> questionParagraphDTOS;
-
         try {
-            questionParagraphDTOS = es.selectQuestionParagraph(examPaperId, user);
+            Map<Integer, List<QuestionParagraphDTO>> questionParagraphDTOS = es.selectQuestionParagraph(examPaperId, user);
             model.addAttribute("items", questionParagraphDTOS);
+            return "exam/exam-take";
         } catch (AccessDeniedException e) {
             setFlashToastMessage(redirectAttributes, false, "공개된 시험지가 아닙니다.");
-            return "redirect:/";
         } catch (Exception e) {
             setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생했습니다.");
-            return "redirect:/";
         }
 
-        return "exam/exam-take";
+        return "redirect:/";
 
     }
 

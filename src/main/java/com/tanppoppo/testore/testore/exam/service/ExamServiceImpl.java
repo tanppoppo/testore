@@ -95,13 +95,17 @@ public class ExamServiceImpl implements ExamService {
      * @return Map 객체 detail 을 반환합니다.
      */
     @Override
-    public Map<String, Object>  selectPaperDetail(int examPaperId) {
+    public Map<String, Object>  selectPaperDetail(int examPaperId, AuthenticatedUser user) {
 
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
 
         MemberEntity memberEntity = memberRepository.findById(examPaperEntity.getCreatorId().getMemberId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        if (user.getId() != examPaperEntity.getOwnerId() && !examPaperEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+        }
 
         ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
                 .examPaperId(examPaperEntity.getExamPaperId())

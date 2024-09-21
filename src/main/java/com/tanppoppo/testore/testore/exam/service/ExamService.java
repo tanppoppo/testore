@@ -13,7 +13,7 @@ public interface ExamService {
 
     List<ExamPaperDTO> getListItems(AuthenticatedUser user);
 
-    Map<String, Object> selectPaperDetail(int examPaperId);
+    Map<String, Object> selectPaperDetail(int examPaperId, AuthenticatedUser user);
 
     Integer countExamPapersByOwnerId(Integer memberId);
 
