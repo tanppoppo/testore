@@ -1,6 +1,7 @@
 package com.tanppoppo.testore.testore.exam.controller;
 
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
+import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
 import com.tanppoppo.testore.testore.exam.service.ExamService;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 시험지 관리를 위한 컨트롤러 클래스
@@ -73,7 +76,7 @@ public class ExamController {
     }
 
     /* 문제 추가 페이지 주소값 */ // 진행중
-    @GetMapping("create-question-form")
+    @GetMapping("createQuestionForm")
     public String createQuestionForm(/*
             @RequestParam(name = "examPaperId") int examPaperId,
             Model model */) {
@@ -83,7 +86,7 @@ public class ExamController {
     }
 
     /* ( Submit ) 시험지 문제 추가 페이지에서 시험 문제 최종 DB상 저장 */ // 진행중
-    @PostMapping("QuestionsSave")
+    @PostMapping("createQuestion")
     public String QuestionsSave(/* @RequestParam(name = "examPaperId") int examPaperId */) {
 //        es.QuestionsSave(examPaperId);
         return "exam-detail";
@@ -101,7 +104,7 @@ public class ExamController {
 
         Map<String, Object> detail = es.selectPaperDetail(examPaperId);
         model.addAttribute("examPaperDTO", detail.get("examPaperDTO"));
-        model.addAttribute("nickName", detail.get("nickName"));
+        model.addAttribute("nickname", detail.get("nickname"));
         model.addAttribute("reviewCount", detail.get("reviewCount"));
         model.addAttribute("likeState", detail.get("likeState"));
         return "exam/exam-detail";
@@ -117,6 +120,20 @@ public class ExamController {
     public String search() {
         return "exam/exam-search";
 
+    }
+
+    @GetMapping("examTake")
+    public String examTake(Model model , @RequestParam(name = "paper") int examPaperId) {
+
+        List<QuestionParagraphDTO> questionParagraphDTOS = es.selectQuestionParagraph(examPaperId);
+
+        Map<Integer, List<QuestionParagraphDTO>> groupedParagraphDTOS = questionParagraphDTOS.stream()
+                .sorted(Comparator.comparingInt(QuestionParagraphDTO::getParagraphOrder))
+                .collect(Collectors.groupingBy(QuestionParagraphDTO::getExamQuestionId));
+
+        model.addAttribute("items", groupedParagraphDTOS);
+
+        return "exam/exam-take";
     }
 
 }

@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
                   <option value="desc">단락 설명</option>
                   <option value="content">단락 내용</option>
                   <option value="question">문제 질문</option>
-                  <option value="choices">문제 선택지</option>
+                  <option value="choice">문제 선택지</option>
                   `
         ;
         newSelect.classList.add('bg-gray-50', 'border', 'border-gray-300', 'text-gray-900', 'text-sm', 'rounded-lg', 'block', 'w-full', 'p-2.5', 'mb-4');
@@ -76,16 +76,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 element.name = `${type}_${number}`;
                 elementClass += 'border-b border-gray-400 p-3 focus:border-gray-600 focus:outline-none';
                 break;
-            case 'choices':
-                addedTypes['choices'] = addedTypes['choices'] || 0;
-                addedTypes['choices']++;
-                element.placeholder = `선택지${addedTypes['choices']} 입력`;
-                element.name = `${type}_${number}_${addedTypes['choices']}`;
+            case 'choice':
+                addedTypes['choice'] = addedTypes['choice'] || 0;
+                addedTypes['choice']++;
+                element.placeholder = `선택지${addedTypes['choice']} 입력`;
+                element.name = `${type}_${number}_${addedTypes['choice']}`;
                 elementClass += 'border-b border-gray-400 p-3 focus:border-gray-600 focus:outline-none';
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.name = `answer_${number}`;
-                checkbox.value = addedTypes['choices'];
+                checkbox.value = addedTypes['choice'];
                 checkbox.className = 'w-5 h-5 ml-2 accent-green-600 rounded';
                 wrapper.appendChild(checkbox);
                 break;
@@ -107,12 +107,12 @@ document.addEventListener('DOMContentLoaded', function () {
         deleteBtn.onclick = function () {
             wrapper.remove();
 
-            if (type === 'choices' && addedTypes['choices'] > 0) {
-                addedTypes['choices']--;
+            if (type === 'choice' && addedTypes['choice'] > 0) {
+                addedTypes['choice']--;
             } else {
                 addedTypes[type] = false;
             }
-            updateChoicesOrder(container, number);
+            updatechoiceOrder(container, number);
             updateSelectOptions();
         };
 
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         select.value = '';
 
-        if (type !== 'choices') {
+        if (type !== 'choice') {
             addedTypes[type] = true;
         }
 
@@ -132,8 +132,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('select').forEach(select => {
             select.querySelectorAll('option').forEach(option => {
                 const value = option.value;
-                if (value === 'choices') {
-                    option.disabled = addedTypes['choices'] >= 5;
+                if (value === 'choice') {
+                    option.disabled = addedTypes['choice'] >= 5;
                 } else {
                     option.disabled = addedTypes[value];
                 }
@@ -148,18 +148,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         inputs.forEach(input => {
             if (input.name.startsWith('question')) questionCount++;
-            if (input.name.startsWith('choices')) choiceCount++;
+            if (input.name.startsWith('choice')) choiceCount++;
         });
 
         return questionCount >= 1 && choiceCount >= 2;
     }
 
-    function updateChoicesOrder(container, number) {
-        const allChoices = container.querySelectorAll('input[name*="choices"]');
+    function updatechoiceOrder(container, number) {
+        const allchoice = container.querySelectorAll('input[name*="choice"]');
         const allCheckboxes = container.querySelectorAll('input[type="checkbox"]');
-        allChoices.forEach((choiceInput, index) => {
+        allchoice.forEach((choiceInput, index) => {
             choiceInput.placeholder = `선택지${index + 1} 입력`;
-            choiceInput.name = `choices_${number}_${index + 1}`;
+            choiceInput.name = `choice_${number}_${index + 1}`;
             allCheckboxes[index].value = index + 1;
         });
     }

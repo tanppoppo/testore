@@ -1,10 +1,14 @@
 package com.tanppoppo.testore.testore.exam.service;
 
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
+import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
 import com.tanppoppo.testore.testore.exam.entity.ExamPaperEntity;
+import com.tanppoppo.testore.testore.exam.entity.ExamQuestionEntity;
+import com.tanppoppo.testore.testore.exam.entity.QuestionParagraphEntity;
 import com.tanppoppo.testore.testore.exam.repository.ExamQuestionRepository;
 import com.tanppoppo.testore.testore.exam.repository.ExamPaperRepository;
 import com.tanppoppo.testore.testore.exam.repository.ExamResultRepository;
+import com.tanppoppo.testore.testore.exam.repository.QuestionParagraphRepository;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
@@ -27,7 +31,8 @@ import java.util.Map;
 public class ExamServiceImpl implements ExamService {
 
     private final ExamPaperRepository epr;
-    private final ExamQuestionRepository eir;
+    private final ExamQuestionRepository eqr;
+    private final QuestionParagraphRepository qpr;
     private final ExamResultRepository err;
     private final MemberRepository memberRepository;
 
@@ -100,6 +105,7 @@ public class ExamServiceImpl implements ExamService {
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
+                .examPaperId(examPaperEntity.getExamPaperId())
                 .creatorId(examPaperEntity.getCreatorId().getMemberId())
                 .imagePath(examPaperEntity.getImagePath())
                 .title(examPaperEntity.getTitle())
@@ -114,7 +120,7 @@ public class ExamServiceImpl implements ExamService {
 
         Map<String, Object> detail = new HashMap<>();
         detail.put("examPaperDTO", examPaperDTO);
-        detail.put("nickName", examPaperEntity.getCreatorId().getNickname());
+        detail.put("nickname", examPaperEntity.getCreatorId().getNickname());
         detail.put("reviewCount", epr.getReviewCount(examPaperId));
         detail.put("likeState", epr.getLikeState(memberEntity.getMemberId(), examPaperId));
         return detail;
@@ -132,5 +138,46 @@ public class ExamServiceImpl implements ExamService {
     public Integer countExamPapersByOwnerId(Integer memberId) {
         return epr.countExamPapersByOwnerId(memberId);
     }
+
+    /**
+     * 시험 문제 조회
+     * @author gyahury
+     * @param examPaperId 시험지 id를 가져옵니다.
+     * @return paragraphDTOs 시험지 dto list를 반환합니다.
+     */
+    @Override
+    public List<QuestionParagraphDTO> selectQuestionParagraph(int examPaperId) {
+
+        ExamPaperEntity examPaperEntity = new ExamPaperEntity();
+        examPaperEntity.setExamPaperId(examPaperId);
+
+        List<ExamQuestionEntity> examQuestionEntities = eqr.findByExamPaperId(examPaperEntity);
+        List<QuestionParagraphDTO> paragraphDTOs = new ArrayList<>();
+
+        for (ExamQuestionEntity examQuestionEntity : examQuestionEntities) {
+            List<QuestionParagraphEntity> questionParagraphs = qpr.findByExamQuestionId(examQuestionEntity);
+            int choiceCounter = 0;
+            for (QuestionParagraphEntity paragraph : questionParagraphs) {
+                QuestionParagraphDTO paragraphDTO = new QuestionParagraphDTO();
+
+                // 선택지 인덱스 추가
+                if(paragraph.getParagraphType().equals("choice")){
+                    choiceCounter++;
+                    paragraphDTO.setChoiceIndex(choiceCounter);
+                }
+
+                paragraphDTO.setQuestionParagraphId(paragraph.getQuestionParagraphId());
+                paragraphDTO.setExamQuestionId(paragraph.getExamQuestionId().getExamQuestionId());
+                paragraphDTO.setParagraphType(paragraph.getParagraphType());
+                paragraphDTO.setParagraphContent(paragraph.getParagraphContent());
+                paragraphDTO.setParagraphOrder(paragraph.getParagraphOrder());
+                paragraphDTO.setCorrect(paragraph.getCorrect());
+                paragraphDTOs.add(paragraphDTO);
+            }
+        }
+
+        return paragraphDTOs;
+    }
+
 
 }

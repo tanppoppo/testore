@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:fragment="ToastFragment(content, isSuccess)">
-<div id="toast" class="flex w-full fixed bottom-0 left-0 justify-center">
+<div id="toast" class="flex w-full fixed bottom-0 left-0 justify-center fade-in">
   <div class="flex w-full fixed bottom-20 justify-center items-center max-w-xs p-4 text-gray-500 bg-white rounded-lg shadow">
     <div th:if="${isSuccess}" class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
       <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"

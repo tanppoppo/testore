@@ -1,6 +1,7 @@
 package com.tanppoppo.testore.testore.exam.service;
 
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
+import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 
 import java.util.List;
@@ -15,4 +16,7 @@ public interface ExamService {
     Map<String, Object> selectPaperDetail(int examPaperId);
 
     Integer countExamPapersByOwnerId(Integer memberId);
+
+    List<QuestionParagraphDTO> selectQuestionParagraph(int examPaperId);
+
 }
