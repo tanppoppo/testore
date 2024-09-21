@@ -1,9 +1,11 @@
 package com.tanppoppo.testore.testore.exam.service;
 
+import com.tanppoppo.testore.testore.common.util.ExamStatusEnum;
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
 import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
 import com.tanppoppo.testore.testore.exam.entity.ExamPaperEntity;
 import com.tanppoppo.testore.testore.exam.entity.ExamQuestionEntity;
+import com.tanppoppo.testore.testore.exam.entity.ExamResultEntity;
 import com.tanppoppo.testore.testore.exam.entity.QuestionParagraphEntity;
 import com.tanppoppo.testore.testore.exam.repository.ExamQuestionRepository;
 import com.tanppoppo.testore.testore.exam.repository.ExamPaperRepository;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -103,7 +106,7 @@ public class ExamServiceImpl implements ExamService {
         MemberEntity memberEntity = memberRepository.findById(examPaperEntity.getCreatorId().getMemberId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        if (user.getId() != examPaperEntity.getOwnerId() && !examPaperEntity.getPublicOption()){
+        if (!user.getId().equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
             throw new AccessDeniedException("공개된 시험지가 아닙니다.");
         }
 
@@ -154,14 +157,21 @@ public class ExamServiceImpl implements ExamService {
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
 
-        if (user.getId() != examPaperEntity.getOwnerId() && !examPaperEntity.getPublicOption()){
+        if (!user.getId().equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
             throw new AccessDeniedException("공개된 시험지가 아닙니다.");
         }
 
         List<ExamQuestionEntity> examQuestionEntities = eqr.findByExamPaperId(examPaperEntity);
+
+        if(examQuestionEntities.isEmpty()) {
+            throw new NoSuchElementException("시험 문제가 없습니다.");
+        }
+
         List<QuestionParagraphDTO> paragraphDTOs = new ArrayList<>();
+        int questionIndex = 0; // 문제 번호
 
         for (ExamQuestionEntity examQuestionEntity : examQuestionEntities) {
+            questionIndex++;
             List<QuestionParagraphEntity> questionParagraphs = qpr.findByExamQuestionId(examQuestionEntity);
             int choiceCounter = 0;
             for (QuestionParagraphEntity paragraph : questionParagraphs) {
@@ -174,7 +184,7 @@ public class ExamServiceImpl implements ExamService {
                 }
 
                 paragraphDTO.setQuestionParagraphId(paragraph.getQuestionParagraphId());
-                paragraphDTO.setExamQuestionId(paragraph.getExamQuestionId().getExamQuestionId());
+                paragraphDTO.setExamQuestionId(questionIndex);
                 paragraphDTO.setParagraphType(paragraph.getParagraphType());
                 paragraphDTO.setParagraphContent(paragraph.getParagraphContent());
                 paragraphDTO.setParagraphOrder(paragraph.getParagraphOrder());
@@ -189,6 +199,113 @@ public class ExamServiceImpl implements ExamService {
                 .collect(Collectors.groupingBy(QuestionParagraphDTO::getExamQuestionId));
 
         return groupedParagraphDTOS;
+    }
+
+    /**
+     * 시험 점수 계산
+     * @author gyahury
+     * @param choices 선택지를 가져옵니다.
+     * @return 시험 결과 점수를 반환합니다.
+     */
+    @Override
+    public int calculateScore(Map<String, String[]> choices) {
+
+        ExamPaperEntity examPaperEntity = epr.findById(Integer.parseInt(choices.get("paper")[0]))
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        List<ExamQuestionEntity> examQuestionEntities = eqr.findByExamPaperId(examPaperEntity);
+
+        if(examQuestionEntities.isEmpty()) {
+            throw new NoSuchElementException("시험 문제가 없습니다.");
+        }
+
+        double questionIndex = 0;
+        double correctCount = 0;
+
+        for (ExamQuestionEntity examQuestionEntity : examQuestionEntities) {
+
+            questionIndex++;
+            List<QuestionParagraphEntity> questionParagraphs = qpr.findByExamQuestionId(examQuestionEntity);
+
+            if (questionParagraphs.isEmpty()) {
+                throw new EntityNotFoundException("문제 단락 정보를 찾을 수 없습니다.");
+            }
+            // 선택지 questionIndex번에 대해 제출한 답변 ex) ["1","2"]
+            String[] submittedAnswers = choices.get("choice_" + (int) questionIndex);
+
+            // choice로 필터된 문제 단락
+            List<QuestionParagraphEntity> filteredParagraphs = questionParagraphs.stream()
+                    .filter(p -> p.getParagraphType().equals("choice"))
+                    .collect(Collectors.toList());
+
+            ArrayList<String> answers = new ArrayList<>();
+
+            // 문제 단락을 순회
+            for (int i = 0; i < filteredParagraphs.size(); i++) {
+                QuestionParagraphEntity paragraph = filteredParagraphs.get(i);
+                // 단락의 정답 여부 확인
+                if (paragraph.getCorrect() == true) {
+                    answers.add(String.valueOf(i+1));
+                }
+            }
+
+            boolean isCorrect = submittedAnswers != null && Arrays.asList(submittedAnswers).equals(answers);
+            if (isCorrect) {
+                correctCount++;
+            }
+        }
+        return (int) Math.round((correctCount / questionIndex * 100));
+    }
+
+    /**
+     * 시험 시작 기록
+     * @author gyahury
+     * @param examPaperId 시험지 id를 가져옵니다.
+     * @param user user 객체를 가져옵니다.
+     * @return 시험 결과 id를 반환합니다.
+     */
+    @Override
+    public int startExam(int examPaperId, AuthenticatedUser user) {
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = memberRepository.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        ExamResultEntity examResultEntity = ExamResultEntity.builder()
+                .examPaperId(examPaperEntity)
+                .memberId(memberEntity)
+                .startTime(LocalDateTime.now())
+                .status(ExamStatusEnum.IN_PROGRESS)
+                .build();
+
+        err.save(examResultEntity);
+
+        return examResultEntity.getExamResultId();
+
+    }
+
+    /**
+     * 시험 종료 기록
+     * @author gyahury
+     * @param examResultId 시험 결과 id를 가져옵니다.
+     * @param score 시험 점수를 가져옵니다.
+     * @param user 유저 객체를 가져옵니다.
+     */
+    @Override
+    public void endExam(int examResultId, int score, AuthenticatedUser user) {
+
+        ExamResultEntity examResultEntity = err.findById(examResultId)
+                .orElseThrow(()-> new EntityNotFoundException("시험 결과 정보를 찾을 수 없습니다."));
+
+        if (!examResultEntity.getMemberId().getMemberId().equals(user.getId())) {
+            throw new AccessDeniedException("제출 권한이 없습니다.");
+        }
+
+        examResultEntity.setExamScore(score);
+        examResultEntity.setEndTime(LocalDateTime.now());
+        examResultEntity.setStatus(ExamStatusEnum.COMPLETED);
     }
 
 

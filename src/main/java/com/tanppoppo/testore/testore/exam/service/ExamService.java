@@ -19,4 +19,9 @@ public interface ExamService {
 
     Map<Integer, List<QuestionParagraphDTO>> selectQuestionParagraph(int examPaperId, AuthenticatedUser user);
 
+    int calculateScore(Map<String, String[]> choices);
+
+    int startExam(int examResultId, AuthenticatedUser user);
+
+    void endExam(int examPaperId, int score, AuthenticatedUser user);
 }

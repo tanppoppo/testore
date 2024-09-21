@@ -10,6 +10,8 @@
   <div th:if="${#lists.isEmpty(items)}" class="text-gray-300 text-center font-bold mt-10">
     시험 문제가 없습니다.
   </div>
+  <input type="hidden" name="paper" th:value="${examPaperId}" />
+  <input type="hidden" name="result" th:value="${examResultId}" />
   <div th:unless="${#lists.isEmpty(items)}">
     <div th:each="entry : ${items}" class="flex flex-col gap-4 mt-10 px-4 text-gray-700">
       <div th:text="'문제' + ${entry.key}" class="text-sm font-medium text-gray-900'"></div>

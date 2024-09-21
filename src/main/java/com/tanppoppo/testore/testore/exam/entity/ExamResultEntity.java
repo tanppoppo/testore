@@ -1,9 +1,9 @@
 package com.tanppoppo.testore.testore.exam.entity;
 
+import com.tanppoppo.testore.testore.common.util.ExamStatusEnum;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 /**
  * 시험 결과를 저장하는 엔티티 클래스
- * @version 0.1.0
+ * @version 0.1.1
  * @since 0.1.0
  * @author KIMGEON64
  */
@@ -43,13 +43,8 @@ public class ExamResultEntity {
     @JoinColumn(name = "exam_paper_id", nullable = false, referencedColumnName = "exam_paper_id")
     private ExamPaperEntity examPaperId;
 
-    @NotNull
-    @Column(name = "exam_score", nullable = false)
+    @Column(name = "exam_score")
     private Integer examScore;
-
-    @NotNull
-    @Column(name = "exam_duration", nullable = false)
-    private Integer examDuration;
 
     @NotNull
     @Column(name = "start_time", nullable = false, updatable = false)
@@ -59,9 +54,9 @@ public class ExamResultEntity {
     private LocalDateTime endTime;
 
     @NotNull
-    @Size(max = 10)
-    @Column(name = "status", nullable = false, length = 10)
-    private String status;
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ExamStatusEnum status;
 
     @CreatedDate
     @Column(name = "created_date", nullable = false, updatable = false)

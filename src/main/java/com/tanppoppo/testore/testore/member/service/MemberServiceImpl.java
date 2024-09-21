@@ -69,11 +69,13 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public String generateEmailVerificationToken(MemberEntity member) {
+
         String newToken = generateVerificationToken();
         member.setEmailVerificationToken(newToken);
-        member.setTokenExpirationTime(LocalDateTime.now().plusSeconds(10));
+        member.setTokenExpirationTime(LocalDateTime.now().plusMinutes(10));
         mr.save(member);
         return newToken;
+
     }
 
     /**

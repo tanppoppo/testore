@@ -4,6 +4,7 @@ import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
 import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
 import com.tanppoppo.testore.testore.exam.service.ExamService;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static com.tanppoppo.testore.testore.util.MessageUtil.*;
 
@@ -73,7 +75,7 @@ public class ExamController {
 
         int examPaperId = es.examCreate(examPaperDTO, user);
         model.addAttribute("examPaperId", examPaperId);
-        return "redirect:create-question-form";
+        return "/exam/createQuestionForm";
 
     }
 
@@ -132,19 +134,50 @@ public class ExamController {
 
     }
 
+    /**
+     * 시험 응시 페이지 이동
+     * @author gyahury
+     * @param model 모델 객체를 전달합니다.
+     * @param redirectAttributes 리다이렉트 객체를 전달합니다.
+     * @param examPaperId 시험지 id를 전달합니다.
+     * @param user user 객체를 전달합니다.
+     * @return 성공시 시험 응시 페이지, 실패시 메인 화면으로 리다이렉트 됩니다.
+     */
     @GetMapping("examTake")
     public String examTake(Model model, RedirectAttributes redirectAttributes, @RequestParam(name = "paper") int examPaperId, @AuthenticationPrincipal AuthenticatedUser user) {
 
         try {
             Map<Integer, List<QuestionParagraphDTO>> questionParagraphDTOS = es.selectQuestionParagraph(examPaperId, user);
+            int examResultId = es.startExam(examPaperId, user);
             model.addAttribute("items", questionParagraphDTOS);
-            return "exam/exam-take";
+            model.addAttribute("examPaperId", examPaperId);
+            model.addAttribute("examResultId", examResultId);
+            return "/exam/exam-take";
         } catch (AccessDeniedException e) {
             setFlashToastMessage(redirectAttributes, false, "공개된 시험지가 아닙니다.");
-        } catch (Exception e) {
-            setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생했습니다.");
+        } catch (NoSuchElementException e) {
+            setFlashModalMessage(redirectAttributes, "시험문제가 없습니다.<br>추가하시겠습니까?", true, "/exam/createQuestionForm?examPaperId="+examPaperId);
         }
 
+        return "redirect:/";
+
+    }
+
+    /**
+     * 시험 제출
+     * @author gyahury
+     * @param request 요청 객체를 가져옵니다.
+     * @param redirectAttributes 리다이렉트 객체를 가져옵니다.
+     * @param user 유저 객체를 가져옵니다.
+     * @return 성공시 루트 페이지로 리다이렉트 됩니다.
+     */
+    @PostMapping("submitExam")
+    public String submitExam(HttpServletRequest request, RedirectAttributes redirectAttributes, @AuthenticationPrincipal AuthenticatedUser user) {
+
+        Map<String, String[]> choices = request.getParameterMap();
+        int score = es.calculateScore(choices);
+        es.endExam(Integer.parseInt(choices.get("result")[0]), score, user);
+        setFlashToastMessage(redirectAttributes, true, "제출되었습니다.");
         return "redirect:/";
 
     }
