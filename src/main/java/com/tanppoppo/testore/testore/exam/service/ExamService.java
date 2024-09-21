@@ -17,6 +17,6 @@ public interface ExamService {
 
     Integer countExamPapersByOwnerId(Integer memberId);
 
-    List<QuestionParagraphDTO> selectQuestionParagraph(int examPaperId);
+    Map<Integer, List<QuestionParagraphDTO>> selectQuestionParagraph(int examPaperId, AuthenticatedUser user);
 
 }

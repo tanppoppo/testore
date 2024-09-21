@@ -6,15 +6,19 @@ import com.tanppoppo.testore.testore.exam.service.ExamService;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.tanppoppo.testore.testore.util.MessageUtil.*;
 
 /**
  * 시험지 관리를 위한 컨트롤러 클래스
@@ -123,17 +127,23 @@ public class ExamController {
     }
 
     @GetMapping("examTake")
-    public String examTake(Model model , @RequestParam(name = "paper") int examPaperId) {
+    public String examTake(Model model, RedirectAttributes redirectAttributes, @RequestParam(name = "paper") int examPaperId, @AuthenticationPrincipal AuthenticatedUser user) {
 
-        List<QuestionParagraphDTO> questionParagraphDTOS = es.selectQuestionParagraph(examPaperId);
+        Map<Integer, List<QuestionParagraphDTO>> questionParagraphDTOS;
 
-        Map<Integer, List<QuestionParagraphDTO>> groupedParagraphDTOS = questionParagraphDTOS.stream()
-                .sorted(Comparator.comparingInt(QuestionParagraphDTO::getParagraphOrder))
-                .collect(Collectors.groupingBy(QuestionParagraphDTO::getExamQuestionId));
-
-        model.addAttribute("items", groupedParagraphDTOS);
+        try {
+            questionParagraphDTOS = es.selectQuestionParagraph(examPaperId, user);
+            model.addAttribute("items", questionParagraphDTOS);
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "공개된 시험지가 아닙니다.");
+            return "redirect:/";
+        } catch (Exception e) {
+            setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생했습니다.");
+            return "redirect:/";
+        }
 
         return "exam/exam-take";
+
     }
 
 }

@@ -17,12 +17,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -146,10 +145,14 @@ public class ExamServiceImpl implements ExamService {
      * @return paragraphDTOs 시험지 dto list를 반환합니다.
      */
     @Override
-    public List<QuestionParagraphDTO> selectQuestionParagraph(int examPaperId) {
+    public Map<Integer, List<QuestionParagraphDTO>> selectQuestionParagraph(int examPaperId, AuthenticatedUser user) {
 
-        ExamPaperEntity examPaperEntity = new ExamPaperEntity();
-        examPaperEntity.setExamPaperId(examPaperId);
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        if (user.getId() != examPaperEntity.getOwnerId() && !examPaperEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+        }
 
         List<ExamQuestionEntity> examQuestionEntities = eqr.findByExamPaperId(examPaperEntity);
         List<QuestionParagraphDTO> paragraphDTOs = new ArrayList<>();
@@ -176,7 +179,12 @@ public class ExamServiceImpl implements ExamService {
             }
         }
 
-        return paragraphDTOs;
+        // 시험 문제 그룹화 및 정렬
+        Map<Integer, List<QuestionParagraphDTO>> groupedParagraphDTOS = paragraphDTOs.stream()
+                .sorted(Comparator.comparingInt(QuestionParagraphDTO::getParagraphOrder))
+                .collect(Collectors.groupingBy(QuestionParagraphDTO::getExamQuestionId));
+
+        return groupedParagraphDTOS;
     }
 
 

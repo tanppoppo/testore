@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.lang.reflect.Member;
+import static com.tanppoppo.testore.testore.util.MessageUtil.*;
 
 /**
  * 회원 관리를 위한 컨트롤러 클래스
@@ -66,19 +66,14 @@ public class MemberController {
         if (error != null) {
             switch (error) {
                 case "unverified":
-                    model.addAttribute("toastShown", true);
-                    model.addAttribute("toastMessage", "계정이 인증되지 않았습니다.");
-                    model.addAttribute("isSuccess", false);
+                    setModelToastMessage(model, false, "계정이 인증되지 않았습니다.");
                     break;
                 case "badcredential":
-                    model.addAttribute("toastShown", true);
-                    model.addAttribute("toastMessage", "아이디 또는 비밀번호가<br>잘못되었습니다.");
-                    model.addAttribute("isSuccess", false);
+                    setModelToastMessage(model, false, "아이디 또는 비밀번호가<br>잘못되었습니다.");
                     break;
                 default:
-                    model.addAttribute("toastShown", true);
-                    model.addAttribute("toastMessage", "로그인에 실패했습니다.");
-                    model.addAttribute("isSuccess", false);
+                    setModelToastMessage(model, false, "로그인에 실패했습니다.");
+                    break;
             }
         }
         return "member/loginForm";
@@ -116,13 +111,9 @@ public class MemberController {
 
         try {
             ms.joinMember(memberDTO);
-            redirectAttributes.addFlashAttribute("toastShown", true);
-            redirectAttributes.addFlashAttribute("toastMessage", "인증 메일을 발송하였습니다.<br>인증을 완료해주세요.");
-            redirectAttributes.addFlashAttribute("isSuccess", true);
+            setFlashToastMessage(redirectAttributes, true, "인증 메일을 발송하였습니다.<br>인증을 완료해주세요.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("toastShown", true);
-            redirectAttributes.addFlashAttribute("toastMessage", "회원가입 중 문제가 발생했습니다.<br>다시 시도해주세요.");
-            redirectAttributes.addFlashAttribute("isSuccess", false);
+            setFlashToastMessage(redirectAttributes, false, "회원가입 중 문제가 발생했습니다.<br>다시 시도해주세요.");
         }
 
         return "redirect:/";
@@ -146,23 +137,15 @@ public class MemberController {
             boolean isVerified = ms.verifyEmail(token);
             log.info("Email verification result: {}", isVerified);
             if (isVerified) {
-                redirectAttributes.addFlashAttribute("toastShown", true);
-                redirectAttributes.addFlashAttribute("toastMessage", "인증이 완료되었습니다.");
-                redirectAttributes.addFlashAttribute("isSuccess", true);
+                setFlashToastMessage(redirectAttributes, true, "인증이 완료되었습니다.");
                 return "redirect:/";
             } else {
-                redirectAttributes.addFlashAttribute("toastShown", true);
-                redirectAttributes.addFlashAttribute("toastMessage", "인증에 실패했습니다.");
-                redirectAttributes.addFlashAttribute("isSuccess", true);
+                setFlashToastMessage(redirectAttributes, false, "인증에 실패했습니다.");
                 return "redirect:/";
             }
         } catch (IllegalStateException e) {
             MemberEntity member = ms.findByEmailVerificationToken(token);
-            redirectAttributes.addFlashAttribute("email", member.getEmail());
-            redirectAttributes.addFlashAttribute("modalShown", true);
-            redirectAttributes.addFlashAttribute("modalMessage", "토큰이 만료되었습니다.<br>인증 메일을 다시 보내시겠습니까?");
-            redirectAttributes.addFlashAttribute("canCancel", true);
-            redirectAttributes.addFlashAttribute("link", "/member/resend-verification?email="+member.getEmail());
+            setFlashModalMessage(redirectAttributes, "토큰이 만료되었습니다.<br>인증 메일을 다시 보내시겠습니까?", true, "/member/resend-verification?email="+member.getEmail());
             return "redirect:/member/loginForm";
         }
 
@@ -181,13 +164,9 @@ public class MemberController {
 
         try {
             ms.resendVerificationEmail(email);
-            redirectAttributes.addFlashAttribute("toastShown", true);
-            redirectAttributes.addFlashAttribute("toastMessage", "재전송에 성공했습니다.");
-            redirectAttributes.addFlashAttribute("isSuccess", true);
+            setFlashToastMessage(redirectAttributes, true, "재전송에 성공했습니다.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("toastShown", true);
-            redirectAttributes.addFlashAttribute("toastMessage", "재전송에 실패했습니다.");
-            redirectAttributes.addFlashAttribute("isSuccess", false);
+            setFlashToastMessage(redirectAttributes, false, "재전송에 실패했습니다.");
         }
 
         return "redirect:/member/loginForm";
