@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:fragment="InputFragment(type, id, name, label)">
-<label th:for="${id} ?: ''"
-       th:text="${label} ?: ''"
+<label th:for="${id != null ? id : ''}"
+       th:text="${label != null ? label : ''} ?: ''"
        class="block mt-6 mb-1 text-sm font-bold text-gray-400"></label>
-<input th:type="${type} ?: 'text'"
-       th:id="${id} ?: ''"
-       th:name="${name} ?: ''"
+<input th:type="${type != null ? type : 'text'}"
+       th:id="${id != null ? id : ''}"
+       th:name="${name != null ? name : ''}"
        required
        class="py-2.5 px-0 w-full text-md text-gray-900 bg-transparent border-0 border-b-2 border-gray-400 appearance-none focus:outline-none focus:border-gray-500"/>
 </html>

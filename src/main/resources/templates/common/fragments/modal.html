@@ -6,7 +6,7 @@
     <div class="relative bg-white rounded-lg shadow fade-in">
       <div class="px-6 py-8 text-center">
         <h3 class="mb-5 text-md font-bold text-gray-600"
-            th:utext="${content} ?: ''">
+            th:utext="${content != null ? content : '내용'}">
         </h3>
         <button th:if="${link}"
                 type="button"

@@ -3,17 +3,17 @@
       th:fragment="FloatingButtonFragment(id, name, text, link)">
 <button type="button"
         th:if="${link}"
-        th:id="${id} ?: ''"
-        th:name="${name} ?: ''"
-        th:text="${text} ?: ''"
+        th:id="${id != null ? id : ''}"
+        th:name="${name != null ? name : ''}"
+        th:text="${text != null ? text : ''}"
         th:attr="onclick=|location.href='${link}'|"
         th:classappend="'fixed z-40 -translate-x-1/2 left-1/2 bottom-24 px-9 py-3 text-sm text-gray-100 bg-gray-500 hover:bg-gray-600 rounded-full'">
 </button>
 <button type="button"
         th:unless="${link}"
-        th:id="${id} ?: ''"
-        th:name="${name} ?: ''"
-        th:text="${text} ?: ''"
+        th:id="${id != null ? id : ''}"
+        th:name="${name != null ? name : ''}"
+        th:text="${text != null ? text : ''}"
         th:classappend="'fixed z-40 -translate-x-1/2 left-1/2 bottom-24 px-9 py-3 text-sm text-gray-100 bg-gray-500 hover:bg-gray-600 rounded-full'">
 </button>
 </html>

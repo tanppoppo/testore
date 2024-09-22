@@ -3,15 +3,15 @@
       th:fragment="TwinMenuFragment(menu1, menu2, link1, link2, selected)">
 <div class="flex items-center justify-center text-center w-full text-sm font-bold text-gray-400 h-16">
   <a class="flex w-full h-full items-center justify-center"
-     th:href="${link1} ?: ''">
-    <span th:text="${menu1} ?: ''"
+     th:href="${link1 != null ? link1 : ''}">
+    <span th:text="${menu1 != null ? menu1 : ''}"
           th:classappend="'flex w-3/4 items-center justify-center h-full'
                         + (${selected == 1 ? ' text-gray-600 border-b-2 border-gray-400' : ''})">
     </span>
   </a>
   <a class="flex w-full h-full items-center justify-center"
-     th:href="${link2} ?: ''">
-    <span th:text="${menu2} ?: ''"
+     th:href="${link2 != null ? link2 : ''}">
+    <span th:text="${menu2 != null ? menu2 : ''}"
           th:classappend="'flex w-3/4 items-center justify-center h-full'
                         + (${selected == 2 ? ' text-gray-600 border-b-2 border-gray-400' : ''})">
     </span>

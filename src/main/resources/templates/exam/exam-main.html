@@ -14,7 +14,7 @@
 <div th:unless="${#lists.isEmpty(items)}">
   <th:block th:each="item : ${items}">
     <th:block
-            th:replace="~{common/fragments/list-item :: ListItemFragment(${item})}"></th:block>
+            th:replace="~{common/fragments/exam-item :: ExamItemFragment(${item})}"></th:block>
   </th:block>
 </div>
 <th:block
