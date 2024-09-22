@@ -26,6 +26,6 @@ public interface ExamService {
 
     void endExam(int examPaperId, int score, AuthenticatedUser user);
 
-    List<ExamResultDTO> findExamResultByMemberId(AuthenticatedUser user);
+    List<ExamResultDTO> findExamResultByMemberId(AuthenticatedUser user, String keyword);
 
 }

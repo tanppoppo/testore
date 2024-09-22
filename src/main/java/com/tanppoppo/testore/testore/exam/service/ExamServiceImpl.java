@@ -318,11 +318,17 @@ public class ExamServiceImpl implements ExamService {
      * @return examResultDTOS 시험 결과 dto 리스트를 반환합니다.
      */
     @Override
-    public List<ExamResultDTO> findExamResultByMemberId(AuthenticatedUser user) {
+    public List<ExamResultDTO> findExamResultByMemberId(AuthenticatedUser user, String keyword) {
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
 
-        List<ExamResultEntity> examResultEntities = err.findByMemberIdAndStatus(memberEntity, ExamStatusEnum.COMPLETED);
+        List<ExamResultEntity> examResultEntities;
+
+        if (keyword == null) {
+            examResultEntities = err.findByMemberIdAndStatus(memberEntity, ExamStatusEnum.COMPLETED);
+        } else {
+            examResultEntities = err.findByMemberIdAndStatusAndExamPaperTitleContaining(memberEntity, ExamStatusEnum.COMPLETED, keyword);
+        }
 
         List<ExamResultDTO> examResultDTOS = new ArrayList<>();
         for (ExamResultEntity examResultEntitie : examResultEntities) {
@@ -379,6 +385,5 @@ public class ExamServiceImpl implements ExamService {
 
         return sb.toString().trim();
     }
-
 
 }

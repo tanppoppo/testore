@@ -6,7 +6,7 @@
       th:with="headerText='INFO', footerText='Info'"
       layout:fragment="Content"
 >
-<th:block th:replace="~{common/fragments/search :: SearchFragment()}"></th:block>
+<th:block th:replace="~{common/fragments/search :: SearchFragment('examResult')}"></th:block>
 <div class="pl-5 pt-3 font-bold text-gray-500">내가 응시한 시험</div>
 <div th:if="${#lists.isEmpty(resultItems)}" class="text-gray-300 text-center font-bold mt-10">
   시험 결과가 없습니다.

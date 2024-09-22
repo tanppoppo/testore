@@ -108,7 +108,7 @@ public class MemberController {
     @GetMapping("examResult")
     public String examResult(Model model, @RequestParam(required = false) String keyword, @AuthenticationPrincipal AuthenticatedUser user) {
 
-        model.addAttribute("resultItems", es.findExamResultByMemberId(user));
+        model.addAttribute("resultItems", es.findExamResultByMemberId(user, keyword));
         return "member/exam-result";
 
     }
