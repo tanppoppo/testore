@@ -1,6 +1,7 @@
 package com.tanppoppo.testore.testore.exam.service;
 
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
+import com.tanppoppo.testore.testore.exam.dto.ExamResultDTO;
 import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 
@@ -24,4 +25,7 @@ public interface ExamService {
     int startExam(int examResultId, AuthenticatedUser user);
 
     void endExam(int examPaperId, int score, AuthenticatedUser user);
+
+    List<ExamResultDTO> findExamResultByMemberId(AuthenticatedUser user);
+
 }

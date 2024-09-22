@@ -2,6 +2,7 @@ package com.tanppoppo.testore.testore.exam.service;
 
 import com.tanppoppo.testore.testore.common.util.ExamStatusEnum;
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
+import com.tanppoppo.testore.testore.exam.dto.ExamResultDTO;
 import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
 import com.tanppoppo.testore.testore.exam.entity.ExamPaperEntity;
 import com.tanppoppo.testore.testore.exam.entity.ExamQuestionEntity;
@@ -23,6 +24,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,7 +38,7 @@ public class ExamServiceImpl implements ExamService {
     private final ExamQuestionRepository eqr;
     private final QuestionParagraphRepository qpr;
     private final ExamResultRepository err;
-    private final MemberRepository memberRepository;
+    private final MemberRepository mr;
 
     /**
      * 시험지 생성 정보 저장
@@ -47,12 +49,13 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public int examCreate(ExamPaperDTO examPaperDTO, AuthenticatedUser user) {
 
-        MemberEntity memberEntity = memberRepository.findById(user.getId())
+        MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()->new EntityNotFoundException("회원정보를 찾을 수 없습니다."));
 
         ExamPaperEntity examPaperEntity = ExamPaperEntity.builder()
                 .title(examPaperDTO.getTitle())
                 .content(examPaperDTO.getContent())
+                .passScore(examPaperDTO.getPassScore())
                 .creatorId(memberEntity)
                 .imagePath(examPaperDTO.getImagePath())
                 .ownerId(memberEntity.getMemberId())
@@ -103,7 +106,7 @@ public class ExamServiceImpl implements ExamService {
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
 
-        MemberEntity memberEntity = memberRepository.findById(examPaperEntity.getCreatorId().getMemberId())
+        MemberEntity memberEntity = mr.findById(examPaperEntity.getCreatorId().getMemberId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         if (!user.getId().equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
@@ -270,7 +273,7 @@ public class ExamServiceImpl implements ExamService {
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
 
-        MemberEntity memberEntity = memberRepository.findById(user.getId())
+        MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         ExamResultEntity examResultEntity = ExamResultEntity.builder()
@@ -306,6 +309,75 @@ public class ExamServiceImpl implements ExamService {
         examResultEntity.setExamScore(score);
         examResultEntity.setEndTime(LocalDateTime.now());
         examResultEntity.setStatus(ExamStatusEnum.COMPLETED);
+    }
+
+    /**
+     * 시험 결과 조회
+     * @author gyahury
+     * @param user 유저 객체를 가져옵니다.
+     * @return examResultDTOS 시험 결과 dto 리스트를 반환합니다.
+     */
+    @Override
+    public List<ExamResultDTO> findExamResultByMemberId(AuthenticatedUser user) {
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+
+        List<ExamResultEntity> examResultEntities = err.findByMemberIdAndStatus(memberEntity, ExamStatusEnum.COMPLETED);
+
+        List<ExamResultDTO> examResultDTOS = new ArrayList<>();
+        for (ExamResultEntity examResultEntitie : examResultEntities) {
+            // 시험지 정보 조회
+            ExamPaperEntity examPaperEntity = epr.findById(examResultEntitie.getExamPaperId().getExamPaperId())
+                    .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+            ExamResultDTO examResultDTO = ExamResultDTO.builder()
+                    .examPaperTitle(examPaperEntity.getTitle())
+                    .examPaperContent(examPaperEntity.getContent())
+                    .examPaperImagePath(examPaperEntity.getImagePath())
+                    .examPaperPassScore(examPaperEntity.getPassScore())
+                    .examScore(examResultEntitie.getExamScore())
+                    .passStatus(examPaperEntity.getPassScore() <= examResultEntitie.getExamScore() ? true : false)
+                    .createdDate(examResultEntitie.getCreatedDate())
+                    .timeTaken(calculateTimeTaken(examResultEntitie.getStartTime(), examResultEntitie.getEndTime()))
+                    .examQuestionCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
+                    .build();
+
+            examResultDTOS.add(examResultDTO);
+        }
+        return examResultDTOS;
+    }
+
+    /**
+     * 로컬데이트타임 타입 걸린 시간 계산
+     * @author gyahury
+     * @param start 시작 로컬데이트타임 타입을 가져옵니다.
+     * @param end 끝 로컬데이트타임 타입을 가져옵니다.
+     * @return ~일 ~시간 ~분 ~초 문자열로 반환합니다.
+     */
+    public String calculateTimeTaken (LocalDateTime start, LocalDateTime end) {
+
+        Duration duration = Duration.between(start, end);
+
+        long days = duration.toDaysPart();
+        int hours = duration.toHoursPart();
+        int minutes = duration.toMinutesPart();
+        int seconds = duration.toSecondsPart();
+
+        StringBuilder sb = new StringBuilder();
+        if (days > 0) {
+            sb.append(days + "일 ");
+        }
+        if (hours > 0) {
+            sb.append(hours + "시간 ");
+        }
+        if (minutes > 0) {
+            sb.append(minutes + "분 ");
+        }
+        if (seconds > 0) {
+            sb.append(seconds + "초");
+        }
+
+        return sb.toString().trim();
     }
 
 

@@ -88,3 +88,11 @@
     from { opacity: 1; }
     to { opacity: 0; }
 }
+
+.divi {
+    margin: 4px 6px 0 6px;
+    width: 1px;
+    height: 12px;
+    text-indent: -999em;
+    border-right: solid 1px #ccc;
+}

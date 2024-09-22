@@ -28,4 +28,12 @@ public class ExamResultDTO {
     private String status;
     private LocalDateTime createdDate;
 
+    private String examPaperTitle;
+    private String examPaperContent;
+    private String examPaperImagePath;
+    private Integer examQuestionCount;
+    private Integer examPaperPassScore;
+    private String timeTaken ;
+    private Boolean passStatus;
+
 }

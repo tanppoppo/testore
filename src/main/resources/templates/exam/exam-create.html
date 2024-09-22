@@ -13,6 +13,7 @@
   </div>
   <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'title', 'title', '시험지 이름')}"></th:block>
   <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'content', 'content', '시험지 설명')}"></th:block>
+  <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'passScore', 'passScore', '합격 점수 (100점 기준)')}"></th:block>
   <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit', 'submitButton', 'submitButton', '시험지 생성', '', true)}"></th:block>
 </form>
 </html>

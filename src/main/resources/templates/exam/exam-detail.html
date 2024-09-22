@@ -24,6 +24,10 @@
               id="likeButton">좋아요
       </button>
       <button
+              class="block w-full px-4 py-3 text-left text-xs text-gray-600 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              id="bookmarkButton">찜하기
+      </button>
+      <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
               id="correctPaperButton">시험지 수정하기
       </button>
@@ -38,6 +42,10 @@
       <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
               id="reviewButton">리뷰 남기기
+      </button>
+      <button
+              class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              id="historyButton">응시 내역보기
       </button>
       <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
@@ -89,9 +97,10 @@
     </div>
   </div>
   <div class="flex gap-3 w-full px-7">
-    <th:block th:if="${#authentication.principal.id != examPaperDTO.ownerId}" th:replace="~{common/fragments/button :: ButtonFragment('button', '', '', '가져오기', 'getExamPaper?paper='+${examPaperDTO.examPaperId}, true)}"></th:block>
-    <th:block th:if="${#authentication.principal.id == examPaperDTO.ownerId}" th:replace="~{common/fragments/button :: ButtonFragment('button', 'button', 'button', '응시', 'get', true)}"></th:block>
-    <th:block th:if="${#authentication.principal.id == examPaperDTO.ownerId}" th:replace="~{common/fragments/button :: ButtonFragment('button', 'button', 'button', '방 생성', 'get', true)}"></th:block>
+    <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'examTakeButton', 'examTakeButton', '응시', 'examTake?paper='+${examPaperDTO.examPaperId} , true)}"></th:block>
+    <th:block th:if="${#authentication.principal.id == examPaperDTO.ownerId}">
+      <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'button', 'button', '방 생성', '', true)}"></th:block>
+    </th:block>
   </div>
 </div>
 </html>

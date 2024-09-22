@@ -101,6 +101,19 @@ public class MemberController {
     }
 
     /**
+     * 시험 결과 페이지 이동
+     * @author gyahury
+     * @return 시험 결과 페이지를 반환합니다.
+     */
+    @GetMapping("examResult")
+    public String examResult(Model model, @RequestParam(required = false) String keyword, @AuthenticationPrincipal AuthenticatedUser user) {
+
+        model.addAttribute("resultItems", es.findExamResultByMemberId(user));
+        return "member/exam-result";
+
+    }
+
+    /**
      * 회원 가입
      * @author KIMGEON64
      * @param memberDTO 회원 정보를 입력합니다.
