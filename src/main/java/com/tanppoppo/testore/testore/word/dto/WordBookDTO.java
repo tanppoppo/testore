@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class WordBookDTO {
 
-    private Integer wordbookID;
+    private Integer wordBookId;
     private String title;
     private String content;
     private String language;
@@ -31,5 +31,9 @@ public class WordBookDTO {
     private LocalDateTime studiedDate;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
+
+    private Integer wordItemCount;
+    private Integer likeCount;
+    private Integer shareCount;
 
 }
