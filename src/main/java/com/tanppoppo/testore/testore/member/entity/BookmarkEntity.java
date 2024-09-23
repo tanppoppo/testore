@@ -1,8 +1,8 @@
 package com.tanppoppo.testore.testore.member.entity;
 
+import com.tanppoppo.testore.testore.common.util.ItemTypeEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,9 +41,10 @@ public class BookmarkEntity {
     @Column(name = "item_id", nullable = false)
     private Integer itemId;
 
-    @Size(max = 20)
-    @Column(name = "item_type", length = 20)
-    private String itemType;
+    @NotNull
+    @Column(name = "item_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ItemTypeEnum itemType;
 
     @CreatedDate
     @Column(name = "created_date", nullable = false, updatable = false)
