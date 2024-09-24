@@ -1,6 +1,8 @@
 package com.tanppoppo.testore.testore.exam.service;
 
 import com.tanppoppo.testore.testore.common.util.ExamStatusEnum;
+import com.tanppoppo.testore.testore.common.util.ParagraphTypeEnum;
+import com.tanppoppo.testore.testore.common.util.QuestionTypeEnum;
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
 import com.tanppoppo.testore.testore.exam.dto.ExamResultDTO;
 import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -181,14 +184,14 @@ public class ExamServiceImpl implements ExamService {
                 QuestionParagraphDTO paragraphDTO = new QuestionParagraphDTO();
 
                 // 선택지 인덱스 추가
-                if(paragraph.getParagraphType().equals("choice")){
+                if(paragraph.getParagraphType().equals(ParagraphTypeEnum.CHOICE)){
                     choiceCounter++;
                     paragraphDTO.setChoiceIndex(choiceCounter);
                 }
 
                 paragraphDTO.setQuestionParagraphId(paragraph.getQuestionParagraphId());
                 paragraphDTO.setExamQuestionId(questionIndex);
-                paragraphDTO.setParagraphType(paragraph.getParagraphType());
+                paragraphDTO.setParagraphType(String.valueOf(paragraph.getParagraphType()));
                 paragraphDTO.setParagraphContent(paragraph.getParagraphContent());
                 paragraphDTO.setParagraphOrder(paragraph.getParagraphOrder());
                 paragraphDTO.setCorrect(paragraph.getCorrect());
@@ -238,7 +241,7 @@ public class ExamServiceImpl implements ExamService {
 
             // choice로 필터된 문제 단락
             List<QuestionParagraphEntity> filteredParagraphs = questionParagraphs.stream()
-                    .filter(p -> p.getParagraphType().equals("choice"))
+                    .filter(p -> p.getParagraphType().equals(ParagraphTypeEnum.CHOICE))
                     .collect(Collectors.toList());
 
             ArrayList<String> answers = new ArrayList<>();
@@ -319,6 +322,7 @@ public class ExamServiceImpl implements ExamService {
      */
     @Override
     public List<ExamResultDTO> findExamResultByMemberId(AuthenticatedUser user, String keyword) {
+
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
 
@@ -351,6 +355,121 @@ public class ExamServiceImpl implements ExamService {
             examResultDTOS.add(examResultDTO);
         }
         return examResultDTOS;
+    }
+
+    /**
+     * 문제 생성
+     * @author gyahury
+     * @param paragraphs 문제 단락을 가져옵니다.
+     * @param userId 계정 id를 가져옵니다.
+     */
+    @Override
+    public void createQuestion(Map<String, String[]> paragraphs, Integer userId) {
+
+        ExamPaperEntity examPaperEntity = epr.findById(Integer.parseInt(paragraphs.get("paper")[0]))
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        Map<Integer, List<String[]>> groupedData = new HashMap<>();
+        Map<Integer, String[]> answers = new HashMap<>();
+
+        // 데이터 분리
+        paragraphs.forEach((key, value) -> {
+            String[] parts = key.split("_");
+            if (parts.length > 1) {
+                if (!parts[0].equals("answer")) {
+                    Integer num = Integer.parseInt(parts[1]);
+                    if (parts.length > 2 && parts[0].equals("choice")) {
+                        value = new String[]{String.join(" ", value) + "||||choice||||" + parts[2]};
+                    }
+                    else if (parts[0].equals("desc")) {
+                        value = new String[]{String.join(" ", value) + "||||desc"};
+                    }
+                    else if (parts[0].equals("content")) {
+                        value = new String[]{String.join(" ", value) + "||||content"};
+                    }
+                    else if (parts[0].equals("question")) {
+                        value = new String[]{String.join(" ", value) + "||||question"};
+                    }
+                    groupedData.computeIfAbsent(num, k -> new ArrayList<>()).add(value);
+                } else {
+                    Integer num = Integer.parseInt(parts[1]);
+                    answers.put(num, value);
+                }
+            }
+        });
+
+        // key: 문제 번호, values: 단락 내용
+        groupedData.forEach((key, values) -> {
+
+            // 문제 테이블부터 저장
+            ExamQuestionEntity examQuestionEntity = ExamQuestionEntity.builder()
+                    .questionOrder(key)
+                    .examPaperId(examPaperEntity)
+                    .questionScore((int) Math.round(100.0 /groupedData.size()))
+                    .questionType(QuestionTypeEnum.MULTIPLE)
+                    .build();
+
+            eqr.save(examQuestionEntity);
+
+            AtomicInteger paragraphIndex = new AtomicInteger(1);
+            // 단락 테이블 저장
+            values.forEach((content) -> {
+
+                int currentIndex = paragraphIndex.getAndIncrement();
+                String[] splitedContent = content[0].split("\\|\\|\\|\\|");
+                QuestionParagraphEntity questionParagraphEntity = new QuestionParagraphEntity();
+
+                ParagraphTypeEnum type = null ;
+
+                // type 처리
+                if (splitedContent[1].equals("choice")){
+                    type = ParagraphTypeEnum.CHOICE;
+
+                    // 정답 처리
+                    String[] answer = answers.get(key);
+                    if (Arrays.asList(answer).contains(splitedContent[2])) {
+                        questionParagraphEntity.setCorrect(true);
+                    };
+
+                } else if (splitedContent[1].equals("desc")) {
+                    type = ParagraphTypeEnum.DESC;
+                } else if (splitedContent[1].equals("content")) {
+                    type = ParagraphTypeEnum.CONTENT;
+                } else if (splitedContent[1].equals("question")) {
+                    type = ParagraphTypeEnum.QUESTION;
+                }
+
+                questionParagraphEntity.setParagraphOrder(currentIndex);
+                questionParagraphEntity.setParagraphType(type);
+                questionParagraphEntity.setParagraphContent(splitedContent[0]);
+                questionParagraphEntity.setExamQuestionId(examQuestionEntity);
+
+                qpr.save(questionParagraphEntity);
+            });
+
+        });
+    }
+
+    @Override
+    public boolean checkQuestionExist(int examPaperId, AuthenticatedUser user) {
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        mr.findById(examPaperEntity.getCreatorId().getMemberId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        if (!user.getId().equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+        }
+
+        List<ExamQuestionEntity> examQuestionEntities = eqr.findByExamPaperId(examPaperEntity);
+
+        if(!examQuestionEntities.isEmpty()) {
+            return true;
+        }
+
+        return false;
+
     }
 
     /**

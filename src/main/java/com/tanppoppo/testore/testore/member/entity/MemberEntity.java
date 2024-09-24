@@ -127,10 +127,20 @@ public class MemberEntity {
 
     @PrePersist
     public void prePersist() {
-        status = false;
-        membershipLevel = 0;
-        notificationOption = false;
-        marketingOption = false;
+
+        if(status == null) {
+            status = false;
+        }
+        if(membershipLevel == null) {
+            membershipLevel = 0;
+        }
+        if(notificationOption == null) {
+            notificationOption = false;
+        }
+        if(marketingOption == null) {
+            marketingOption = false;
+        }
+
     }
 
 }

@@ -16,12 +16,12 @@
     <div th:each="entry : ${items}" class="flex flex-col gap-4 mt-10 px-4 text-gray-700">
       <div th:text="'문제' + ${entry.key}" class="text-sm font-medium text-gray-900'"></div>
       <div th:each="paragraph : ${entry.value}" class="flex gap-3">
-        <input th:if="${'choice'.equals(paragraph.paragraphType)}" type="checkbox" class="w-4 h-4 ml-1 mt-1 accent-gray-700 rounded"
+        <input th:if="${'CHOICE'.equals(paragraph.paragraphType)}" type="checkbox" class="w-4 h-4 ml-1 mt-1 accent-gray-700 rounded"
                th:name="${'choice_' + entry.key}" th:value="${paragraph.choiceIndex}"/>
-        <div th:classappend="${'desc'.equals(paragraph.paragraphType) ? 'desc-style' :
-                         'content'.equals(paragraph.paragraphType) ? 'w-full border-2 border-gray-300 rounded-lg p-5' :
-                         'question'.equals(paragraph.paragraphType) ? 'question-style' :
-                         'choice'.equals(paragraph.paragraphType) ? 'choice-style' : ''}"
+        <div th:classappend="${'DESC'.equals(paragraph.paragraphType) ? '' :
+                         'CONTENT'.equals(paragraph.paragraphType) ? 'w-full border-2 border-gray-300 rounded-lg p-5' :
+                         'QUESTION'.equals(paragraph.paragraphType) ? '' :
+                         'CHOICE'.equals(paragraph.paragraphType) ? '' : ''}"
              th:text="${paragraph.paragraphContent}"></div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 package com.tanppoppo.testore.testore.exam.entity;
 
+import com.tanppoppo.testore.testore.common.util.ParagraphTypeEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,8 +32,10 @@ public class QuestionParagraphEntity {
     @JoinColumn(name = "exam_question_id", nullable = false, referencedColumnName = "exam_question_id")
     private ExamQuestionEntity examQuestionId;
 
-    @Column(name = "paragraph_type")
-    private String paragraphType;
+    @NotNull
+    @Column(name = "paragraphType", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ParagraphTypeEnum paragraphType;
 
     @Column(name = "paragraph_content")
     private String paragraphContent;
@@ -43,4 +46,10 @@ public class QuestionParagraphEntity {
     @Column(name = "correct", columnDefinition = "BOOLEAN")
     private Boolean correct;
 
+    @PrePersist
+    public void prePersist() {
+        if (correct == null) {
+            correct = false;
+        }
+    }
 }

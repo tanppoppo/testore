@@ -86,8 +86,15 @@ public class ExamPaperEntity {
 
     @PrePersist
     public void prePersist() {
-        languageLevel = 0;
-        membershipLevel = 0;
-        publicOption = false;
+
+        if(languageLevel == null){
+            languageLevel = 0;
+        }
+        if(membershipLevel == null){
+            membershipLevel = 0;
+        }
+        if(publicOption == null){
+            publicOption = false;
+        }
     }
 }

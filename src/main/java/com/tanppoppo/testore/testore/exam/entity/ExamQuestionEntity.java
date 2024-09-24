@@ -1,5 +1,6 @@
 package com.tanppoppo.testore.testore.exam.entity;
 
+import com.tanppoppo.testore.testore.common.util.QuestionTypeEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,8 +32,10 @@ public class ExamQuestionEntity {
     @JoinColumn(name = "exam_paper_id", nullable = false, referencedColumnName = "exam_paper_id")
     private ExamPaperEntity examPaperId;
 
-    @Column(name = "question_type")
-    private String questionType;
+    @NotNull
+    @Column(name = "questionType", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private QuestionTypeEnum questionType;
 
     @Column(name = "question_score")
     private Integer questionScore;

@@ -75,33 +75,53 @@ public class ExamController {
 
         int examPaperId = es.examCreate(examPaperDTO, user);
         model.addAttribute("examPaperId", examPaperId);
-        return "/exam/createQuestionForm";
+        return "/exam/create-question-form";
 
     }
 
-    /* 문제 추가 페이지 주소값 */ // 진행중
+    /**
+     * 시험 문제 생성 폼 이동
+     * @author gyahury
+     * @param examPaperId 시험지 아이디를 가져옵니다.
+     * @param model 모델 객체를 가져옵니다.
+     * @return 시험 문제가 존재하는지 확인 후 존재하면 수정 폼으로 이동, 존재하지 않으면 시험 문제 생성 폼을 반환합니다.
+     */
     @GetMapping("createQuestionForm")
-    public String createQuestionForm(/*
-            @RequestParam(name = "examPaperId") int examPaperId,
-            Model model */) {
-//        model.addAttribute("examPaperId", examPaperId);
+    public String createQuestionForm(@RequestParam(name = "paper") int examPaperId, RedirectAttributes redirectAttributes, Model model, @AuthenticationPrincipal AuthenticatedUser user) {
+
+        if(es.checkQuestionExist(examPaperId, user)) {
+            setFlashModalMessage(redirectAttributes, "시험 문제가 이미 존재합니다.<br>수정하시겠습니까?", true, "/exam/correctQuestionForm?paper="+examPaperId);
+            return "redirect:/";
+        }
+
+        model.addAttribute("examPaperId", examPaperId);
         return "exam/create-question-form";
 
     }
 
-    /* ( Submit ) 시험지 문제 추가 페이지에서 시험 문제 최종 DB상 저장 */ // 진행중
+    /**
+     * 시험 문제 생성
+     * @author gyahury
+     * @param request 요청 객체를 가져옵니다.
+     * @return 홈화면으로 리다이렉트합니다.
+     */
     @PostMapping("createQuestion")
-    public String QuestionsSave(/* @RequestParam(name = "examPaperId") int examPaperId */) {
-//        es.QuestionsSave(examPaperId);
-        return "exam-detail";
+    public String createQuestion(HttpServletRequest request, @AuthenticationPrincipal AuthenticatedUser user) {
+
+        Map<String, String[]> paragraphs = request.getParameterMap();
+
+        es.createQuestion(paragraphs, user.getId());
+
+        return "redirect:/";
+
     }
 
     /**
-     * 시험지 상세 페이지 이동
+s     * 시험지 상세 페이지 이동
+     * @author KIMGEON64
      * @param model Map객체 detail을 반환합니다.
      * @param examPaperId 시험지 키값을 가져옵니다.
      * @return 시험지 상세 페이지를 반환합니다.
-     * @author KIMGEON64
      */
     @GetMapping("detail")
     public String paper(Model model, RedirectAttributes redirectAttributes, @RequestParam(name = "paper") int examPaperId, @AuthenticationPrincipal AuthenticatedUser user) {
@@ -156,7 +176,7 @@ public class ExamController {
         } catch (AccessDeniedException e) {
             setFlashToastMessage(redirectAttributes, false, "공개된 시험지가 아닙니다.");
         } catch (NoSuchElementException e) {
-            setFlashModalMessage(redirectAttributes, "시험문제가 없습니다.<br>추가하시겠습니까?", true, "/exam/createQuestionForm?examPaperId="+examPaperId);
+            setFlashModalMessage(redirectAttributes, "시험문제가 없습니다.<br>추가하시겠습니까?", true, "/exam/createQuestionForm?paper="+examPaperId);
         }
 
         return "redirect:/";

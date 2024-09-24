@@ -58,7 +58,10 @@ public class ReviewEntity {
 
     @PrePersist
     public void prePersist() {
-        rating = 3;
+
+        if(rating == null){
+            rating = 3;
+        }
     }
 
 }

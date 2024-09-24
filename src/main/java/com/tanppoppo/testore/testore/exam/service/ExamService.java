@@ -28,4 +28,7 @@ public interface ExamService {
 
     List<ExamResultDTO> findExamResultByMemberId(AuthenticatedUser user, String keyword);
 
+    void createQuestion(Map<String, String[]> paragraphs, Integer userId);
+
+    boolean checkQuestionExist(int examPaperId, AuthenticatedUser user);
 }
