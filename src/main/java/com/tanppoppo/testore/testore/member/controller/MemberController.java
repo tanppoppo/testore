@@ -193,11 +193,14 @@ public class MemberController {
      * @param user 인증된 회원 정보를 가져옵니다.
      * @return 시험지 상세 페이지를 반환합니다.
      */
-    @PostMapping("bookmark")
-    public String bookmark(@RequestParam(name = "paper") Integer examPaperId,
+    @GetMapping("bookmarkExamPaper")
+    public String bookmark(@RequestParam(name = "paper") Integer examPaperId, RedirectAttributes redirectAttributes,
                            @AuthenticationPrincipal AuthenticatedUser user){
+
         ms.createAndDeleteBookmarkByMemberId(examPaperId,user);
-        return"redirect:/";
+        setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
+        return"redirect:/exam/detail?paper="+examPaperId;
+
     }
 
     /**
@@ -207,13 +210,14 @@ public class MemberController {
      * @param user 인증된 회원 정보를 가져옵니다.
      * @return 시험지 상세 페이지를 반환합니다.
      */
-    @PostMapping("like")
-    public String like(@RequestParam(name = "paper") Integer examPaperId,
+    @GetMapping("likeExamPaper")
+    public String like(@RequestParam(name = "paper") Integer examPaperId, RedirectAttributes redirectAttributes,
                        @AuthenticationPrincipal AuthenticatedUser user){
+
         ms.createAndDeleteItemLikeByMemberId(examPaperId,user);
-        return"redirect:/";
+        setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
+        return"redirect:/exam/detail?paper="+examPaperId;
+
     }
-
-
 
 }

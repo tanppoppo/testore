@@ -135,6 +135,7 @@ public class ExamServiceImpl implements ExamService {
         detail.put("nickname", examPaperEntity.getCreatorId().getNickname());
         detail.put("reviewCount", epr.getReviewCount(examPaperId));
         detail.put("likeState", epr.getLikeState(memberEntity.getMemberId(), examPaperId));
+        detail.put("bookmarkState", epr.getBookmarkState(memberEntity.getMemberId(), examPaperId));
         return detail;
 
     }

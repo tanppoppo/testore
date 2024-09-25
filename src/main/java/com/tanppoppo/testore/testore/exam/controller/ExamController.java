@@ -132,6 +132,7 @@ s     * 시험지 상세 페이지 이동
             model.addAttribute("nickname", detail.get("nickname"));
             model.addAttribute("reviewCount", detail.get("reviewCount"));
             model.addAttribute("likeState", detail.get("likeState"));
+            model.addAttribute("bookmarkState", detail.get("bookmarkState"));
             return "exam/exam-detail";
         } catch (AccessDeniedException e) {
             setFlashToastMessage(redirectAttributes, false, "공개된 시험지가 아닙니다.");
