@@ -1,11 +1,20 @@
 package com.tanppoppo.testore.testore.member.service;
 
+import com.tanppoppo.testore.testore.common.util.ItemTypeEnum;
+import com.tanppoppo.testore.testore.exam.entity.ExamPaperEntity;
+import com.tanppoppo.testore.testore.exam.repository.ExamPaperRepository;
 import com.tanppoppo.testore.testore.member.dto.MemberDTO;
+import com.tanppoppo.testore.testore.member.entity.BookmarkEntity;
+import com.tanppoppo.testore.testore.member.entity.ItemLikeEntity;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.entity.PointEntity;
+import com.tanppoppo.testore.testore.member.repository.BookmarkRepository;
+import com.tanppoppo.testore.testore.member.repository.ItemLikeRepository;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
 import com.tanppoppo.testore.testore.member.repository.PointRepository;
+import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +37,9 @@ public class MemberServiceImpl implements MemberService {
     private final BCryptPasswordEncoder PasswordEncoder;
     private final JavaMailSender mailSender;
     private final PointRepository pr;
+    private final BookmarkRepository br;
+    private final ItemLikeRepository ilr;
+    private final ExamPaperRepository epr;
 
     @Override
     public void joinMember(MemberDTO memberDTO) {
@@ -186,4 +198,64 @@ public class MemberServiceImpl implements MemberService {
     private String generateVerificationToken() {
         return UUID.randomUUID().toString();
     }
+
+    /**
+     * 북마크 추가 및 삭제 기능
+     * @param examPaperId 시험지 아이디를 가져옵니다.
+     * @param user 인증된 회원정보를 가져옵니다.
+     */
+    @Override
+    public void createAndDeleteBookmarkByMemberId(Integer examPaperId, AuthenticatedUser user) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을수 없습니다."));
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을수 없습니다."));
+
+        BookmarkEntity selectBookmarkByMemberId = br.selectBookmarkByMemberId(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM);
+
+        if (selectBookmarkByMemberId == null) {
+            BookmarkEntity bookmarkEntity = BookmarkEntity.builder()
+                    .memberId(memberEntity)
+                    .itemId(examPaperEntity.getExamPaperId())
+                    .itemType(ItemTypeEnum.EXAM)
+                    .build();
+            br.save(bookmarkEntity);
+        } else {
+            br.delete(selectBookmarkByMemberId);
+        }
+
+    }
+
+    /**
+     * 좋아요 추가 및 삭제 기능
+     * @param examPaperId 시험지 아이디를 가져옵니다.
+     * @param user 인증된 회원정보를 가져옵니다.
+     */
+    @Override
+    public void createAndDeleteItemLikeByMemberId(Integer examPaperId, AuthenticatedUser user) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을수 없습니다."));
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을수 없습니다."));
+
+        ItemLikeEntity selectItemLikeByMemberId = ilr.selectItemLikeByMemberId(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM);
+
+        if (selectItemLikeByMemberId == null) {
+            ItemLikeEntity itemLikeEntity = ItemLikeEntity.builder()
+                    .memberId(memberEntity)
+                    .itemId(examPaperEntity.getExamPaperId())
+                    .itemType(ItemTypeEnum.EXAM)
+                    .build();
+            ilr.save(itemLikeEntity);
+        } else {
+            ilr.delete(selectItemLikeByMemberId);
+        }
+
+    }
+
+
 }
