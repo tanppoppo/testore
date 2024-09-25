@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 
 /**
  * 단어장 정보를 저장하는 엔티티 클래스
+ * @author MinCheolHa
  * @version 0.1.0
  * @since 0.1.0
- * @author MinCheolHa
  */
 @Entity
 @Data
@@ -29,7 +29,7 @@ public class WordBookEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "wordbook_id")
-    private Integer wordbookId;
+    private Integer wordBookId;
 
     @NotNull
     @Size(max = 30)

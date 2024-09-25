@@ -30,7 +30,7 @@ public class WordEntity {
     @ManyToOne
     @NotNull
     @JoinColumn(name = "wordbook_id", nullable = false, referencedColumnName = "wordbook_id")
-    private WordBookEntity wordbookId;
+    private WordBookEntity wordBookId;
 
     @NotNull
     @Size(max = 30)
