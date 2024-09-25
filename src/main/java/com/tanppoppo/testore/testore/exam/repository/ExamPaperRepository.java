@@ -31,8 +31,8 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     @Query("SELECT SUM(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 ELSE 0 END) FROM ExamPaperEntity ep WHERE ep.creatorId.memberId = :memberId")
     Integer getShareCount(@Param("memberId") Integer memberId);
 
-    // likeState : 좋아요 여부 [확신]
-    @Query("SELECT COUNT(le) > 0 FROM ItemLikeEntity le WHERE le.memberId.memberId = :memberId AND le.itemId = :examPaperId")
+    // likeState : 좋아요 여부 [확신] * 수정완료 * /* le.itemType = 'EXAM'and */
+    @Query("SELECT COUNT(le) > 0 FROM ItemLikeEntity le WHERE  le.itemType = 'EXAM'AND le.memberId.memberId = :memberId AND le.itemId = :examPaperId")
     Boolean getLikeState(@Param("memberId") Integer memberId, @Param("examPaperId") Integer examPaperId);
 
     @Query("SELECT COUNT(ep) FROM ExamPaperEntity ep WHERE ep.ownerId = :memberId")

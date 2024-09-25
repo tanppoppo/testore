@@ -186,4 +186,34 @@ public class MemberController {
 
     }
 
+    /**
+     * 북마크 추가및 삭제 기능
+     * @author KIMGEON64
+     * @param examPaperId 시험지 아이디를 가져옵니다.
+     * @param user 인증된 회원 정보를 가져옵니다.
+     * @return 시험지 상세 페이지를 반환합니다.
+     */
+    @PostMapping("bookmark")
+    public String bookmark(@RequestParam(name = "paper") Integer examPaperId,
+                           @AuthenticationPrincipal AuthenticatedUser user){
+        ms.createAndDeleteBookmarkByMemberId(examPaperId,user);
+        return"redirect:/";
+    }
+
+    /**
+     * 좋아요 추가및 삭제 기능
+     * @author KIMGEON64
+     * @param examPaperId 시험지 아이디를 가져옵니다.
+     * @param user 인증된 회원 정보를 가져옵니다.
+     * @return 시험지 상세 페이지를 반환합니다.
+     */
+    @PostMapping("like")
+    public String like(@RequestParam(name = "paper") Integer examPaperId,
+                       @AuthenticationPrincipal AuthenticatedUser user){
+        ms.createAndDeleteItemLikeByMemberId(examPaperId,user);
+        return"redirect:/";
+    }
+
+
+
 }
