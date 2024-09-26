@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layouts/layout}"
+      th:with="headerText='EXAM', footerText='Exam'"
+      layout:fragment="Content"
+>
+<form id="questionForm" class="pb-60" th:action="@{createQuestion}" method="post">
+  <input type="hidden" name="paper" th:value="${examPaperId != null ? examPaperId : ''}">
+  <th:block th:replace="~{common/fragments/floating-button :: FloatingButtonFragment('addButton', '', '문제 생성', false)}"></th:block>
+  <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit', 'submitButton', '', '문제 제출', '', true)}"></th:block>
+</form>
+<script th:src="@{/exam/js/create-question-form.js}"></script>
+</html>

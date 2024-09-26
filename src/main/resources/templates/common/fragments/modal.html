@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="ModalFragment(content, canCancel, link)">
+<div id="modal" class="flex fixed left-0 bottom-0 z-50 justify-center items-center w-full h-screen max-h-full bg-gray-500 bg-opacity-60">
+  <div class="relative p-4 w-full max-w-sm max-h-full">
+    <div class="relative bg-white rounded-lg shadow fade-in">
+      <div class="px-6 py-8 text-center">
+        <h3 class="mb-5 text-md font-bold text-gray-600"
+            th:utext="${content != null ? content : '내용'}">
+        </h3>
+        <button th:if="${link}"
+                type="button"
+                th:attr="onclick=|location.href='${link}'|"
+                class="text-white px-8 py-2 bg-gray-800 hover:bg-gray-900 focus:outline-none font-medium rounded-lg text-sm inline-flex items-center text-center">
+          확인
+        </button>
+        <button th:unless="${link}"
+                type="button"
+                id="confirmModal"
+                class="text-white px-8 py-2 bg-gray-800 hover:bg-gray-900 focus:outline-none font-medium rounded-lg text-sm inline-flex items-center text-center">
+          확인
+        </button>
+        <button th:if="${canCancel}"
+                type="button"
+                id="cancelModal"
+                class="py-2 px-8 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-700">
+          취소
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</html>

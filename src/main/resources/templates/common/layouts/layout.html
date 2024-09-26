@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<!--Config-->
+<head th:replace="~{common/fragments/config :: ConfigFragment}">
+</head>
+
+<body class="overflow-y-auto
+            [&::-webkit-scrollbar]:w-3
+            [&::-webkit-scrollbar-track]:rounded-full
+            [&::-webkit-scrollbar-track]:bg-gray-100
+            [&::-webkit-scrollbar-thumb]:rounded-full
+            [&::-webkit-scrollbar-thumb]:bg-gray-300">
+<!--Layout-->
+<div class="max-w-[600px] min-w-[320px] h-screen mx-auto px-4 break-all">
+  <!--Header-->
+  <header th:replace="~{common/fragments/header :: HeaderFragment(${headerText})}"></header>
+
+  <!--Content-->
+  <div class="pt-14 pb-20">
+    <th:block layout:fragment="Content"></th:block>
+  </div>
+
+  <!--Modal-->
+  <th:block th:if="${modalShown}">
+    <th:block th:replace="~{common/fragments/modal :: ModalFragment(${modalMessage}, ${canCancel}, ${link})}"></th:block>
+  </th:block>
+
+  <!--Toast-->
+  <th:block th:if="${toastShown}">
+    <th:block th:replace="~{common/fragments/toast :: ToastFragment(${toastMessage}, ${isSuccess})}"></th:block>
+  </th:block>
+</div>
+
+<!--Footer Navigation-->
+<footer th:replace="~{common/fragments/footer :: FooterFragment(${footerText})}"></footer>
+</body>
+</html>

@@ -38,7 +38,6 @@ out/
 
 ### env related ###
 .env
-letsencrypt/acme.json
 
 ### docker related ###
 docker-compose.yml

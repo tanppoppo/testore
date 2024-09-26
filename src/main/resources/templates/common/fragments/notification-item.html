@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="NotificationItemFragment()">
+<div class="flex items-center min-h-20 px-2 border-b-2 border-gray-100">
+  <img class="w-16 object-contain" th:src="@{/common/image/like.png}">
+  <div class="flex flex-col justify-center gap-2 w-full px-8 font-bold">
+    <div class="text-md text-gray-800"
+         >좋아요 알림</div>
+    <div class="text-sm text-gray-500 font-medium"
+         >누군가 당신의 '스쿠스쿠 단어장'을 좋아합니다.</div>
+  </div>
+</div>
+<div class="flex items-center min-h-20 px-2 border-b-2 border-gray-100">
+  <img class="w-16 object-contain" th:src="@{/common/image/share.png}">
+  <div class="flex flex-col justify-center gap-2 w-full px-8 font-bold">
+    <div class="text-md text-gray-800"
+    >공유 알림</div>
+    <div class="text-sm text-gray-500 font-medium"
+    >누군가 당신의 '스쿠스쿠 단어장'을 가져왔습니다.</div>
+  </div>
+</div>
+
+</html>

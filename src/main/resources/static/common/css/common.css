@@ -1,0 +1,98 @@
+/* font */
+@font-face {
+    font-family: 'NotoSans';
+    src: url('../font/NotoSansKR-Light.otf') format('truetype');
+    font-weight: 300;
+    font-display: block;
+    unicode-range: U+AC00-D7AF;
+}
+
+@font-face {
+    font-family: 'NotoSans';
+    src: url('../font/NotoSans-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-display: block;
+    unicode-range: U+0020-007E;
+}
+
+@font-face {
+    font-family: 'NotoSans';
+    src: url('../font/NotoSansKR-Medium.otf') format('truetype');
+    font-weight: 500;
+    font-display: block;
+    unicode-range: U+AC00-D7AF;
+}
+
+@font-face {
+    font-family: 'NotoSans';
+    src: url('../font/NotoSans-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-display: block;
+    unicode-range: U+0020-007E;
+}
+
+@font-face {
+    font-family: 'NotoSans';
+    src: url('../font/NotoSansKR-Regular.otf') format('truetype');
+    font-weight: 400;
+    font-display: block;
+    unicode-range: U+AC00-D7AF;
+}
+
+@font-face {
+    font-family: 'NotoSans';
+    src: url('../font/NotoSans-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: block;
+    unicode-range: U+0020-007E;
+}
+
+@font-face {
+    font-family: 'NotoSans';
+    src: url('../font/NotoSansKR-Bold.otf') format('truetype');
+    font-weight: 700;
+    font-display: block;
+    unicode-range: U+AC00-D7AF;
+}
+
+@font-face {
+    font-family: 'NotoSans';
+    src: url('../font/NotoSans-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-display: block;
+    unicode-range: U+0020-007E;
+}
+
+* {
+    font-family: NotoSans;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+
+.fade-in {
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.divi {
+    margin: 4px 6px 0 6px;
+    width: 1px;
+    height: 12px;
+    text-indent: -999em;
+    border-right: solid 1px #ccc;
+}

@@ -2,6 +2,8 @@ package com.tanppoppo.testore.testore.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,13 +16,17 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
     private static final String[] PUBLIC_URLS = {
             "/"
-            , "/images/**"
-            , "/css/**"
-            , "/js/**"
+            , "/common/**"
+            , "/member/loginForm"
+            , "/member/joinForm"
+            , "/member/join"
+            , "/member/verify-email"
+            , "/member/resend-verification"
     };
 
     @Bean
     protected SecurityFilterChain config(HttpSecurity http) throws Exception {
+
         http
                 .authorizeHttpRequests(author -> author
                         .requestMatchers(PUBLIC_URLS).permitAll()
@@ -29,9 +35,18 @@ public class WebSecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(formLogin -> formLogin
                         .loginPage("/member/loginForm")
-                        .usernameParameter("id")
-                        .passwordParameter("password")
+                        .usernameParameter("email")
+                        .passwordParameter("memberPassword")
                         .loginProcessingUrl("/member/login")
+                        .failureHandler((request, response, exception) -> {
+                            if (exception instanceof InternalAuthenticationServiceException) {
+                                response.sendRedirect("/member/loginForm?error=unverified");
+                            } else if (exception instanceof BadCredentialsException) {
+                                response.sendRedirect("/member/loginForm?error=badcredential");
+                            } else {
+                                response.sendRedirect("/member/loginForm?error=true");
+                            }
+                        })
                         .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
@@ -45,6 +60,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
+
     }
 
     @Bean

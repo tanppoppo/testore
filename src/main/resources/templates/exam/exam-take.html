@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layouts/layout}"
+      th:with="headerText='EXAM', footerText='Exam'"
+      layout:fragment="Content"
+>
+<form id="examForm" class="pb-60" th:action="@{submitExam}" method="post">
+  <div th:if="${#lists.isEmpty(items)}" class="text-gray-300 text-center font-bold mt-10">
+    시험 문제가 없습니다.
+  </div>
+  <input type="hidden" name="paper" th:value="${examPaperId}" />
+  <input type="hidden" name="result" th:value="${examResultId}" />
+  <div th:unless="${#lists.isEmpty(items)}">
+    <div th:each="entry : ${items}" class="flex flex-col gap-4 mt-10 px-4 text-gray-700">
+      <div th:text="'문제' + ${entry.key}" class="text-sm font-medium text-gray-900'"></div>
+      <div th:each="paragraph : ${entry.value}" class="flex gap-3">
+        <input th:if="${'CHOICE'.equals(paragraph.paragraphType)}" type="checkbox" class="w-4 h-4 ml-1 mt-1 accent-gray-700 rounded"
+               th:name="${'choice_' + entry.key}" th:value="${paragraph.choiceIndex}"/>
+        <div th:classappend="${'DESC'.equals(paragraph.paragraphType) ? '' :
+                         'CONTENT'.equals(paragraph.paragraphType) ? 'w-full border-2 border-gray-300 rounded-lg p-5' :
+                         'QUESTION'.equals(paragraph.paragraphType) ? '' :
+                         'CHOICE'.equals(paragraph.paragraphType) ? '' : ''}"
+             th:text="${paragraph.paragraphContent}"></div>
+      </div>
+    </div>
+  </div>
+  <th:block
+          th:replace="~{common/fragments/button :: ButtonFragment('submit', 'submitButton', '', '시험 제출', '', true)}"></th:block>
+</form>
+</html>

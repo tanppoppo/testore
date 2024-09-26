@@ -1,11 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-    <meta charset="UTF-8">
-    <title>TESTORE</title>
-</head>
-<body>
-
-</body>
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layouts/layout}"
+      th:with="headerText='TESTORE', footerText='Home'"
+      layout:fragment="Content"
+>
+<div class="bg-yellow-100 p-6 rounded-lg text-lg text-gray-700">
+  <span class="ml-6 font-bold">테스토어</span><br>
+  <span class="ml-6 font-bold">알아보기</span><br>
+  <div class="flex justify-center text-center items-center text-sm font-bold text-gray-600 mt-3 gap-7 p-3">
+    <div class="flex flex-col w-1/4">
+      <div class="flex justify-center items-center bg-red-100 rounded-full w-full aspect-square">
+        <img class="w-3/4 h-3/4" th:src="@{/common/image/word-main.png}">
+      </div>
+      <span class="mt-3">단어</span>
+    </div>
+    <div class="flex flex-col w-1/4">
+      <div class="flex justify-center items-center bg-teal-100 rounded-full w-full h-auto aspect-square">
+        <img class="w-3/4 h-3/4" th:src="@{/common/image/exam-main.png}">
+      </div>
+      <span class="mt-3">시험</span>
+    </div>
+    <div class="flex flex-col w-1/4">
+      <div class="flex justify-center items-center bg-emerald-100 rounded-full w-full h-auto aspect-square">
+        <img class="w-3/4 h-3/4" th:src="@{/common/image/share-main.png}">
+      </div>
+      <span class="mt-3">공유</span>
+    </div>
+    <div class="flex flex-col w-1/4">
+      <div class="flex justify-center items-center bg-blue-100 rounded-full w-full h-auto aspect-square">
+        <img class="w-3/4 h-3/4" th:src="@{/common/image/schedule-main.png}">
+      </div>
+      <span class="mt-3">일정</span>
+    </div>
+  </div>
+</div>
+<div class="p-4 text-lg font-bold text-gray-600">
+  <div sec:authorize="isAuthenticated()">
+    <th:block th:text="${#authentication.principal.nickname}"/>님 환영합니다.
+  </div>
+  <div sec:authorize="not isAuthenticated()"><a th:href="@{/member/loginForm}" class="inline-block hover:underline hover:-translate-y-1 hover:scale-105 ease-in-out transition duration-700">로그인</a> 해주세요.</div>
+</div>
 </html>

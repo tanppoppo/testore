@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="ResultItemFragment(resultItem)">
+<div class="flex items-center gap-2 min-h-[calc(6rem+4vw)] py-6 px-2 border-b-2 border-gray-100">
+  <div class="flex">
+    <img class="w-20 object-contain"
+         th:src="${resultItem.examPaperImagePath != null ? resultItem.examPaperImagePath : ''}">
+    <svg th:if="${resultItem.passStatus != null ? resultItem.passStatus : false}"
+         class="relative top-0 w-[30px] h-[30px] text-green-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+         width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+      <path fill-rule="evenodd"
+            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm13.707-1.293a1 1 0 0 0-1.414-1.414L11 12.586l-1.793-1.793a1 1 0 0 0-1.414 1.414l2.5 2.5a1 1 0 0 0 1.414 0l4-4Z"
+            clip-rule="evenodd"/>
+    </svg>
+    <svg th:unless="${resultItem.passStatus != null ? resultItem.passStatus : false}"
+         class="w-[30px] h-[30px] text-red-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
+         height="24" fill="currentColor" viewBox="0 0 24 24">
+      <path fill-rule="evenodd"
+            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm7.707-3.707a1 1 0 0 0-1.414 1.414L10.586 12l-2.293 2.293a1 1 0 1 0 1.414 1.414L12 13.414l2.293 2.293a1 1 0 0 0 1.414-1.414L13.414 12l2.293-2.293a1 1 0 0 0-1.414-1.414L12 10.586 9.707 8.293Z"
+            clip-rule="evenodd"/>
+    </svg>
+  </div>
+  <div class="flex flex-col justify-center gap-2 w-full px-8 font-bold">
+    <div class="text-[calc(0.7rem+0.3vw)] text-gray-800"
+         th:text="${resultItem.examPaperTitle != null ? resultItem.examPaperTitle : '제목 없음'}">
+    </div>
+    <div class="text-[calc(0.5rem+0.2vw)] text-gray-700 font-light whitespace-nowrap">
+      문제수 : <span
+            th:text="${resultItem.examQuestionCount != null ? resultItem.examQuestionCount : '에러'}"></span><span
+            class="divi"></span>합격 점수 : <span
+            th:text="${resultItem.examPaperPassScore != null ? resultItem.examPaperPassScore : '에러'}"></span><span
+            class="divi"></span>점수 : <span
+            th:text="${resultItem.examScore != null ? resultItem.examScore : '에러'}"></span>
+    </div>
+    <div class="text-[calc(0.5rem+0.2vw)] text-gray-700 font-light whitespace-nowrap">
+      소요시간 : <span th:text="${resultItem.timeTaken != null ? resultItem.timeTaken : '에러'}"></span><span
+            class="divi"></span>상태 : <span th:text="${resultItem.passStatus ? '합격' : '불합격'}"></span>
+    </div>
+    <div class="text-[calc(0.5rem+0.2vw)] text-gray-700 font-light whitespace-nowrap">
+      응시일 : <span th:text="${resultItem.createdDate != null ? #temporals.format(resultItem.createdDate, 'yyyy년 MM월 dd일') : '에러'}"></span>
+    </div>
+    <div class="text-[calc(0.6rem+0.2vw)] text-gray-400 font-medium mt-2"
+         th:text="${resultItem.examPaperContent != null ? resultItem.examPaperContent : '내용 없음'}">
+    </div>
+  </div>
+</div>
+</html>
