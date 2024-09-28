@@ -23,14 +23,10 @@
   </div>
 
   <!--Modal-->
-  <th:block th:if="${modalShown}">
-    <th:block th:replace="~{common/fragments/modal :: ModalFragment(${modalMessage}, ${canCancel}, ${link})}"></th:block>
-  </th:block>
+  <th:block th:replace="~{common/fragments/modal :: ModalFragment(${modalShown}, ${modalMessage}, ${canCancel}, ${link})}"></th:block>
 
   <!--Toast-->
-  <th:block th:if="${toastShown}">
-    <th:block th:replace="~{common/fragments/toast :: ToastFragment(${toastMessage}, ${isSuccess})}"></th:block>
-  </th:block>
+  <th:block th:replace="~{common/fragments/toast :: ToastFragment(${toastShown}, ${toastMessage}, ${isSuccess})}"></th:block>
 </div>
 
 <!--Footer Navigation-->

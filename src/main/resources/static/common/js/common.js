@@ -31,16 +31,20 @@ document.addEventListener('DOMContentLoaded', function () {
         modalElement.style.display = 'none';
     }
 
-    function showToast() {
+    function showToast(content) {
+        let toastContent = document.querySelector('#toastContent');
         toastElement.style.display = 'flex';
+        toastContent.textContent = content;
 
         setTimeout(function () {
             toastElement.style.display = 'none';
         }, 3000)
     }
 
-    function showModal() {
+    function showModal(content) {
+        let modalContent = document.querySelector('#modalContent');
         modalElement.style.display = 'flex';
+        modalContent.textContent = content;
 
         setTimeout(function () {
             modalElement.style.display = 'none';

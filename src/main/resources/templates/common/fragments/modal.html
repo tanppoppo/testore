@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:fragment="ModalFragment(content, canCancel, link)">
-<div id="modal" class="flex fixed left-0 bottom-0 z-50 justify-center items-center w-full h-screen max-h-full bg-gray-500 bg-opacity-60">
+      th:fragment="ModalFragment(modalShown, content, canCancel, link)">
+<div id="modal" th:classappend="'fixed left-0 bottom-0 z-50 justify-center items-center w-full h-screen max-h-full bg-gray-500 bg-opacity-60' + (${modalShown == null || !modalShown ? ' hidden' : ' flex'})">
   <div class="relative p-4 w-full max-w-sm max-h-full">
     <div class="relative bg-white rounded-lg shadow fade-in">
       <div class="px-6 py-8 text-center">
-        <h3 class="mb-5 text-md font-bold text-gray-600"
+        <h3 class="mb-5 text-md font-bold text-gray-600" id="modalContent"
             th:utext="${content != null ? content : '내용'}">
         </h3>
         <button th:if="${link}"
