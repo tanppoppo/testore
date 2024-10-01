@@ -15,8 +15,16 @@ import org.springframework.data.repository.query.Param;
  */
 public interface ItemLikeRepository extends JpaRepository<ItemLikeEntity, Integer> {
 
-    // 좋아요 Entity // itemType word 사용가능
+    // 좋아요 기능
     @Query("select il from ItemLikeEntity il where il.itemType = :itemType and il.memberId.memberId =:memberId and il.itemId =:examPaperId")
     ItemLikeEntity selectItemLikeByMemberId(@Param("memberId") Integer memberId, @Param("examPaperId") Integer examPaperId, ItemTypeEnum itemType);
+
+    // 좋아요 여부
+    @Query("SELECT COUNT(le) > 0 FROM ItemLikeEntity le WHERE  le.itemType = 'EXAM' AND le.memberId.memberId = :memberId AND le.itemId = :examPaperId")
+    Boolean getLikeState(@Param("memberId") Integer memberId, @Param("examPaperId") Integer examPaperId);
+
+    // 좋아요 수
+    @Query("SELECT COUNT(l) FROM ItemLikeEntity l WHERE l.itemId = :examPaperId")
+    Integer getLikeCount(@Param("examPaperId") Integer examPaperId);
 
 }

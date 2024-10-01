@@ -14,12 +14,12 @@ import org.springframework.data.repository.query.Param;
  */
 public interface BookmarkRepository extends JpaRepository<BookmarkEntity, Integer> {
 
-    // 북마크 여부 2진 반환 // itemType word 사용가능
-    @Query("select count(bm) > 0 from BookmarkEntity bm where bm.itemType = :itemType and bm.memberId.memberId =:memberId and bm.itemId =:examPaperId")
-    Boolean isBookmarked(@Param("memberId") Integer memberId, @Param("examPaperId") Integer examPaperId, ItemTypeEnum itemType);
-
-    // 북마크 Entity // itemType word 사용가능
+    // 북마크 기능
     @Query("select bm from BookmarkEntity bm where bm.itemType = :itemType and bm.memberId.memberId =:memberId and bm.itemId =:examPaperId")
     BookmarkEntity selectBookmarkByMemberId(@Param("memberId") Integer memberId, @Param("examPaperId") Integer examPaperId, ItemTypeEnum itemType);
+
+    // 북마크 여부
+    @Query("select count(bm) > 0 from BookmarkEntity bm where bm.itemType = :itemType and bm.memberId.memberId =:memberId and bm.itemId =:examPaperId")
+    Boolean getBookmarkState(@Param("memberId") Integer memberId, @Param("examPaperId") Integer examPaperId, ItemTypeEnum itemType);
 
 }
