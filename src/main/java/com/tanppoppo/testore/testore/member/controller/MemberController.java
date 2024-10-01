@@ -199,7 +199,7 @@ public class MemberController {
 
         ms.createAndDeleteBookmarkByMemberId(examPaperId,user);
         setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
-        return"redirect:/exam/detail?paper="+examPaperId;
+        return"redirect:/exam/examPaperDetail?paper="+examPaperId;
 
     }
 
@@ -216,7 +216,7 @@ public class MemberController {
 
         ms.createAndDeleteItemLikeByMemberId(examPaperId,user);
         setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
-        return"redirect:/exam/detail?paper="+examPaperId;
+        return"redirect:/exam/examPaperDetail?paper="+examPaperId;
 
     }
 
