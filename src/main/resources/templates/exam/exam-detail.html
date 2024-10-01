@@ -53,6 +53,7 @@
     <div class="absolute right-2 z-10 mt-1 w-32 origin-top-right rounded-md bg-white shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:w-44">
       <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              th:onclick="'location.href=\'updateExamPaperForm?paper=' + ${examPaperDTO.examPaperId} + '\''"
               id="correctPaperButton">시험지 수정하기
       </button>
       <button
@@ -85,11 +86,12 @@
     <span th:text="${examPaperDTO.title}"></span>
     <div class="font-bold text-sm text-gray-400">제작자 : <span th:text="${nickname}"></span></div>
     <div class="font-bold text-sm text-gray-400">만든 날짜 : <span th:text="${#temporals.format(examPaperDTO.createdDate, 'yyyy년 MM월 dd일')}"></span></div>
+    <div class="font-bold text-sm text-gray-400">합격 점수 : <span th:text="${examPaperDTO.passScore}"></span></div>
   </div>
-  <div class="flex flex-col gap-2 font-bold text-sm text-center text-gray-400 mt-20">
+  <div class="flex flex-col gap-2 font-bold text-sm text-center text-gray-400 mt-16">
     <span th:text="${examPaperDTO.content}"></span>
   </div>
-  <hr class="w-full mt-20">
+  <hr class="w-full mt-12">
   <div class="flex justify-center text-center items-center w-[85%] text-sm font-bold text-gray-600 mt-4 gap-5 p-3">
     <div class="flex flex-col w-1/4">
       <div class="flex justify-center items-center w-full h-auto aspect-square">

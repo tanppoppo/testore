@@ -130,6 +130,7 @@ public class ExamServiceImpl implements ExamService {
                 .title(examPaperEntity.getTitle())
                 .createdDate(examPaperEntity.getCreatedDate())
                 .content(examPaperEntity.getContent())
+                .passScore(examPaperEntity.getPassScore())
                 .ownerId(examPaperEntity.getOwnerId())
                 .publicOption(examPaperEntity.getPublicOption())
                 .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
@@ -458,6 +459,13 @@ public class ExamServiceImpl implements ExamService {
         });
     }
 
+    /**
+     * 시험 문제 존재 여부 체크
+     * @author gyahury
+     * @param examPaperId 시험지 id를 가져옵니다.
+     * @param user user 객체를 가져옵니다.
+     * @return boolean 존재 여부를 반환합니다.
+     */
     @Override
     public boolean checkQuestionExist(int examPaperId, AuthenticatedUser user) {
 
@@ -477,6 +485,60 @@ public class ExamServiceImpl implements ExamService {
         }
 
         return false;
+
+    }
+
+    /**
+     * 업데이트할 시험지 정보 조회
+     * @param examPaperId 시험지 id를 가져옵니다.
+     * @param userId user id를 가져옵니다.
+     * @return examResultDTO를 반환합니다.
+     */
+    @Override
+    public ExamResultDTO selectUpdatedPaperInfo(int examPaperId, Integer userId) {
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = mr.findById(examPaperEntity.getCreatorId().getMemberId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        if (!userId.equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+        }
+
+        ExamResultDTO examResultDTO = ExamResultDTO.builder()
+                .examPaperId(examPaperEntity.getExamPaperId())
+                .examPaperTitle(examPaperEntity.getTitle())
+                .examPaperContent(examPaperEntity.getContent())
+                .examPaperPassScore(examPaperEntity.getPassScore())
+                .build();
+
+        return examResultDTO;
+    }
+
+    /**
+     * 시험지 업데이트
+     * @author gyahury
+     * @param examPaperDTO 시험지 dto를 가져옵니다.
+     * @param userId 유저 id를 가져옵니다.
+     */
+    @Override
+    public void updateExamPaper(ExamPaperDTO examPaperDTO, Integer userId) {
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperDTO.getExamPaperId())
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = mr.findById(examPaperEntity.getCreatorId().getMemberId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        if (!userId.equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+        }
+
+        examPaperEntity.setTitle(examPaperDTO.getTitle());
+        examPaperEntity.setContent(examPaperDTO.getContent());
+        examPaperEntity.setPassScore(examPaperDTO.getPassScore());
 
     }
 

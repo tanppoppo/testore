@@ -8,10 +8,10 @@
 >
 <form class="max-w-lg mx-auto mt-4 px-6" th:action="@{join}" method="post">
   <div class="font-bold text-gray-600">환영합니다<br><span class="font-medium">계정을 생성해보세요.</span></div>
-  <th:block th:replace="~{common/fragments/input :: InputFragment('email', 'email', 'email', '이메일')}"></th:block>
-  <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'nickname', 'nickname', '닉네임')}"></th:block>
-  <th:block th:replace="~{common/fragments/input :: InputFragment('password', 'memberPassword', 'memberPassword', '비밀번호')}"></th:block>
-  <th:block th:replace="~{common/fragments/input :: InputFragment('password', 'confirmPassword', '', '비밀번호 확인')}"></th:block>
+  <th:block th:replace="~{common/fragments/input :: InputFragment('email', 'email', 'email', '이메일', '')}"></th:block>
+  <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'nickname', 'nickname', '닉네임', '')}"></th:block>
+  <th:block th:replace="~{common/fragments/input :: InputFragment('password', 'memberPassword', 'memberPassword', '비밀번호', '')}"></th:block>
+  <th:block th:replace="~{common/fragments/input :: InputFragment('password', 'confirmPassword', '', '비밀번호 확인', '')}"></th:block>
   <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit' ,'submitButton', 'submitButton', '회원가입', false, true)}"></th:block>
 </form>
 </html>

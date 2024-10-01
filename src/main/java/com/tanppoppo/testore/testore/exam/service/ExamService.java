@@ -31,4 +31,8 @@ public interface ExamService {
     void createQuestion(Map<String, String[]> paragraphs, Integer userId);
 
     boolean checkQuestionExist(int examPaperId, AuthenticatedUser user);
+
+    ExamResultDTO selectUpdatedPaperInfo(int examPaperId, Integer id);
+
+    void updateExamPaper(ExamPaperDTO examPaperDTO, Integer id);
 }

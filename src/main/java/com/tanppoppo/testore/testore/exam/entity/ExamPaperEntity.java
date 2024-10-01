@@ -2,6 +2,8 @@ package com.tanppoppo.testore.testore.exam.entity;
 
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -46,6 +48,8 @@ public class ExamPaperEntity {
     @Column(name = "time_limit")
     private Integer timeLimit;
 
+    @Min(0)
+    @Max(100)
     @Column(name = "pass_score")
     private Integer passScore;
 

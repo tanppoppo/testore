@@ -1,6 +1,7 @@
 package com.tanppoppo.testore.testore.exam.controller;
 
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
+import com.tanppoppo.testore.testore.exam.dto.ExamResultDTO;
 import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
 import com.tanppoppo.testore.testore.exam.service.ExamService;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
@@ -52,30 +53,67 @@ public class ExamController {
 
     /**
      * 시험지 생성 페이지 이동
-     * @return 시험지 생성 페이지를 반환합니다.
      * @author KIMGEON64
+     * @return 시험지 생성 페이지를 반환합니다.
      */
-    @GetMapping("createForm")
-    public String createForm() {
+    @GetMapping("createExamPaperForm")
+    public String createExamPaperForm() {
+        return "exam/exam-create";
+    }
+
+    /**
+     * 시험지 수정 페이지 이동
+     * @author gyahury
+     * @return 시험지 생성 페이지를 반환합니다.
+     */
+    @GetMapping("updateExamPaperForm")
+    public String updateExamPaperForm(@RequestParam(name = "paper") int examPaperId,
+                             @AuthenticationPrincipal AuthenticatedUser user,
+                             Model model) {
+
+        ExamResultDTO examResultDTO = es.selectUpdatedPaperInfo(examPaperId, user.getId());
+
+        model.addAttribute("examPaperId", examResultDTO.getExamPaperId());
+        model.addAttribute("examPaperTitle", examResultDTO.getExamPaperTitle());
+        model.addAttribute("examPaperContent", examResultDTO.getExamPaperContent());
+        model.addAttribute("examPaperPassScore", examResultDTO.getExamPaperPassScore());
+
         return "exam/exam-create";
     }
 
     /**
      * 시험지 생성 페이지 입력 정보를 저장
+     * @author KIMGEON64
      * @param examPaperDTO 시험지 정보를 입력합니다.
      * @param user 사용자 인증정보를 가져옵니다.
      * @param model examPaperId 를 반환합니다.
      * @return 시험 문제 추가 페이지를 반환합니다.
-     * @author KIMGEON64
      */
-    @PostMapping("create")
-    public String create(ExamPaperDTO examPaperDTO
+    @PostMapping("createExamPaper")
+    public String createExamPaper(ExamPaperDTO examPaperDTO
             , @AuthenticationPrincipal AuthenticatedUser user
             , Model model) {
 
         int examPaperId = es.examCreate(examPaperDTO, user);
         model.addAttribute("examPaperId", examPaperId);
         return "/exam/create-question-form";
+
+    }
+
+    @PostMapping("updateExamPaper")
+    public String updateExamPaper(ExamPaperDTO examPaperDTO
+            , @AuthenticationPrincipal AuthenticatedUser user
+            , RedirectAttributes redirectAttributes) {
+
+        try {
+            es.updateExamPaper(examPaperDTO, user.getId());
+            return "redirect:/exam/examPaperDetail?paper="+examPaperDTO.getExamPaperId();
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "공개된 시험지가 아닙니다.");
+        } catch (Exception e) {
+            setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생했습니다.");
+        }
+        return "redirect:/";
 
     }
 
@@ -117,14 +155,14 @@ public class ExamController {
     }
 
     /**
-s     * 시험지 상세 페이지 이동
+     * 시험지 상세 페이지 이동
      * @author KIMGEON64
      * @param model Map객체 detail을 반환합니다.
      * @param examPaperId 시험지 키값을 가져옵니다.
      * @return 시험지 상세 페이지를 반환합니다.
      */
-    @GetMapping("detail")
-    public String paper(Model model, RedirectAttributes redirectAttributes, @RequestParam(name = "paper") int examPaperId, @AuthenticationPrincipal AuthenticatedUser user) {
+    @GetMapping("examPaperDetail")
+    public String ExamPaperDetail(Model model, RedirectAttributes redirectAttributes, @RequestParam(name = "paper") int examPaperId, @AuthenticationPrincipal AuthenticatedUser user) {
 
         try {
             Map<String, Object> detail = es.selectPaperDetail(examPaperId, user);
@@ -152,7 +190,6 @@ s     * 시험지 상세 페이지 이동
     @GetMapping("search")
     public String search() {
         return "exam/exam-search";
-
     }
 
     /**
