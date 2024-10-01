@@ -1,6 +1,7 @@
 package com.tanppoppo.testore.testore.exam.service;
 
 import com.tanppoppo.testore.testore.common.util.ExamStatusEnum;
+import com.tanppoppo.testore.testore.common.util.ItemTypeEnum;
 import com.tanppoppo.testore.testore.common.util.ParagraphTypeEnum;
 import com.tanppoppo.testore.testore.common.util.QuestionTypeEnum;
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
@@ -15,7 +16,10 @@ import com.tanppoppo.testore.testore.exam.repository.ExamPaperRepository;
 import com.tanppoppo.testore.testore.exam.repository.ExamResultRepository;
 import com.tanppoppo.testore.testore.exam.repository.QuestionParagraphRepository;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
+import com.tanppoppo.testore.testore.member.repository.BookmarkRepository;
+import com.tanppoppo.testore.testore.member.repository.ItemLikeRepository;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
+import com.tanppoppo.testore.testore.member.repository.ReviewRepository;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -42,6 +46,9 @@ public class ExamServiceImpl implements ExamService {
     private final QuestionParagraphRepository qpr;
     private final ExamResultRepository err;
     private final MemberRepository mr;
+    private final ItemLikeRepository ilr;
+    private final BookmarkRepository br;
+    private final ReviewRepository rr;
 
     /**
      * 시험지 생성 정보 저장
@@ -88,7 +95,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
-                    .likeCount(epr.getLikeCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
                     .shareCount(epr.getShareCount(entity.getCreatorId().getMemberId()))
                     .build();
             items.add(examPaperDTO);
@@ -126,16 +133,16 @@ public class ExamServiceImpl implements ExamService {
                 .ownerId(examPaperEntity.getOwnerId())
                 .publicOption(examPaperEntity.getPublicOption())
                 .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
-                .likeCount(epr.getLikeCount(examPaperEntity.getExamPaperId()))
+                .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
                 .shareCount(epr.getShareCount(examPaperEntity.getCreatorId().getMemberId()))
                 .build();
 
         Map<String, Object> detail = new HashMap<>();
         detail.put("examPaperDTO", examPaperDTO);
         detail.put("nickname", examPaperEntity.getCreatorId().getNickname());
-        detail.put("reviewCount", epr.getReviewCount(examPaperId));
-        detail.put("likeState", epr.getLikeState(memberEntity.getMemberId(), examPaperId));
-        detail.put("bookmarkState", epr.getBookmarkState(memberEntity.getMemberId(), examPaperId));
+        detail.put("reviewCount", rr.getReviewCount(examPaperId));
+        detail.put("likeState", ilr.getLikeState(memberEntity.getMemberId(), examPaperId));
+        detail.put("bookmarkState", br.getBookmarkState(memberEntity.getMemberId(), examPaperId, ItemTypeEnum.EXAM));
         return detail;
 
     }
