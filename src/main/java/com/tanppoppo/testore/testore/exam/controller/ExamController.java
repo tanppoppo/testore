@@ -37,10 +37,10 @@ public class ExamController {
 
     /**
      * 시험지 메인 페이지 이동
+     * @author KIMGEON64
      * @param model 시험지 정보를 뷰로 반환합니다.
      * @param user 인증된 회원 정보를 가져옵니다.
      * @return 시험지 메인 페이지를 반환합니다.
-     * @author KIMGEON64
      */
     @GetMapping("")
     public String examMain(Model model, @AuthenticationPrincipal AuthenticatedUser user) {
@@ -237,6 +237,20 @@ public class ExamController {
         es.endExam(Integer.parseInt(choices.get("result")[0]), score, user);
         setFlashToastMessage(redirectAttributes, true, "제출되었습니다.");
         return "redirect:/";
+
+    }
+
+    /**
+     * 공개여부 설정
+     * @author KIMGEON64
+     * @param examPaperId 시험지 키값을 가져옵니다.
+     * @return 시험지 상세 페이지를 반환합니다.
+     */
+    @GetMapping("controlPublicOption")
+    public String controlPublicOption(@RequestParam(name = "paper") int examPaperId){
+
+        es.controlPublicOption(examPaperId);
+        return"redirect:/exam/examPaperDetail?paper=" + examPaperId;
 
     }
 
