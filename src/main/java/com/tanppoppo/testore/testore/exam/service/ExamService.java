@@ -35,4 +35,6 @@ public interface ExamService {
     ExamResultDTO selectUpdatedPaperInfo(int examPaperId, Integer id);
 
     void updateExamPaper(ExamPaperDTO examPaperDTO, Integer id);
+
+    void controlPublicOption(int examPaperId);
 }

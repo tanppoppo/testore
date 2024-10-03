@@ -575,4 +575,26 @@ public class ExamServiceImpl implements ExamService {
         return sb.toString().trim();
     }
 
+    /**
+     * 공개여부 설정
+     * @author KIMGEON64
+     * @param examPaperId 시험지 키값을 가져옵니다.
+     */
+    @Override
+    public void controlPublicOption(int examPaperId) {
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        Boolean publicOption = examPaperEntity.getPublicOption();
+
+        if (publicOption == false) {
+            examPaperEntity.setPublicOption(true);
+        } else {
+            examPaperEntity.setPublicOption(false);
+        }
+
+        epr.save(examPaperEntity);
+
+    }
 }
