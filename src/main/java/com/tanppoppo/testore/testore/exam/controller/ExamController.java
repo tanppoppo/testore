@@ -254,4 +254,26 @@ public class ExamController {
 
     }
 
+    /**
+     * 시험지 리뷰 페이지 이동
+     * @author gyahury
+     * @param examPaperId 시험지 id를 가져옵니다.
+     * @return 시험지 리뷰 페이지를 반환합니다.
+     */
+    @GetMapping("review")
+    public String review(@RequestParam(name = "paper") int examPaperId) {
+        return "exam/exam-review";
+    }
+
+    /**
+     * 시험지 리뷰 생성 페이지 이동
+     * @author gyahury
+     * @param examPaperId 시험지 id를 가져옵니다.
+     * @return 시험지 리뷰 페이지를 반환합니다.
+     */
+    @GetMapping("createReviewForm")
+    public String createReviewForm(@RequestParam(name = "paper") int examPaperId) {
+        return "exam/create-review-form";
+    }
+
 }
