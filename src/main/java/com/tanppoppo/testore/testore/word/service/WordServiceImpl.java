@@ -43,7 +43,7 @@ public class WordServiceImpl implements WordService {
      * @return WordBookId를 반환합니다.
      */
     @Override
-    public int wordCreate(WordBookDTO wordBookDTO, AuthenticatedUser user) {
+    public int createWordBook(WordBookDTO wordBookDTO, AuthenticatedUser user) {
 
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()->new EntityNotFoundException("회원정보를 찾을 수 없습니다."));

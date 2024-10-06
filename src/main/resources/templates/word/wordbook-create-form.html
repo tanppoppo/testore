@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layouts/layout}"
+      th:with="headerText='WORD', footerText='Word'"
+      layout:fragment="Content"
+>
+<form class="p-10" th:action="@{${wordBookTitle} != null ? 'updateWordBook' : 'createWordBook'}" method="post">
+  <div class="flex items-center justify-center pb-4">
+    <img class="w-20 object-contain" th:src="@{'/word/image/wordbook-' + ${color} + '.png'}">
+    <input type="hidden" id="imagePath" name="imagePath" th:value="@{'/word/image/wordbook-' + ${color} + '.png'}">
+    <input type="hidden" th:name="${examPaperId != null ? 'examPaperId' : ''}" th:value="${wordBookId != null ? wordBookId : ''}">
+  </div>
+  <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'title', 'title', '단어장 이름', ${wordBookTitle})}"></th:block>
+  <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'content', 'content', '단어장 설명', ${wordBookContent})}"></th:block>
+  <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit', 'submitButton', 'submitButton', ${wordBookTitle} != null ? '단어장 수정' : '단어장 생성', '', true)}"></th:block>
+</form>
+</html>

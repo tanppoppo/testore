@@ -247,9 +247,10 @@ public class ExamController {
      * @return 시험지 상세 페이지를 반환합니다.
      */
     @GetMapping("controlPublicOption")
-    public String controlPublicOption(@RequestParam(name = "paper") int examPaperId){
+    public String controlPublicOption(RedirectAttributes redirectAttributes, @RequestParam(name = "paper") int examPaperId){
 
         es.controlPublicOption(examPaperId);
+        setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
         return"redirect:/exam/examPaperDetail?paper=" + examPaperId;
 
     }

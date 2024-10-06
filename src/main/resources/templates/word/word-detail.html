@@ -3,37 +3,37 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{common/layouts/layout}"
-      th:with="headerText='EXAM', footerText='Exam'"
+      th:with="headerText='WORD', footerText='Word'"
       layout:fragment="Content"
 >
 <div class="relative">
   <div class="flex gap-[calc(0.01rem+0.5vw)] absolute top-5 left-8">
-    <button th:if="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkExamPaper?paper=' + ${examPaperDTO.examPaperId} + '\''">
+    <button th:if="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
       <svg class="w-6 h-6 text-yellow-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
         <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"/>
       </svg>
     </button>
-    <button th:unless="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkExamPaper?paper=' + ${examPaperDTO.examPaperId} + '\''">
+    <button th:unless="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
       <svg class="w-6 h-6 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
         <path stroke="currentColor" stroke-width="1.6" d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"/>
       </svg>
     </button>
-    <button th:if="${likeState != null ? likeState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/likeExamPaper?paper=' + ${examPaperDTO.examPaperId} + '\''">
+    <button th:if="${likeState != null ? likeState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/likeWordBook?paper=' + ${wordBookDTO.wordBookId} + '\''">
       <svg class="w-6 h-6 text-rose-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
         <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/>
       </svg>
     </button>
-    <button th:unless="${likeState != null ? likeState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/likeExamPaper?paper=' + ${examPaperDTO.examPaperId} + '\''">
+    <button th:unless="${likeState != null ? likeState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/likeWordBook?paper=' + ${wordBookDTO.wordBookId} + '\''">
       <svg class="w-6 h-6 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"/>
       </svg>
     </button>
-    <button th:if="${examPaperDTO.publicOption != null ? examPaperDTO.publicOption : false}" type="button" class="p-1" th:onclick="'location.href=\'/exam/controlPublicOption?paper=' + ${examPaperDTO.examPaperId} + '\''">
+    <button th:if="${wordBookDTO.publicOption != null ? wordBookDTO.publicOption : false}" type="button" class="p-1">
       <svg class="w-6 h-6 text-teal-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
         <path fill-rule="evenodd" d="M15 7a2 2 0 1 1 4 0v4a1 1 0 1 0 2 0V7a4 4 0 0 0-8 0v3H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2V7Zm-5 6a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0v-3a1 1 0 0 1 1-1Z" clip-rule="evenodd"/>
       </svg>
     </button>
-    <button th:unless="${examPaperDTO.publicOption != null ? examPaperDTO.publicOption : false}" type="button" class="p-1" th:onclick="'location.href=\'/exam/controlPublicOption?paper=' + ${examPaperDTO.examPaperId} + '\''">
+    <button th:unless="${wordBookDTO.publicOption != null ? wordBookDTO.publicOption : false}" type="button" class="p-1">
       <svg class="w-6 h-6 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
       </svg>
@@ -53,16 +53,12 @@
     <div class="absolute right-2 z-10 mt-1 w-32 origin-top-right rounded-md bg-white shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:w-44">
       <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
-              th:onclick="'location.href=\'updateExamPaperForm?paper=' + ${examPaperDTO.examPaperId} + '\''"
-              id="correctPaperButton">시험지 수정하기
+              th:onclick="'location.href=\'updateWordBookForm?paper=' + ${wordBookDTO.wordBookId} + '\''"
+              id="correctPaperButton">단어장 수정하기
       </button>
       <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
               id="reviewButton">리뷰 남기기
-      </button>
-      <button
-              class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
-              id="historyButton">응시 내역보기
       </button>
       <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
@@ -73,15 +69,14 @@
   </div>
 </div>
 <div class="flex flex-col items-center mt-16">
-  <img class="w-20 object-contain" th:src="@{/common/image/exam-main.png}">
+  <img class="w-20 object-contain" th:src="@{/common/image/word-number.png}">
   <div class="flex flex-col gap-2 w-full font-bold text-lg text-center text-gray-700 mt-10">
-    <span th:text="${examPaperDTO.title}"></span>
+    <span th:text="${wordBookDTO.title}"></span>
     <div class="font-bold text-sm text-gray-400">제작자 : <span th:text="${nickname}"></span></div>
-    <div class="font-bold text-sm text-gray-400">만든 날짜 : <span th:text="${#temporals.format(examPaperDTO.createdDate, 'yyyy년 MM월 dd일')}"></span></div>
-    <div class="font-bold text-sm text-gray-400">합격 점수 : <span th:text="${examPaperDTO.passScore}"></span></div>
+    <div class="font-bold text-sm text-gray-400">만든 날짜 : <span th:text="${#temporals.format(wordBookDTO.createdDate, 'yyyy년 MM월 dd일')}"></span></div>
   </div>
   <div class="flex flex-col gap-2 font-bold text-sm text-center text-gray-400 mt-16">
-    <span th:text="${examPaperDTO.content}"></span>
+    <span th:text="${wordBookDTO.content}"></span>
   </div>
   <hr class="w-full mt-12">
   <div class="flex justify-center text-center items-center w-[85%] text-sm font-bold text-gray-600 mt-4 gap-5 p-3">
@@ -89,22 +84,22 @@
       <div class="flex justify-center items-center w-full h-auto aspect-square">
         <img class="w-3/4 h-3/4" th:src="@{/common/image/word-number.png}">
       </div>
-      <span class="mt-1">문제수</span>
-      <span class="mt-1" th:text="${examPaperDTO.examItemCount}"></span>
+      <span class="mt-1">단어수</span>
+      <span class="mt-1" th:text="${wordBookDTO.wordItemCount}"></span>
     </div>
     <div class="flex flex-col w-1/4">
       <div class="flex justify-center items-center w-full h-auto aspect-square">
         <img class="w-3/4 h-3/4" th:src="@{/common/image/like.png}">
       </div>
       <span class="mt-1">좋아요</span>
-      <span class="mt-1" th:text="${examPaperDTO.likeCount}"></span>
+      <span class="mt-1" th:text="${wordBookDTO.likeCount}"></span>
     </div>
     <div class="flex flex-col w-1/4">
       <div class="flex justify-center items-center w-full h-auto aspect-square">
         <img class="w-3/4 h-3/4" th:src="@{/common/image/share.png}">
       </div>
       <span class="mt-1">공유</span>
-      <span class="mt-1" th:text="${examPaperDTO.shareCount}"></span>
+      <span class="mt-1" th:text="${wordBookDTO.shareCount}"></span>
     </div>
     <div class="flex flex-col w-1/4">
       <div class="flex justify-center items-center w-full h-auto aspect-square">
@@ -115,10 +110,7 @@
     </div>
   </div>
   <div class="flex gap-3 w-full px-7">
-    <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'examTakeButton', 'examTakeButton', '응 시', 'examTake?paper='+${examPaperDTO.examPaperId} , true)}"></th:block>
-    <th:block th:if="${#authentication.principal.id == examPaperDTO.ownerId}">
-      <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'button', 'button', '방 생성', '', true)}"></th:block>
-    </th:block>
+    <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'learningButton', 'learningButton', '학 습', 'examTake?paper='+${wordBookDTO.wordBookId} , true)}"></th:block>
   </div>
 </div>
 </html>
