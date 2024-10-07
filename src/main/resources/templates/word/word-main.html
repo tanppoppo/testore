@@ -15,4 +15,5 @@
         <th:block th:replace="~{common/fragments/wordbook-item :: WordBookItemFragment(${item})}"></th:block>
     </th:block>
 </div>
+<th:block th:replace="~{common/fragments/floating-button :: FloatingButtonFragment('createButton', 'createButton', '단어장 생성', '/word/wordBookCreateForm')}"></th:block>
 </html>

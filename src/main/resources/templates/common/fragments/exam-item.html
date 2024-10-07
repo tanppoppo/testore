@@ -7,7 +7,7 @@
     <div class="text-[calc(0.7rem+0.3vw)] text-gray-800"
          th:text="${item.title != null ? item.title : ''}"></div>
     <div class="text-[calc(0.55rem+0.2vw)] text-gray-700 font-light whitespace-nowrap">
-      문제수 : <span th:text="${item.examItemCount != null ? item.examItemCount : ''}"></span><span class="divi"></span>추천수 : <span
+      문제수 : <span th:text="${item.examItemCount != null ? item.examItemCount : ''}"></span><span class="divi"></span>좋아요 : <span
             th:text="${item.likeCount != null ? item.likeCount : ''}"></span><span class="divi"></span>공유 : <span th:text="${item.shareCount != null ? item.shareCount : ''}"></span></div>
     <div class="text-[calc(0.6rem+0.2vw)] text-gray-400 font-medium mt-2"
          th:text="${item.content != null ? item.content : ''}"></div>

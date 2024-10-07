@@ -10,7 +10,7 @@ public interface WordService {
 
     Integer countWordBooksByOwnerId(Integer ownerId);
 
-    int wordCreate(WordBookDTO wordBookDTO, AuthenticatedUser user);
+    int createWordBook(WordBookDTO wordBookDTO, AuthenticatedUser user);
 
     List<WordBookDTO> getListItems(AuthenticatedUser user);
 

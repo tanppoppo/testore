@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "wordbook")
 public class WordBookEntity {
 
@@ -77,8 +79,15 @@ public class WordBookEntity {
 
     @PrePersist
     public void prePersist() {
-        languageLevel = 0;
-        membershipLevel = 0;
-        publicOption = false;
+
+        if (languageLevel == null){
+            languageLevel = 0;
+        }
+        if (membershipLevel == null){
+            membershipLevel = 0;
+        }
+        if (publicOption == null){
+            publicOption = false;
+        }
     }
 }
