@@ -19,6 +19,7 @@ public class WordDTO {
 
     private Integer wordId;
     private Integer wordbookId;
+    private Integer wordNum;
     private String text1;
     private String text2;
     private String text3;

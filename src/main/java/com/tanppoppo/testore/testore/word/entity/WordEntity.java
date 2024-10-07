@@ -32,6 +32,9 @@ public class WordEntity {
     @JoinColumn(name = "wordbook_id", nullable = false, referencedColumnName = "wordbook_id")
     private WordBookEntity wordBookId;
 
+    @Column(name = "word_num")
+    private Integer wordNum;
+
     @NotNull
     @Size(max = 30)
     @Column(name = "text_1", nullable = false, length = 30)
