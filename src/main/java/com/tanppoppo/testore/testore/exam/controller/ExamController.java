@@ -4,6 +4,7 @@ import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
 import com.tanppoppo.testore.testore.exam.dto.ExamResultDTO;
 import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
 import com.tanppoppo.testore.testore.exam.service.ExamService;
+import com.tanppoppo.testore.testore.member.dto.ReviewDTO;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -184,8 +185,8 @@ public class ExamController {
 
     /**
      * 시험지 찾기 페이지 이동
-     * @return 시험지 찾기 페이지를 반환합니다.
      * @author KIMGEON64
+     * @return 시험지 찾기 페이지를 반환합니다.
      */
     @GetMapping("search")
     public String search() {
@@ -247,34 +248,110 @@ public class ExamController {
      * @return 시험지 상세 페이지를 반환합니다.
      */
     @GetMapping("controlPublicOption")
-    public String controlPublicOption(RedirectAttributes redirectAttributes, @RequestParam(name = "paper") int examPaperId){
+    public String controlPublicOption(@RequestParam(name = "paper") int examPaperId){
 
         es.controlPublicOption(examPaperId);
-        setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
-        return"redirect:/exam/examPaperDetail?paper=" + examPaperId;
+        return "redirect:/exam/examPaperDetail?paper=" + examPaperId;
 
     }
 
     /**
-     * 시험지 리뷰 페이지 이동
-     * @author gyahury
-     * @param examPaperId 시험지 id를 가져옵니다.
-     * @return 시험지 리뷰 페이지를 반환합니다.
+     * 리뷰 목록 페이지 이동
+     * @author KIMGEON64
+     * @param model 모델 객체를 전달합니다.
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param examPaperId 시험지 ID를 전달합니다.
+     * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
-    @GetMapping("review")
-    public String review(@RequestParam(name = "paper") int examPaperId) {
+    @GetMapping("reviewForm")
+    public String reviewForm(@AuthenticationPrincipal AuthenticatedUser user,
+                             @RequestParam(name = "paper") int examPaperId, Model model){
+
+        Map<String, Object> review = es.getListReviews(user, examPaperId);
+        model.addAttribute("reviewDTOList", review.get("reviewDTOList"));
+        model.addAttribute("nickname", review.get("nickname"));
+
+        return "exam/exam-reviewForm";
+
+    }
+
+    /**
+     * 리뷰 생성 페이지 이동
+     * @author KIMGEON64
+     * @return 리뷰 생성 페이지를 반환합니다.
+     */
+    @GetMapping("createReviewForm")
+    public String createReviewForm(){ return "exam/exam-createReviewForm"; }
+
+    /**
+     * 리뷰 저장
+     * @author KIMGEON64
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param examPaperId 시험지 ID를 전달합니다.
+     * @return 시험지 리뷰 목록 페이지를 반환합니다.
+     */
+    @GetMapping("createReview")
+    public String createReview(@AuthenticationPrincipal AuthenticatedUser user,
+                               @RequestParam(name = "paper") int examPaperId, ReviewDTO reviewDTO){
+
+        es.createReview(user, examPaperId, reviewDTO);
+
         return "exam/exam-review";
     }
 
     /**
-     * 시험지 리뷰 생성 페이지 이동
-     * @author gyahury
-     * @param examPaperId 시험지 id를 가져옵니다.
-     * @return 시험지 리뷰 페이지를 반환합니다.
+     * 리뷰 수정 페이지 이동
+     * @author KIMGEON64
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param examPaperId 시험지 ID를 전달합니다.
+     * @param reviewId 리뷰 ID를 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
-    @GetMapping("createReviewForm")
-    public String createReviewForm(@RequestParam(name = "paper") int examPaperId) {
-        return "exam/create-review-form";
+    @GetMapping("updateReviewForm")
+    public String updateReviewForm(@AuthenticationPrincipal AuthenticatedUser user,
+                                   @RequestParam(name = "paper") int examPaperId,
+                                   @RequestParam(name = "review") int reviewId, Model model){
+
+        ReviewDTO reviewDTO = es.selectUpdatedReviewInfo(user, examPaperId, reviewId);
+        model.addAttribute("rating", reviewDTO.getRating());
+        model.addAttribute("content", reviewDTO.getContent());
+
+        return "exam/exam-updateReviewForm";
+
+    }
+
+    /**
+     * 리뷰 수정
+     * @author KIMGEON64
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param reviewId 리뷰 ID를 전달합니다.
+     * @return 시험지 리뷰 목록 페이지를 반환합니다.
+     */
+    @GetMapping("updateReview")
+    public String updateReview(@AuthenticationPrincipal AuthenticatedUser user,
+                               @RequestParam(name = "review") int reviewId,
+                               ReviewDTO reviewDTO){
+
+        es.updateReview(user, reviewId, reviewDTO);
+
+        return "exam/exam-updateReviewForm";
+    }
+
+    /**
+     * 리뷰 삭제
+     * @author KIMGEON64
+     * @param reviewId 리뷰 ID를 전달합니다.
+     * @return 시험지 리뷰 목록 페이지를 반환합니다.
+     */
+    @GetMapping("deleteReview")
+    public String deleteReview(@AuthenticationPrincipal AuthenticatedUser user,
+                               @RequestParam(name = "review") int reviewId){
+
+        es.deleteReview(user, reviewId);
+
+        return "exam/exam-reviewForm";
+
     }
 
 }
