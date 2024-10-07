@@ -10,10 +10,13 @@ public interface WordService {
 
     Integer countWordBooksByOwnerId(Integer ownerId);
 
+    void addWords(Map<String, String[]> words, Integer wordBookId, Integer userId);
+
     int createWordBook(WordBookDTO wordBookDTO, AuthenticatedUser user);
 
     List<WordBookDTO> getListItems(AuthenticatedUser user);
 
-    Map<String, Object> selectBookDetail(int wordbookId);
+    Map<String, Object> selectWordBookDetail(int wordbookId);
+
 
 }
