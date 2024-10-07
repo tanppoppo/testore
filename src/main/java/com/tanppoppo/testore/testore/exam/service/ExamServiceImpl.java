@@ -15,7 +15,9 @@ import com.tanppoppo.testore.testore.exam.repository.ExamQuestionRepository;
 import com.tanppoppo.testore.testore.exam.repository.ExamPaperRepository;
 import com.tanppoppo.testore.testore.exam.repository.ExamResultRepository;
 import com.tanppoppo.testore.testore.exam.repository.QuestionParagraphRepository;
+import com.tanppoppo.testore.testore.member.dto.ReviewDTO;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
+import com.tanppoppo.testore.testore.member.entity.ReviewEntity;
 import com.tanppoppo.testore.testore.member.repository.BookmarkRepository;
 import com.tanppoppo.testore.testore.member.repository.ItemLikeRepository;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
@@ -52,6 +54,7 @@ public class ExamServiceImpl implements ExamService {
 
     /**
      * 시험지 생성 정보 저장
+     * @author KIMGEON64
      * @param examPaperDTO 시험지 정보를 입력합니다.
      * @param user 사용자 인증 정보를 가져옵니다.
      * @return examPaperId를 반환합니다.
@@ -78,6 +81,7 @@ public class ExamServiceImpl implements ExamService {
 
     /**
      * 시험지 메인 페이지 이동
+     * @author KIMGEON64
      * @param user 인증된 회원 정보를 가져옵니다.
      * @return List형식의 items를 반환합니다.
      */
@@ -107,6 +111,7 @@ public class ExamServiceImpl implements ExamService {
 
     /**
      * 시험지 상세 페이지 이동
+     * @author KIMGEON64
      * @param examPaperId examPaperId 시험지 키값을 가져옵니다.
      * @return Map 객체 detail 을 반환합니다.
      */
@@ -597,4 +602,147 @@ public class ExamServiceImpl implements ExamService {
         epr.save(examPaperEntity);
 
     }
+
+    /**
+     * 리뷰 목록 반환
+     * @author KIMGEON64
+     * @param user user 객체를 가져옵니다.
+     * @param examPaperId 시험지 키값을 가져옵니다.
+     * @return Map 객체 result를 반환합니다.
+     */
+    @Override
+    public Map<String,Object> getListReviews(AuthenticatedUser user, int examPaperId) {
+
+        epr.findById(examPaperId).orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "reviewId");
+        List<ReviewEntity> reviewEntityList = rr.findByItemId(examPaperId,sort);
+
+        List<ReviewDTO> reviewDTOList = new ArrayList<>();
+
+        for (ReviewEntity entity : reviewEntityList) {
+            ReviewDTO reviewDTO = ReviewDTO.builder()
+                    .rating(entity.getRating())
+                    .content(entity.getContent())
+                    .createdDate(entity.getCreatedDate())
+                    .build();
+            reviewDTOList.add(reviewDTO);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("reviewDTOList", reviewDTOList);
+        result.put("nickname", memberEntity.getNickname());
+
+        return result;
+
+    }
+
+    /**
+     * 시험지 리뷰 생성 정보 저장
+     * @author KIMGEON64
+     * @param user user 객체를 가져옵니다.
+     * @param examPaperId 시험지 키값을 가져옵니다.
+     */
+    @Override
+    public void createReview(AuthenticatedUser user, int examPaperId, ReviewDTO reviewDTO) {
+
+        epr.findById(examPaperId).orElseThrow(()-> new EntityNotFoundException("시험지 정보가 존재하지 않습니다."));
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보가 존재하지 않습니다."));
+
+        ReviewEntity reviewEntity = ReviewEntity.builder()
+                .rating(reviewDTO.getRating())
+                .content(reviewDTO.getContent())
+                .itemId(examPaperId)
+                .memberId(memberEntity)
+                .itemType(ItemTypeEnum.EXAM)
+                .build();
+        rr.save(reviewEntity);
+
+    }
+
+    /**
+     * 리뷰 수정 페이지 이동
+     * @author KIMGEON64
+     * @param user user 객체를 가져옵니다.
+     * @param examPaperId 시험지 키값을 가져옵니다.
+     * @param reviewId 리뷰 키값을 가져옵니다.
+     * @return reviewDTO를 반환합니다.
+     */
+    @Override
+    public ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int examPaperId, int reviewId) {
+
+        epr.findById(examPaperId).orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        ReviewEntity reviewEntity = rr.findById(reviewId)
+                .orElseThrow(()-> new EntityNotFoundException("리뷰 정보를 찾을 수 없습니다."));
+
+        if (reviewEntity.getMemberId().getMemberId().equals(memberEntity.getMemberId())){
+            throw new AccessDeniedException("인증회원과 리뷰정보가 일치하지 않습니다.");
+        }
+
+        ReviewDTO reviewDTO = ReviewDTO.builder()
+                .rating(reviewEntity.getRating())
+                .content(reviewEntity.getContent())
+                .build();
+
+        return reviewDTO;
+
+    }
+
+    /**
+     * 리뷰 수정
+     * @author KIMGEON64
+     * @param user user 객체를 가져옵니다.
+     * @param reviewId 리뷰 키값을 가져옵니다.
+     */
+    @Override
+    public void updateReview(AuthenticatedUser user, int reviewId, ReviewDTO reviewDTO) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        ReviewEntity reviewEntity = rr.findById(reviewId)
+                .orElseThrow(()-> new EntityNotFoundException("리뷰 정보를 찾을 수 없습니다."));
+
+        if (reviewEntity.getMemberId().getMemberId().equals(memberEntity.getMemberId())){
+            throw new AccessDeniedException("인증회원과 리뷰정보가 일치하지 않습니다.");
+        }
+
+        reviewEntity.setRating(reviewDTO.getRating());
+        reviewEntity.setContent(reviewDTO.getContent());
+        reviewEntity.setCreatedDate(reviewDTO.getCreatedDate());
+
+    }
+
+    /**
+     * 리뷰 삭제
+     * @author KIMGEON64
+     * @param user user 객체를 가져옵니다.
+     * @param reviewId 리뷰 키값을 가져옵니다.
+     */
+    @Override
+    public void deleteReview(AuthenticatedUser user, int reviewId) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        ReviewEntity reviewEntity = rr.findById(reviewId)
+                .orElseThrow(()-> new EntityNotFoundException("리뷰 정보를 찾을 수 없습니다."));
+
+        if (reviewEntity.getMemberId().getMemberId().equals(memberEntity.getMemberId())){
+            throw new AccessDeniedException("인증회원과 리뷰정보가 일치하지 않습니다.");
+        }
+
+        rr.delete(reviewEntity);
+
+    }
+
 }
