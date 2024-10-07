@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Controller
 @Slf4j
@@ -45,8 +46,17 @@ public class WordController {
      * @author MinCheolHa
      * @return 단어장 생성 페이지를 반환합니다.
      */
-    @GetMapping("createWordBookForm")
-    public String createWordBookForm() { return "word/word-create"; }
+    @GetMapping("wordBookCreateForm")
+    public String wordBookCreateForm(Model model) {
+
+        String[] colors = {"red", "blue", "yellow", "brown", "green", "mint", "purple"};
+        Random random = new Random();
+        String randomColor = colors[random.nextInt(colors.length)];
+        model.addAttribute("color", randomColor);
+
+        return "word/wordbook-create-form";
+
+    }
 
     /**
      * 단어장 생성
@@ -117,5 +127,16 @@ public class WordController {
      */
     @GetMapping("learning")
     public String learning() { return "word/word-learning"; }
+
+    /**
+     * 단어장 찾아보기 페이지 이동
+     * @author gyahury
+     * @return 단어장 상세 페이지를 반환합니다.
+     */
+    @GetMapping("search")
+    public String search() {
+        return "word/word-search";
+    }
+
 
 }
