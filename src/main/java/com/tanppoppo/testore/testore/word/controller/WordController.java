@@ -3,6 +3,7 @@ package com.tanppoppo.testore.testore.word.controller;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import com.tanppoppo.testore.testore.word.dto.WordBookDTO;
 import com.tanppoppo.testore.testore.word.service.WordService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,10 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 @Controller
 @Slf4j
@@ -42,20 +43,10 @@ public class WordController {
     /**
      * 단어장 생성 페이지
      * @author MinCheolHa
-     * @param model 모델 객체를 가져옵니다.
      * @return 단어장 생성 페이지를 반환합니다.
      */
-    @GetMapping("wordBookCreateForm")
-    public String wordBookCreateForm(Model model) {
-
-        String[] colors = {"red", "blue", "yellow", "brown", "green", "mint", "purple"};
-        Random random = new Random();
-        String randomColor = colors[random.nextInt(colors.length)];
-        model.addAttribute("color", randomColor);
-
-        return "word/wordbook-create-form";
-
-    }
+    @GetMapping("createWordBookForm")
+    public String createWordBookForm() { return "word/word-create"; }
 
     /**
      * 단어장 생성
@@ -69,36 +60,54 @@ public class WordController {
     public String createWordBook(WordBookDTO wordBookDTO
             , @AuthenticationPrincipal AuthenticatedUser user
             , Model model) {
+
         int wordbookId = ws.createWordBook(wordBookDTO, user);
         model.addAttribute("wordbookId", wordbookId);
-        return "word/create-word-list";
+        return "word/create-word-book";
+
     }
+
+    /**
+     * 단어 추가
+     * @author MinCheolHa
+     * @param wordBookId
+     * @param user
+     * @param request
+     * @param redirectAttributes
+     * @return
+     */
+    @PostMapping("/addWords")
+    public String addWords(
+            @RequestParam(name = "book") int wordBookId,
+            @AuthenticationPrincipal AuthenticatedUser user,
+            HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
+
+        Map<String, String[]> words = request.getParameterMap();
+        // 단어를 단어장에 추가하는 서비스 호출
+        ws.addWords(words, wordBookId, user.getId());
+
+        redirectAttributes.addFlashAttribute("wordbookId", wordBookId);
+        return "redirect:/word/wordBookDetail?book=" + wordBookId; // 단어장 상세 페이지로 리디렉션
+
+    }
+
 
     /**
      * 단어장 상세 페이지 이동
      * @author MinCheolHa
      * @param model Map객체 detail을 반환합니다.
-     * @param wordbookId 단어장 키값을 가져옵니다.
+     * @param wordBookId 단어장 키값을 가져옵니다.
      * @return 단어장 상세 페이지를 반환합니다.
      */
-    @GetMapping("detail")
-    public String wordDetails(Model model, @RequestParam(name = "book") int wordbookId) {
-        Map<String, Object> detail = ws.selectBookDetail(wordbookId);
+    @GetMapping("wordBookDetail")
+    public String wordBookDetail(Model model, @RequestParam(name = "wordbook") int wordBookId) {
+        Map<String, Object> detail = ws.selectWordBookDetail(wordBookId);
         model.addAttribute("wordBookDTO", detail.get("wordBookDTO"));
-        model.addAttribute("nickname", detail.get("nickName"));
+        model.addAttribute("nickName", detail.get("nickName"));
         model.addAttribute("reviewCount", detail.get("reviewCount"));
         model.addAttribute("likeState", detail.get("likeState"));
         return "word/word-detail";
-    }
-
-    /**
-     * 단어장 찾아보기 페이지 이동
-     * @author gyahury
-     * @return 단어장 상세 페이지를 반환합니다.
-     */
-    @GetMapping("search")
-    public String search() {
-        return "word/word-search";
     }
 
     /**
