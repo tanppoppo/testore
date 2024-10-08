@@ -13,4 +13,6 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Integer> {
 
     Optional<MemberEntity> findByEmailVerificationToken(String token);
 
+    // 이메일 존재 여부 확인 메서드 추가
+    boolean existsByEmail(String email);
 }
