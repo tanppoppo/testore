@@ -111,7 +111,7 @@ public class WordController {
      * @return 단어장 상세 페이지를 반환합니다.
      */
     @GetMapping("wordBookDetail")
-    public String wordBookDetail(Model model, @RequestParam(name = "wordbook") int wordBookId) {
+    public String wordBookDetail(Model model, @RequestParam(name = "book") int wordBookId) {
         Map<String, Object> detail = ws.selectWordBookDetail(wordBookId);
         model.addAttribute("wordBookDTO", detail.get("wordBookDTO"));
         model.addAttribute("nickName", detail.get("nickName"));
