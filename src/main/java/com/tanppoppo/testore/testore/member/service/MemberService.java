@@ -15,4 +15,7 @@ public interface MemberService {
     int getPointSumByMemberId(int memberId);
     void createAndDeleteBookmarkByMemberId(Integer examPaperId, AuthenticatedUser user);
     void createAndDeleteItemLikeByMemberId(Integer examPaperId, AuthenticatedUser user);
+    void createAndDeleteWordBookBookmarkByMemberId(Integer wordBookId, AuthenticatedUser user);
+    void createAndDeleteWordBookItemLikeByMemberId(Integer wordBookId, AuthenticatedUser user);
+
 }
