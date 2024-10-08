@@ -263,15 +263,14 @@ public class ExamController {
      * @param examPaperId 시험지 ID를 전달합니다.
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
-    @GetMapping("reviewForm")
+    @GetMapping("review")
     public String reviewForm(@AuthenticationPrincipal AuthenticatedUser user,
                              @RequestParam(name = "paper") int examPaperId, Model model){
 
         Map<String, Object> review = es.getListReviews(user, examPaperId);
         model.addAttribute("reviewDTOList", review.get("reviewDTOList"));
-        model.addAttribute("nickname", review.get("nickname"));
 
-        return "exam/exam-reviewForm";
+        return "exam/exam-review";
 
     }
 
@@ -281,7 +280,12 @@ public class ExamController {
      * @return 리뷰 생성 페이지를 반환합니다.
      */
     @GetMapping("createReviewForm")
-    public String createReviewForm(){ return "exam/exam-createReviewForm"; }
+    public String createReviewForm(@RequestParam(name = "paper") int examPaperId, Model model){
+
+        model.addAttribute("examPaperId", examPaperId);
+        return "exam/create-review-form";
+
+    }
 
     /**
      * 리뷰 저장
@@ -290,13 +294,13 @@ public class ExamController {
      * @param examPaperId 시험지 ID를 전달합니다.
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
-    @GetMapping("createReview")
+    @PostMapping("createReview")
     public String createReview(@AuthenticationPrincipal AuthenticatedUser user,
                                @RequestParam(name = "paper") int examPaperId, ReviewDTO reviewDTO){
 
         es.createReview(user, examPaperId, reviewDTO);
 
-        return "exam/exam-review";
+        return "redirect:/exam/examPaperDetail?paper=" + examPaperId;
     }
 
     /**

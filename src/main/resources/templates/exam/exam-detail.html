@@ -58,7 +58,13 @@
       </button>
       <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              th:onclick="'location.href=\'createReviewForm?paper=' + ${examPaperDTO.examPaperId} + '\''"
               id="reviewButton">리뷰 남기기
+      </button>
+      <button
+              class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              th:onclick="'location.href=\'review?paper=' + ${examPaperDTO.examPaperId} + '\''"
+              id="selectReviewButton">리뷰 보기
       </button>
       <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
