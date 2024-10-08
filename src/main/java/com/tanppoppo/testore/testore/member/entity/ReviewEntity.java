@@ -56,6 +56,9 @@ public class ReviewEntity {
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
+    @Column(name = "update_date")
+    private LocalDateTime updateDate;
+
     @PrePersist
     public void prePersist() {
 

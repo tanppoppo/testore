@@ -27,10 +27,13 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.*;
@@ -628,13 +631,14 @@ public class ExamServiceImpl implements ExamService {
                     .rating(entity.getRating())
                     .content(entity.getContent())
                     .createdDate(entity.getCreatedDate())
+                    .updateDate(entity.getUpdateDate())
+                    .nickname(memberEntity.getNickname())
                     .build();
             reviewDTOList.add(reviewDTO);
         }
 
         Map<String, Object> result = new HashMap<>();
         result.put("reviewDTOList", reviewDTOList);
-        result.put("nickname", memberEntity.getNickname());
 
         return result;
 
@@ -718,7 +722,6 @@ public class ExamServiceImpl implements ExamService {
 
         reviewEntity.setRating(reviewDTO.getRating());
         reviewEntity.setContent(reviewDTO.getContent());
-        reviewEntity.setCreatedDate(reviewDTO.getCreatedDate());
 
     }
 
