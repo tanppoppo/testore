@@ -48,4 +48,10 @@ public interface ExamService {
     void updateReview(AuthenticatedUser user, int reviewId, ReviewDTO reviewDTO);
 
     void deleteReview(AuthenticatedUser user, int reviewId);
+
+    List<ExamPaperDTO> recommendedExamPaper(AuthenticatedUser user);
+
+    List<ExamPaperDTO> likedExamPaper(AuthenticatedUser user);
+
+    List<ExamPaperDTO> muchSharedExamPaper(AuthenticatedUser user);
 }

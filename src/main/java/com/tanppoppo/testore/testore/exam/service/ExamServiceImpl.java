@@ -748,4 +748,110 @@ public class ExamServiceImpl implements ExamService {
 
     }
 
+    /**
+     * 추천 시험지 반환
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return ExamPaperDTO 형식의 recommendExam 를 반환 합니다.
+     */
+    @Override
+    public List<ExamPaperDTO> recommendedExamPaper(AuthenticatedUser user) {
+
+        mr.findById(user.getId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        Pageable pageable = PageRequest.of(0, 3);
+        List<ExamPaperEntity> examPaperEntity = epr.findRandomExamPapers(pageable);
+
+        List<ExamPaperDTO> recommendedExamPaper = new ArrayList<>();
+
+        for (ExamPaperEntity entity : examPaperEntity) {
+            ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
+                    .examPaperId(entity.getExamPaperId())
+                    .title(entity.getTitle())
+                    .content(entity.getContent())
+                    .imagePath(entity.getImagePath())
+                    .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .shareCount(epr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .build();
+            recommendedExamPaper.add(examPaperDTO);
+
+        }
+
+        return recommendedExamPaper;
+
+    }
+
+    /**
+     * 이번주 인기 시험지 반환
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return ExamPaperDTO 형식의 popularityExam 를 반환 합니다.
+     */
+    @Override
+    public List<ExamPaperDTO> likedExamPaper(AuthenticatedUser user) {
+
+        mr.findById(user.getId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime monday = now.with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay();
+        LocalDateTime sunday = now.with(DayOfWeek.SUNDAY).toLocalDate().atTime(23, 59, 59);
+
+        Pageable pageable = PageRequest.of(0, 3);
+        List<ExamPaperEntity> examPaperEntity = epr.findPopularExamsThisWeek(monday, sunday, pageable);
+
+        List<ExamPaperDTO> likedExamPaper = new ArrayList<>();
+
+        for (ExamPaperEntity entity : examPaperEntity) {
+            ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
+                    .examPaperId(entity.getExamPaperId())
+                    .title(entity.getTitle())
+                    .content(entity.getContent())
+                    .imagePath(entity.getImagePath())
+                    .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .shareCount(epr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .build();
+            likedExamPaper.add(examPaperDTO);
+
+        }
+
+        return likedExamPaper;
+
+    }
+
+    /**
+     * 많이 공유된 시험지 반환
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return ExamPaperDTO 형식의 muchSharedExam 를 반환 합니다.
+     */
+    @Override
+    public List<ExamPaperDTO> muchSharedExamPaper(AuthenticatedUser user) {
+
+        mr.findById(user.getId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        Pageable pageable = PageRequest.of(0, 3);
+        List<ExamPaperEntity> examPaperEntity = epr.findSortedExamPapersByShareCount(pageable);
+
+        List<ExamPaperDTO> muchSharedExamPaper = new ArrayList<>();
+
+        for (ExamPaperEntity entity : examPaperEntity) {
+            ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
+                    .examPaperId(entity.getExamPaperId())
+                    .title(entity.getTitle())
+                    .content(entity.getContent())
+                    .imagePath(entity.getImagePath())
+                    .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .shareCount(epr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .build();
+            muchSharedExamPaper.add(examPaperDTO);
+
+        }
+
+        return muchSharedExamPaper;
+
+    }
+
 }
