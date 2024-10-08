@@ -186,11 +186,26 @@ public class ExamController {
     /**
      * 시험지 찾기 페이지 이동
      * @author KIMGEON64
-     * @return 시험지 찾기 페이지를 반환합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @param user user 객체를 전달합니다.
+     * @return 시험지 찾아보기 페이지를 반환합니다.
      */
     @GetMapping("search")
-    public String search() {
+    public String search(Model model, @AuthenticationPrincipal AuthenticatedUser user) {
+
+        List<ExamPaperDTO> recommendedExamPaper = es.recommendedExamPaper(user);
+        List<ExamPaperDTO> likedExamPaper = es.likedExamPaper(user);
+        List<ExamPaperDTO> muchSharedExamPaper = es.muchSharedExamPaper(user);
+        model.addAttribute("recommendedExamPaper", recommendedExamPaper);
+        model.addAttribute("likedExamPaper", likedExamPaper);
+        model.addAttribute("muchSharedExamPaper", muchSharedExamPaper);
+
+        System.out.println("추천3개" + recommendedExamPaper);
+        System.out.println("이번주3개" + likedExamPaper);
+        System.out.println("공유수3개" + muchSharedExamPaper);
+
         return "exam/exam-search";
+
     }
 
     /**
