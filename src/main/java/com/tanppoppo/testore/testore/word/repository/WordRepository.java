@@ -11,9 +11,9 @@ import java.util.List;
 public interface WordRepository extends JpaRepository<WordEntity, Integer> {
 
     // 특정 단어장 ID로 단어 조회
-    List<WordDTO> findByWordbookId(Integer wordbookId);
+//    List<WordDTO> findByWordbookId(Integer wordbookId);
 
     // 특정 사용자 ID로 단어 조회
-    List<WordDTO> findByOwnerId(Integer ownerId);
+//    List<WordDTO> findByOwnerId(Integer ownerId);
 
 }

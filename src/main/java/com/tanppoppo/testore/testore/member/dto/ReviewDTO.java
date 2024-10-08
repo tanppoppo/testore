@@ -26,5 +26,7 @@ public class ReviewDTO {
     private String content;
     private Byte rating;
     private LocalDateTime createdDate;
+    private LocalDateTime updateDate;
+    private String nickname;
 
 }

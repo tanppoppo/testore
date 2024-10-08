@@ -6,6 +6,12 @@
       th:with="headerText='EXAM', footerText='Exam'"
       layout:fragment="Content"
 >
-<th:block th:replace="~{common/fragments/search :: SearchFragment('examReview')}"></th:block>
-<th:block th:replace="~{common/fragments/review-item :: ReviewItemFragment()}"></th:block>
+<div th:if="${#lists.isEmpty(reviewDTOList)}" class="text-gray-300 text-center font-bold mt-10">
+  리뷰가 없습니다.
+</div>
+<div th:unless="${#lists.isEmpty(reviewDTOList)}">
+  <th:block th:each="reviewItem : ${reviewDTOList}">
+    <th:block th:replace="~{common/fragments/review-item :: ReviewItemFragment(${reviewItem})}"></th:block>
+  </th:block>
+</div>
 </html>

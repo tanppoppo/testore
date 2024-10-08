@@ -3,6 +3,7 @@ package com.tanppoppo.testore.testore.exam.service;
 import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
 import com.tanppoppo.testore.testore.exam.dto.ExamResultDTO;
 import com.tanppoppo.testore.testore.exam.dto.QuestionParagraphDTO;
+import com.tanppoppo.testore.testore.member.dto.ReviewDTO;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 
 import java.util.List;
@@ -37,4 +38,14 @@ public interface ExamService {
     void updateExamPaper(ExamPaperDTO examPaperDTO, Integer id);
 
     void controlPublicOption(int examPaperId);
+
+    Map<String,Object> getListReviews(AuthenticatedUser user, int examPaperId);
+
+    void createReview(AuthenticatedUser user, int examPaperId, ReviewDTO reviewDTO);
+
+    ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int examPaperId, int reviewId);
+
+    void updateReview(AuthenticatedUser user, int reviewId, ReviewDTO reviewDTO);
+
+    void deleteReview(AuthenticatedUser user, int reviewId);
 }

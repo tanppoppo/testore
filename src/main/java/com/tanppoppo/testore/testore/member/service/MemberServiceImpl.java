@@ -44,6 +44,10 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void joinMember(MemberDTO memberDTO) {
 
+        if (mr.existsByEmail(memberDTO.getEmail())) {
+            throw new IllegalStateException("이미 사용 중인 이메일입니다.");
+        }
+
         MemberEntity entity = MemberEntity.builder()
                 .email(memberDTO.getEmail())
                 .nickname(memberDTO.getNickname())
