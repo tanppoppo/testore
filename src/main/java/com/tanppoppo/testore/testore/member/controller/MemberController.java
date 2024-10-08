@@ -125,6 +125,9 @@ public class MemberController {
         try {
             ms.joinMember(memberDTO);
             setFlashToastMessage(redirectAttributes, true, "인증 메일을 발송하였습니다.<br>인증을 완료해주세요.");
+        } catch (IllegalStateException e) {
+            setFlashToastMessage(redirectAttributes, false, "중복된 이메일입니다.");
+            return "redirect:/member/joinForm";
         } catch (Exception e) {
             setFlashToastMessage(redirectAttributes, false, "회원가입 중 문제가 발생했습니다.<br>다시 시도해주세요.");
         }
