@@ -91,8 +91,12 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public List<ExamPaperDTO> getListItems(AuthenticatedUser user) {
 
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
         Sort sort = Sort.by(Sort.Direction.DESC, "examPaperId");
-        List<ExamPaperEntity> examPaperEntityList = epr.findByOwnerId(user.getId(), sort);
+        List<ExamPaperEntity> examPaperEntityList = epr.findByOwnerIdWithBookmarks(memberEntity.getMemberId(), sort);
+
         List<ExamPaperDTO> items = new ArrayList<>();
 
         for (ExamPaperEntity entity : examPaperEntityList) {
@@ -104,6 +108,7 @@ public class ExamServiceImpl implements ExamService {
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
                     .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
                     .shareCount(epr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .isBookmarked(br.getBookmarkState(user.getId(), entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .build();
             items.add(examPaperDTO);
         }

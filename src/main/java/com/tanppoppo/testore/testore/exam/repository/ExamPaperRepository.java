@@ -14,8 +14,10 @@ import java.util.List;
 @Repository
 public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Integer> {
 
-    // 정렬 리스트 반환
-    List<ExamPaperEntity> findByOwnerId(Integer memberId, Sort sort);
+    // 북마크 여부 고려 정렬 리스트 반환
+    @Query("SELECT ep FROM ExamPaperEntity ep LEFT JOIN BookmarkEntity bm ON ep.examPaperId = bm.itemId WHERE ep.ownerId = :ownerId ORDER BY CASE WHEN bm IS NOT NULL THEN 1 ELSE 0 END DESC, ep.examPaperId DESC")
+    List<ExamPaperEntity> findByOwnerIdWithBookmarks(@Param("ownerId") Integer ownerId, Sort sort);
+
 
     // 문제 수
     @Query("SELECT COUNT(ei) FROM ExamQuestionEntity ei WHERE ei.examPaperId.examPaperId = :examPaperId")
@@ -37,10 +39,7 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     @Query("SELECT ep FROM ExamPaperEntity ep WHERE ep.publicOption = true GROUP BY ep ORDER BY COUNT(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 END) DESC")
     List<ExamPaperEntity> findSortedExamPapersByShareCount(Pageable pageable);
 
-    // 주제 : 이번주 인기 시험지 추천
-    /* 조건 1. 현재날짜를 기준으로 월요일과 일요일 사이의 날짜만을 출력함.
-     * 조건 2. publicOption이 true인것만을 출력함.
-     * 조건 3. itemLikeEntity의 itemLikeId가 examPaperId와 같은 경우가 가장 많은 순서대로 정렬함. */
+    // 이번주 인기 시험지 추천 -> publicOption 고려
     @Query("SELECT ep FROM ExamPaperEntity ep LEFT JOIN ItemLikeEntity il ON ep.examPaperId = il.itemId WHERE ep.publicOption = true AND il.createdDate BETWEEN :monday AND :sunday GROUP BY ep.examPaperId ORDER BY COUNT(il) DESC")
     List<ExamPaperEntity> findPopularExamsThisWeek(@Param("monday") LocalDateTime monday, @Param("sunday") LocalDateTime sunday, Pageable pageable);
 
