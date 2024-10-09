@@ -43,11 +43,11 @@ public interface ExamService {
 
     void createReview(AuthenticatedUser user, int examPaperId, ReviewDTO reviewDTO);
 
-    ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int examPaperId, int reviewId);
+    ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int reviewId);
 
-    void updateReview(AuthenticatedUser user, int reviewId, ReviewDTO reviewDTO);
+    void updateReview(AuthenticatedUser user, Integer reviewId, ReviewDTO reviewDTO);
 
-    void deleteReview(AuthenticatedUser user, int reviewId);
+    Integer deleteReview(AuthenticatedUser user, int reviewId);
 
     List<ExamPaperDTO> recommendedExamPaper(AuthenticatedUser user);
 

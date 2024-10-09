@@ -12,7 +12,7 @@
     <div class="text-[calc(0.6rem+0.2vw)] text-gray-400 font-medium mt-2"
          th:text="${item.content != null ? item.content : ''}"></div>
   </div>
-  <a th:href="'exam/examPaperDetail?paper='+${item.examPaperId != null ? item.examPaperId : '1'}">
+  <a th:href="'/exam/examPaperDetail?paper='+${item.examPaperId != null ? item.examPaperId : '1'}">
     <svg class="w-[48px] h-[48px] text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
          height="24" fill="none" viewBox="0 0 24 24">
       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
