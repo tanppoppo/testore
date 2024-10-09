@@ -200,10 +200,6 @@ public class ExamController {
         model.addAttribute("likedExamPaper", likedExamPaper);
         model.addAttribute("muchSharedExamPaper", muchSharedExamPaper);
 
-        System.out.println("추천3개" + recommendedExamPaper);
-        System.out.println("이번주3개" + likedExamPaper);
-        System.out.println("공유수3개" + muchSharedExamPaper);
-
         return "exam/exam-search";
 
     }

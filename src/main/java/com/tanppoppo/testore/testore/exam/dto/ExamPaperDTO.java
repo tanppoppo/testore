@@ -38,5 +38,6 @@ public class ExamPaperDTO {
     private Integer examItemCount;
     private Integer likeCount;
     private Integer shareCount;
+    private Boolean isBookmarked;
 
 }
