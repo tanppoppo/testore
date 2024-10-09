@@ -54,6 +54,7 @@
     </div>
     <div class="hidden absolute right-2 z-10 mt-1 w-32 origin-top-right rounded-md bg-white shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:w-44">
       <button
+              th:if="${#authentication.principal.id == examPaperDTO.ownerId}"
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
               th:onclick="'location.href=\'updateExamPaperForm?paper=' + ${examPaperDTO.examPaperId} + '\''"
               id="correctPaperButton">시험지 수정하기
@@ -69,10 +70,12 @@
               id="selectReviewButton">리뷰 보기
       </button>
       <button
+              th:if="${#authentication.principal.id == examPaperDTO.ownerId}"
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
               id="historyButton">응시 내역보기
       </button>
       <button
+              th:if="${#authentication.principal.id == examPaperDTO.ownerId}"
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
               id="deleteButton">삭제하기
       </button>

@@ -110,7 +110,7 @@ public class ExamController {
             es.updateExamPaper(examPaperDTO, user.getId());
             return "redirect:/exam/examPaperDetail?paper="+examPaperDTO.getExamPaperId();
         } catch (AccessDeniedException e) {
-            setFlashToastMessage(redirectAttributes, false, "공개된 시험지가 아닙니다.");
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
         } catch (Exception e) {
             setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생했습니다.");
         }

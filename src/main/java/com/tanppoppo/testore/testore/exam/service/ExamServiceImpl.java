@@ -545,6 +545,13 @@ public class ExamServiceImpl implements ExamService {
         MemberEntity memberEntity = mr.findById(examPaperEntity.getCreatorId().getMemberId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
+        if (!userId.equals(examPaperEntity.getOwnerId())){
+            if (!examPaperEntity.getPublicOption()) {
+                throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+            }
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
         if (!userId.equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
             throw new AccessDeniedException("공개된 시험지가 아닙니다.");
         }
