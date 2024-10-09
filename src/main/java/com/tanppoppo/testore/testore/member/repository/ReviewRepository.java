@@ -1,10 +1,10 @@
 package com.tanppoppo.testore.testore.member.repository;
 
+import com.tanppoppo.testore.testore.common.util.ItemTypeEnum;
 import com.tanppoppo.testore.testore.member.entity.ReviewEntity;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -17,10 +17,11 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Integer> {
 
     // 리뷰 수
-    @Query("SELECT COUNT(r) FROM ReviewEntity r WHERE r.itemId = :examPaperId")
-    Integer getReviewCount(@Param("examPaperId") Integer examPaperId);
+    @Query("SELECT COUNT(r) FROM ReviewEntity r WHERE r.itemId = :itemId")
+    Integer getReviewCount(Integer itemId);
 
     // examPaper 소속 리뷰 전체 정렬 반환
-    List<ReviewEntity> findByItemId(Integer ItemId, Sort sort);
+    @Query("SELECT r FROM ReviewEntity r WHERE r.itemId = :itemId AND r.itemType = :itemType")
+    List<ReviewEntity> findByItemIdAndItemType(Integer itemId, ItemTypeEnum itemType, Sort sort);
 
 }
