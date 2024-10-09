@@ -318,21 +318,18 @@ public class ExamController {
      * 리뷰 수정 페이지 이동
      * @author KIMGEON64
      * @param user 인증된 회원 정보를 전달합니다.
-     * @param examPaperId 시험지 ID를 전달합니다.
      * @param reviewId 리뷰 ID를 전달합니다.
      * @param model 모델 객체를 전달합니다.
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
     @GetMapping("updateReviewForm")
     public String updateReviewForm(@AuthenticationPrincipal AuthenticatedUser user,
-                                   @RequestParam(name = "paper") int examPaperId,
                                    @RequestParam(name = "review") int reviewId, Model model){
 
-        ReviewDTO reviewDTO = es.selectUpdatedReviewInfo(user, examPaperId, reviewId);
-        model.addAttribute("rating", reviewDTO.getRating());
-        model.addAttribute("content", reviewDTO.getContent());
+        ReviewDTO reviewDTO = es.selectUpdatedReviewInfo(user, reviewId);
+        model.addAttribute("reviewDTO", reviewDTO);
 
-        return "exam/exam-updateReviewForm";
+        return "exam/create-review-form";
 
     }
 
@@ -343,14 +340,16 @@ public class ExamController {
      * @param reviewId 리뷰 ID를 전달합니다.
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
-    @GetMapping("updateReview")
+    @PostMapping("updateReview")
     public String updateReview(@AuthenticationPrincipal AuthenticatedUser user,
                                @RequestParam(name = "review") int reviewId,
+                               @RequestParam(name = "paper") int examPaperId,
                                ReviewDTO reviewDTO){
 
         es.updateReview(user, reviewId, reviewDTO);
 
-        return "exam/exam-updateReviewForm";
+        return "redirect:/exam/review?paper=" + examPaperId;
+
     }
 
     /**
@@ -360,12 +359,21 @@ public class ExamController {
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
     @GetMapping("deleteReview")
-    public String deleteReview(@AuthenticationPrincipal AuthenticatedUser user,
-                               @RequestParam(name = "review") int reviewId){
+    public String deleteReview(@AuthenticationPrincipal AuthenticatedUser user, RedirectAttributes redirectAttributes
+                               ,@RequestParam(name = "review") int reviewId){
 
-        es.deleteReview(user, reviewId);
+        Integer examPaperId = 0;
+        try{
+            examPaperId = es.deleteReview(user, reviewId);
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
+            return "redirect:/";
+        } catch (Exception e){
+            setFlashToastMessage(redirectAttributes, false, "알 수 없는 에러가 발생했습니다.");
+            return "redirect:/";
+        }
 
-        return "exam/exam-reviewForm";
+        return "redirect:/exam/review?paper=" + examPaperId;
 
     }
 
