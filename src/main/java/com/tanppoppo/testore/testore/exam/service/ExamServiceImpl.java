@@ -633,6 +633,7 @@ public class ExamServiceImpl implements ExamService {
 
         for (ReviewEntity entity : reviewEntityList) {
             ReviewDTO reviewDTO = ReviewDTO.builder()
+                    .memberId(entity.getMemberId().getMemberId())
                     .rating(entity.getRating())
                     .content(entity.getContent())
                     .createdDate(entity.getCreatedDate())
