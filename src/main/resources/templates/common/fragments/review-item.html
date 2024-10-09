@@ -29,10 +29,12 @@
         <div class="hidden absolute right-2 z-10 mt-1 w-32 origin-top-right rounded-md bg-white shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:w-44">
           <button
                   class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+                  th:onclick="'location.href=\'updateReviewForm?review=' + ${reviewItem.reviewId} + '\''"
                   id="correctButton">수정하기
           </button>
           <button
                   class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+                  th:onclick="'location.href=\'deleteReview?review=' + ${reviewItem.reviewId} + '\''"
                   id="deleteButton">삭제하기
           </button>
         </div>

@@ -640,6 +640,7 @@ public class ExamServiceImpl implements ExamService {
 
         for (ReviewEntity entity : reviewEntityList) {
             ReviewDTO reviewDTO = ReviewDTO.builder()
+                    .reviewId(entity.getReviewId())
                     .memberId(entity.getMemberId().getMemberId())
                     .rating(entity.getRating())
                     .content(entity.getContent())
@@ -686,14 +687,11 @@ public class ExamServiceImpl implements ExamService {
      * 리뷰 수정 페이지 이동
      * @author KIMGEON64
      * @param user user 객체를 가져옵니다.
-     * @param examPaperId 시험지 키값을 가져옵니다.
      * @param reviewId 리뷰 키값을 가져옵니다.
      * @return reviewDTO를 반환합니다.
      */
     @Override
-    public ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int examPaperId, int reviewId) {
-
-        epr.findById(examPaperId).orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+    public ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int reviewId) {
 
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
@@ -701,11 +699,13 @@ public class ExamServiceImpl implements ExamService {
         ReviewEntity reviewEntity = rr.findById(reviewId)
                 .orElseThrow(()-> new EntityNotFoundException("리뷰 정보를 찾을 수 없습니다."));
 
-        if (reviewEntity.getMemberId().getMemberId().equals(memberEntity.getMemberId())){
+        if (!reviewEntity.getMemberId().getMemberId().equals(memberEntity.getMemberId())){
             throw new AccessDeniedException("인증회원과 리뷰정보가 일치하지 않습니다.");
         }
 
         ReviewDTO reviewDTO = ReviewDTO.builder()
+                .itemId(reviewEntity.getItemId())
+                .reviewId(reviewEntity.getReviewId())
                 .rating(reviewEntity.getRating())
                 .content(reviewEntity.getContent())
                 .build();
@@ -718,10 +718,9 @@ public class ExamServiceImpl implements ExamService {
      * 리뷰 수정
      * @author KIMGEON64
      * @param user user 객체를 가져옵니다.
-     * @param reviewId 리뷰 키값을 가져옵니다.
      */
     @Override
-    public void updateReview(AuthenticatedUser user, int reviewId, ReviewDTO reviewDTO) {
+    public void updateReview(AuthenticatedUser user, Integer reviewId, ReviewDTO reviewDTO) {
 
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
@@ -729,7 +728,7 @@ public class ExamServiceImpl implements ExamService {
         ReviewEntity reviewEntity = rr.findById(reviewId)
                 .orElseThrow(()-> new EntityNotFoundException("리뷰 정보를 찾을 수 없습니다."));
 
-        if (reviewEntity.getMemberId().getMemberId().equals(memberEntity.getMemberId())){
+        if (!reviewEntity.getMemberId().getMemberId().equals(memberEntity.getMemberId())){
             throw new AccessDeniedException("인증회원과 리뷰정보가 일치하지 않습니다.");
         }
 
@@ -745,7 +744,7 @@ public class ExamServiceImpl implements ExamService {
      * @param reviewId 리뷰 키값을 가져옵니다.
      */
     @Override
-    public void deleteReview(AuthenticatedUser user, int reviewId) {
+    public Integer deleteReview(AuthenticatedUser user, int reviewId) {
 
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
@@ -753,11 +752,13 @@ public class ExamServiceImpl implements ExamService {
         ReviewEntity reviewEntity = rr.findById(reviewId)
                 .orElseThrow(()-> new EntityNotFoundException("리뷰 정보를 찾을 수 없습니다."));
 
-        if (reviewEntity.getMemberId().getMemberId().equals(memberEntity.getMemberId())){
+        if (!reviewEntity.getMemberId().getMemberId().equals(memberEntity.getMemberId())){
             throw new AccessDeniedException("인증회원과 리뷰정보가 일치하지 않습니다.");
         }
 
         rr.delete(reviewEntity);
+
+        return reviewEntity.getItemId();
 
     }
 
