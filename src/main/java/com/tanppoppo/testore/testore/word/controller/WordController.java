@@ -6,6 +6,7 @@ import com.tanppoppo.testore.testore.word.service.WordService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import static com.tanppoppo.testore.testore.util.MessageUtil.*;
 
 @Controller
 @Slf4j
@@ -111,10 +114,10 @@ public class WordController {
      * @return 단어장 상세 페이지를 반환합니다.
      */
     @GetMapping("wordBookDetail")
-    public String wordBookDetail(Model model, @RequestParam(name = "wordbook") int wordBookId) {
-        Map<String, Object> detail = ws.selectWordBookDetail(wordBookId);
+    public String wordBookDetail(Model model, @RequestParam(name = "book") int wordBookId, @AuthenticationPrincipal AuthenticatedUser user) {
+        Map<String, Object> detail = ws.selectWordBookDetail(wordBookId, user);
         model.addAttribute("wordBookDTO", detail.get("wordBookDTO"));
-        model.addAttribute("nickName", detail.get("nickName"));
+        model.addAttribute("nickname", detail.get("nickName"));
         model.addAttribute("reviewCount", detail.get("reviewCount"));
         model.addAttribute("likeState", detail.get("likeState"));
         return "word/word-detail";
@@ -136,6 +139,25 @@ public class WordController {
     @GetMapping("search")
     public String search() {
         return "word/word-search";
+    }
+
+    /**
+     * 단어장 공개여부 페이지 이동
+     * @author MinCheolHa
+     * @return 단어장 상세 페이지를 반환합니다.
+     */
+    @GetMapping("updatePublicOption")
+    public String updatePublicOption(@RequestParam(name = "book") int wordBookId, @AuthenticationPrincipal AuthenticatedUser user, RedirectAttributes redirectAttributes){
+
+        try {
+            ws.updatePublicOptionByMemberId(wordBookId, user);
+            setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
+        }
+
+        return"redirect:/word/wordBookDetail?book="+wordBookId;
+
     }
 
 

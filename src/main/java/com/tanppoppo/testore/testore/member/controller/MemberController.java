@@ -223,4 +223,38 @@ public class MemberController {
 
     }
 
+    /**
+     * 북마크 추가및 삭제 기능
+     * @author MinCheolHa
+     * @param wordBookId 시험지 아이디를 가져옵니다.
+     * @param user 인증된 회원 정보를 가져옵니다.
+     * @return 시험지 상세 페이지를 반환합니다.
+     */
+    @GetMapping("bookmarkWordBook")
+    public String bookmarkWordBook(@RequestParam(name = "book") Integer wordBookId, RedirectAttributes redirectAttributes,
+                                   @AuthenticationPrincipal AuthenticatedUser user){
+
+        ms.createAndDeleteWordBookBookmarkByMemberId(wordBookId,user);
+        setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
+        return"redirect:/word/wordBookDetail?book="+wordBookId;
+
+    }
+
+    /**
+     * 단어장 좋아요 추가 및 삭제 기능
+     * @author MinCheolHa
+     * @param wordBookId 시험지 아이디를 가져옵니다.
+     * @param user 인증된 회원 정보를 가져옵니다.
+     * @return 시험지 상세 페이지를 반환합니다.
+     */
+    @GetMapping("likeWordBook")
+    public String likeWordBook(@RequestParam(name = "book") Integer wordBookId, RedirectAttributes redirectAttributes,
+                               @AuthenticationPrincipal AuthenticatedUser user){
+
+        ms.createAndDeleteWordBookItemLikeByMemberId(wordBookId,user);
+        setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
+        return"redirect:/word/wordBookDetail?book="+wordBookId;
+
+    }
+
 }

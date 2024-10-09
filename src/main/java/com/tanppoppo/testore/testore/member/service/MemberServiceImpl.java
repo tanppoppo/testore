@@ -13,6 +13,8 @@ import com.tanppoppo.testore.testore.member.repository.ItemLikeRepository;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
 import com.tanppoppo.testore.testore.member.repository.PointRepository;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
+import com.tanppoppo.testore.testore.word.entity.WordBookEntity;
+import com.tanppoppo.testore.testore.word.repository.WordBookRepository;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -40,6 +42,7 @@ public class MemberServiceImpl implements MemberService {
     private final BookmarkRepository br;
     private final ItemLikeRepository ilr;
     private final ExamPaperRepository epr;
+    private final WordBookRepository wbr;
 
     @Override
     public void joinMember(MemberDTO memberDTO) {
@@ -204,7 +207,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     /**
-     * 북마크 추가 및 삭제 기능
+     * 시험지 북마크 추가 및 삭제 기능
      * @param examPaperId 시험지 아이디를 가져옵니다.
      * @param user 인증된 회원정보를 가져옵니다.
      */
@@ -233,7 +236,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     /**
-     * 좋아요 추가 및 삭제 기능
+     * 시험지 좋아요 추가 및 삭제 기능
      * @param examPaperId 시험지 아이디를 가져옵니다.
      * @param user 인증된 회원정보를 가져옵니다.
      */
@@ -260,6 +263,69 @@ public class MemberServiceImpl implements MemberService {
         }
 
     }
+
+    /**
+     * 북마크 추가 및 삭제 기능
+     *
+     * @param wordBookId 단어장 아이디를 가져옵니다.
+     * @param user       인증된 회원정보를 가져옵니다.
+     */
+    @Override
+    public void createAndDeleteWordBookBookmarkByMemberId(Integer wordBookId, AuthenticatedUser user) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을수 없습니다."));
+
+        WordBookEntity wordBookEntity = wbr.findById(wordBookId)
+                .orElseThrow(() -> new EntityNotFoundException("단어장 정보를 찾을수 없습니다."));
+
+        BookmarkEntity selectBookmarkByMemberId = br.selectBookmarkByMemberId(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD);
+
+        if (selectBookmarkByMemberId == null) {
+            BookmarkEntity bookmarkEntity = BookmarkEntity.builder()
+                    .memberId(memberEntity)
+                    .itemId(wordBookEntity.getWordBookId())
+                    .itemType(ItemTypeEnum.WORD)
+                    .build();
+            br.save(bookmarkEntity);
+        } else {
+            br.delete(selectBookmarkByMemberId);
+        }
+
+    }
+
+    /**
+     * 좋아요 추가 및 삭제 기능
+     *
+     * @param wordBookId 단어장 아이디를 가져옵니다.
+     * @param user       인증된 회원정보를 가져옵니다.
+     */
+    @Override
+    public void createAndDeleteWordBookItemLikeByMemberId(Integer wordBookId, AuthenticatedUser user) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을수 없습니다."));
+
+        WordBookEntity wordBookEntity = wbr.findById(wordBookId)
+                .orElseThrow(() -> new EntityNotFoundException("단어장 정보를 찾을수 없습니다."));
+
+        ItemLikeEntity selectItemLikeByMemberId = ilr.selectItemLikeByMemberId(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD);
+
+        if (selectItemLikeByMemberId == null) {
+            ItemLikeEntity itemLikeEntity = ItemLikeEntity.builder()
+                    .memberId(memberEntity)
+                    .itemId(wordBookEntity.getWordBookId())
+                    .itemType(ItemTypeEnum.WORD)
+                    .build();
+            ilr.save(itemLikeEntity);
+        } else {
+            ilr.delete(selectItemLikeByMemberId);
+        }
+    }
+
+
+
+
 
 
 }

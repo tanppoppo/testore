@@ -11,6 +11,7 @@ import com.tanppoppo.testore.testore.word.repository.WordRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -136,7 +137,7 @@ public class WordServiceImpl implements WordService {
      * @return Map 객체 detail 을 반환합니다.
      */
     @Override
-    public Map<String, Object> selectWordBookDetail(int wordbookId) {
+    public Map<String, Object> selectWordBookDetail(int wordbookId, AuthenticatedUser user) {
 
         WordBookEntity wordBookEntity = wbr.findById(wordbookId)
                 .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
@@ -164,6 +165,55 @@ public class WordServiceImpl implements WordService {
 //        detail.put("likeState", wbr.getLikeState(memberEntity.getMemberId(), wordbookId));
         return detail;
 
+    }
+
+    /**
+     * 공개 여부 변경
+     * @param wordBookId 단어장 아이디를 가져옵니다.
+     * @param user       인증된 회원정보를 가져옵니다.
+     */
+    @Override
+    public void updatePublicOptionByMemberId(Integer wordBookId, AuthenticatedUser user) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을수 없습니다."));
+
+        WordBookEntity wordBookEntity = wbr.findById(wordBookId)
+                .orElseThrow(() -> new EntityNotFoundException("단어장 정보를 찾을수 없습니다."));
+
+        if (!memberEntity.getMemberId().equals(wordBookEntity.getOwnerId())) {
+            throw new AccessDeniedException("소유 권한이 없습니다.");
+        }
+
+        if (wordBookEntity.getPublicOption()) {
+            wordBookEntity.setPublicOption(false);
+        } else {
+            wordBookEntity.setPublicOption(true);
+        }
+
+        wbr.save(wordBookEntity);
+    }
+
+    /**
+     * 업데이트할 단어장 정보 조회
+     * @param wordBookId 단어장 id를 가져옵니다.
+     * @param userId user id를 가져옵니다.
+     * @return examResultDTO를 반환합니다.
+     */
+    @Override
+    public WordBookDTO selectUpdatedBookInfo (int wordBookId, Integer userId) {
+
+        WordBookEntity wordBookEntity = wbr.findById(wordBookId)
+                .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+        if (!userId.equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()) {
+            throw new AccessDeniedException("공개된 단어장이 아닙니다,");
+        }
+
+        WordBookDTO wordBookDTO = WordBookDTO.builder()
+                .build();
+
+        return wordBookDTO;
     }
 
 

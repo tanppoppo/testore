@@ -27,10 +27,13 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.*;
@@ -88,8 +91,12 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public List<ExamPaperDTO> getListItems(AuthenticatedUser user) {
 
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
         Sort sort = Sort.by(Sort.Direction.DESC, "examPaperId");
-        List<ExamPaperEntity> examPaperEntityList = epr.findByOwnerId(user.getId(), sort);
+        List<ExamPaperEntity> examPaperEntityList = epr.findByOwnerIdWithBookmarks(memberEntity.getMemberId(), sort);
+
         List<ExamPaperDTO> items = new ArrayList<>();
 
         for (ExamPaperEntity entity : examPaperEntityList) {
@@ -101,6 +108,7 @@ public class ExamServiceImpl implements ExamService {
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
                     .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
                     .shareCount(epr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .isBookmarked(br.getBookmarkState(user.getId(), entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .build();
             items.add(examPaperDTO);
         }
@@ -537,6 +545,13 @@ public class ExamServiceImpl implements ExamService {
         MemberEntity memberEntity = mr.findById(examPaperEntity.getCreatorId().getMemberId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
+        if (!userId.equals(examPaperEntity.getOwnerId())){
+            if (!examPaperEntity.getPublicOption()) {
+                throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+            }
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
         if (!userId.equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
             throw new AccessDeniedException("공개된 시험지가 아닙니다.");
         }
@@ -625,16 +640,18 @@ public class ExamServiceImpl implements ExamService {
 
         for (ReviewEntity entity : reviewEntityList) {
             ReviewDTO reviewDTO = ReviewDTO.builder()
+                    .memberId(entity.getMemberId().getMemberId())
                     .rating(entity.getRating())
                     .content(entity.getContent())
                     .createdDate(entity.getCreatedDate())
+                    .updateDate(entity.getUpdateDate())
+                    .nickname(memberEntity.getNickname())
                     .build();
             reviewDTOList.add(reviewDTO);
         }
 
         Map<String, Object> result = new HashMap<>();
         result.put("reviewDTOList", reviewDTOList);
-        result.put("nickname", memberEntity.getNickname());
 
         return result;
 
@@ -718,7 +735,6 @@ public class ExamServiceImpl implements ExamService {
 
         reviewEntity.setRating(reviewDTO.getRating());
         reviewEntity.setContent(reviewDTO.getContent());
-        reviewEntity.setCreatedDate(reviewDTO.getCreatedDate());
 
     }
 
@@ -742,6 +758,112 @@ public class ExamServiceImpl implements ExamService {
         }
 
         rr.delete(reviewEntity);
+
+    }
+
+    /**
+     * 추천 시험지 반환
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return ExamPaperDTO 형식의 recommendExam 를 반환 합니다.
+     */
+    @Override
+    public List<ExamPaperDTO> recommendedExamPaper(AuthenticatedUser user) {
+
+        mr.findById(user.getId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        Pageable pageable = PageRequest.of(0, 3);
+        List<ExamPaperEntity> examPaperEntity = epr.findRandomExamPapers(pageable);
+
+        List<ExamPaperDTO> recommendedExamPaper = new ArrayList<>();
+
+        for (ExamPaperEntity entity : examPaperEntity) {
+            ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
+                    .examPaperId(entity.getExamPaperId())
+                    .title(entity.getTitle())
+                    .content(entity.getContent())
+                    .imagePath(entity.getImagePath())
+                    .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .shareCount(epr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .build();
+            recommendedExamPaper.add(examPaperDTO);
+
+        }
+
+        return recommendedExamPaper;
+
+    }
+
+    /**
+     * 이번주 인기 시험지 반환
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return ExamPaperDTO 형식의 popularityExam 를 반환 합니다.
+     */
+    @Override
+    public List<ExamPaperDTO> likedExamPaper(AuthenticatedUser user) {
+
+        mr.findById(user.getId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime monday = now.with(DayOfWeek.MONDAY).toLocalDate().atStartOfDay();
+        LocalDateTime sunday = now.with(DayOfWeek.SUNDAY).toLocalDate().atTime(23, 59, 59);
+
+        Pageable pageable = PageRequest.of(0, 3);
+        List<ExamPaperEntity> examPaperEntity = epr.findPopularExamsThisWeek(monday, sunday, pageable);
+
+        List<ExamPaperDTO> likedExamPaper = new ArrayList<>();
+
+        for (ExamPaperEntity entity : examPaperEntity) {
+            ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
+                    .examPaperId(entity.getExamPaperId())
+                    .title(entity.getTitle())
+                    .content(entity.getContent())
+                    .imagePath(entity.getImagePath())
+                    .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .shareCount(epr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .build();
+            likedExamPaper.add(examPaperDTO);
+
+        }
+
+        return likedExamPaper;
+
+    }
+
+    /**
+     * 많이 공유된 시험지 반환
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return ExamPaperDTO 형식의 muchSharedExam 를 반환 합니다.
+     */
+    @Override
+    public List<ExamPaperDTO> muchSharedExamPaper(AuthenticatedUser user) {
+
+        mr.findById(user.getId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        Pageable pageable = PageRequest.of(0, 3);
+        List<ExamPaperEntity> examPaperEntity = epr.findSortedExamPapersByShareCount(pageable);
+
+        List<ExamPaperDTO> muchSharedExamPaper = new ArrayList<>();
+
+        for (ExamPaperEntity entity : examPaperEntity) {
+            ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
+                    .examPaperId(entity.getExamPaperId())
+                    .title(entity.getTitle())
+                    .content(entity.getContent())
+                    .imagePath(entity.getImagePath())
+                    .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .shareCount(epr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .build();
+            muchSharedExamPaper.add(examPaperDTO);
+
+        }
+
+        return muchSharedExamPaper;
 
     }
 

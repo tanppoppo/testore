@@ -16,7 +16,10 @@ public interface WordService {
 
     List<WordBookDTO> getListItems(AuthenticatedUser user);
 
-    Map<String, Object> selectWordBookDetail(int wordbookId);
+    Map<String, Object> selectWordBookDetail(int wordbookId, AuthenticatedUser user);
 
+    void updatePublicOptionByMemberId(Integer wordBookId, AuthenticatedUser user);
+
+    WordBookDTO selectUpdatedBookInfo(int wordBookId, Integer id);
 
 }
