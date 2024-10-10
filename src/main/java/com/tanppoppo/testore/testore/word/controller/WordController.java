@@ -1,5 +1,6 @@
 package com.tanppoppo.testore.testore.word.controller;
 
+import com.tanppoppo.testore.testore.member.dto.ReviewDTO;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import com.tanppoppo.testore.testore.word.dto.WordBookDTO;
 import com.tanppoppo.testore.testore.word.service.WordService;
@@ -134,10 +135,20 @@ public class WordController {
     /**
      * 단어장 찾아보기 페이지 이동
      * @author gyahury
+     * @param model 모델 객체를 전달합니다.
+     * @param user user 객체를 전달합니다.
      * @return 단어장 상세 페이지를 반환합니다.
      */
     @GetMapping("search")
-    public String search() {
+    public String search(Model model, @AuthenticationPrincipal AuthenticatedUser user) {
+
+        List<WordBookDTO> recommendedWordBook = ws.recommendedWordBook(user);
+        List<WordBookDTO> likedWordBook = ws.likedWordBook(user);
+        List<WordBookDTO> muchSharedWordBook = ws.muchSharedWordBook(user);
+        model.addAttribute("recommendedWordBook", recommendedWordBook);
+        model.addAttribute("likedWordBook", likedWordBook);
+        model.addAttribute("muchSharedWordBook", muchSharedWordBook);
+
         return "word/word-search";
     }
 
@@ -160,5 +171,107 @@ public class WordController {
 
     }
 
+    /**
+     * 리뷰 목록 페이지 이동
+     * @author MinCheolHa
+     * @param model 모델 객체를 전달합니다.
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param wordBookId 단어장 ID를 전달합니다.
+     * @return 시험지 리뷰 목록 페이지를 반환합니다.
+     */
+    @GetMapping("review")
+    public String reviewForm(@AuthenticationPrincipal AuthenticatedUser user,
+                             @RequestParam(name = "book") int wordBookId, Model model){
+
+        Map<String, Object> review = ws.getListReviews(user, wordBookId);
+        model.addAttribute("reviewDTOList", review.get("reviewDTOList"));
+
+        return "word/word-review";
+
+    }
+
+    /**
+     * 리뷰 생성 페이지 이동
+     * @author MinCheolHa
+     * @return 리뷰 생성 페이지를 반환합니다.
+     */
+    @GetMapping("createReviewForm")
+    public String createReviewForm(@RequestParam(name = "book") int wordBookId, Model model){
+
+        model.addAttribute("wordBookId", wordBookId);
+        return "word/create-review-form";
+
+    }
+
+    /**
+     * 리뷰 저장
+     * @author MinCheolHa
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param wordBookId 단어장 ID를 전달합니다.
+     * @return 시험지 리뷰 목록 페이지를 반환합니다.
+     */
+    @PostMapping("createReview")
+    public String createReview(@AuthenticationPrincipal AuthenticatedUser user,
+                               @RequestParam(name = "book") int wordBookId, ReviewDTO reviewDTO){
+
+        ws.createReview(user, wordBookId, reviewDTO);
+
+        return "redirect:/word/wordBookDetail?book=" + wordBookId;
+    }
+
+    /**
+     * 리뷰 수정 페이지 이동
+     * @author MinCheolHa
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param wordBookId 단어장 ID를 전달합니다.
+     * @param reviewId 리뷰 ID를 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 시험지 리뷰 목록 페이지를 반환합니다.
+     */
+    @GetMapping("updateReviewForm")
+    public String updateReviewForm(@AuthenticationPrincipal AuthenticatedUser user,
+                                   @RequestParam(name = "book") int wordBookId,
+                                   @RequestParam(name = "review") int reviewId, Model model){
+
+        ReviewDTO reviewDTO = ws.selectUpdatedReviewInfo(user, wordBookId, reviewId);
+        model.addAttribute("rating", reviewDTO.getRating());
+        model.addAttribute("content", reviewDTO.getContent());
+
+        return "word/word-updateReviewForm";
+
+    }
+
+    /**
+     * 리뷰 수정
+     * @author MinCheolHa
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param reviewId 리뷰 ID를 전달합니다.
+     * @return 시험지 리뷰 목록 페이지를 반환합니다.
+     */
+    @GetMapping("updateReview")
+    public String updateReview(@AuthenticationPrincipal AuthenticatedUser user,
+                               @RequestParam(name = "review") int reviewId,
+                               ReviewDTO reviewDTO){
+
+        ws.updateReview(user, reviewId, reviewDTO);
+
+        return "word/word-updateReviewForm";
+    }
+
+    /**
+     * 리뷰 삭제
+     * @author MinCheolHa
+     * @param reviewId 리뷰 ID를 전달합니다.
+     * @return 시험지 리뷰 목록 페이지를 반환합니다.
+     */
+    @GetMapping("deleteReview")
+    public String deleteReview(@AuthenticationPrincipal AuthenticatedUser user,
+                               @RequestParam(name = "review") int reviewId){
+
+        ws.deleteReview(user, reviewId);
+
+        return "word/word-reviewForm";
+
+    }
 
 }

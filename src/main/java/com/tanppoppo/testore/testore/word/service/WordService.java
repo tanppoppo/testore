@@ -1,5 +1,6 @@
 package com.tanppoppo.testore.testore.word.service;
 
+import com.tanppoppo.testore.testore.member.dto.ReviewDTO;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import com.tanppoppo.testore.testore.word.dto.WordBookDTO;
 
@@ -22,4 +23,19 @@ public interface WordService {
 
     WordBookDTO selectUpdatedBookInfo(int wordBookId, Integer id);
 
+    Map<String, Object> getListReviews(AuthenticatedUser user, int wordBookId);
+
+    void createReview(AuthenticatedUser user, int wordBookId, ReviewDTO reviewDTO);
+
+    ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int wordBookId, int reviewId);
+
+    void updateReview(AuthenticatedUser user, int reviewId, ReviewDTO reviewDTO);
+
+    void deleteReview(AuthenticatedUser user, int reviewId);
+
+    List<WordBookDTO> recommendedWordBook(AuthenticatedUser user);
+
+    List<WordBookDTO> likedWordBook(AuthenticatedUser user);
+
+    List<WordBookDTO> muchSharedWordBook(AuthenticatedUser user);
 }

@@ -35,5 +35,6 @@ public class WordBookDTO {
     private Integer wordItemCount;
     private Integer likeCount;
     private Integer shareCount;
+    private Boolean isBookmarked;
 
 }
