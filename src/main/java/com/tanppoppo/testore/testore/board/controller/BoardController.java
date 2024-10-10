@@ -3,10 +3,10 @@ package com.tanppoppo.testore.testore.board.controller;
 
 import com.tanppoppo.testore.testore.board.dto.BoardDTO;
 import com.tanppoppo.testore.testore.board.service.BoardService;
-import com.tanppoppo.testore.testore.common.util.BoardTypeEnum;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
@@ -53,21 +53,18 @@ public class BoardController {
      */
     @PostMapping("/create")
     public String createBoard(BoardDTO boardDTO, @AuthenticationPrincipal AuthenticatedUser user, RedirectAttributes redirectAttributes) {
-        // 관리자 권한 체크
-        if (boardDTO.getBoardType().equals(BoardTypeEnum.NOTICE) && !user.getMembershipLevel().equals((byte) 99)) {
-            setFlashToastMessage(redirectAttributes, false, "관리자만 공지사항을 작성할 수 있습니다.");
-            return "redirect:/board/createBoardForm"; // 글쓰기 폼으로 다시 리다이렉트
-        }
 
         try {
-            // 게시글 저장
             bs.saveBoard(boardDTO, user.getId());
             setFlashToastMessage(redirectAttributes, true, "게시글이 성공적으로 작성되었습니다.");
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
         } catch (Exception e) {
             log.error("게시글 작성 중 오류 발생", e);
             setFlashToastMessage(redirectAttributes, false, "게시글 작성 중 문제가 발생했습니다.<br>다시 시도해주세요.");
         }
         return "redirect:/";
+
     }
 
     /**

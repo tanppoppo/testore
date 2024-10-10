@@ -3,7 +3,6 @@ package com.tanppoppo.testore.testore.board.service;
 import com.tanppoppo.testore.testore.board.dto.BoardDTO;
 import com.tanppoppo.testore.testore.board.entity.BoardEntity;
 import com.tanppoppo.testore.testore.board.repository.BoardRepository;
-import com.tanppoppo.testore.testore.board.service.BoardService;
 import com.tanppoppo.testore.testore.common.util.BoardTypeEnum;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
@@ -11,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,21 +41,24 @@ public class BoardServiceImpl implements BoardService {
      * @param boardDTO 게시글 정보가 담긴 DTO
      * @param userId 게시글 작성자의 사용자 ID
      * @throws EntityNotFoundException 회원이 존재하지 않을 경우 발생
-     * @throws RuntimeException 관리자만 공지사항을 작성할 수 있음
+     * @throws AccessDeniedException 관리자만 공지사항을 작성할 수 있음
      */
     @Override
     public void saveBoard(BoardDTO boardDTO, Integer userId) {
-        log.info("새로운 게시글을 저장합니다 : {}", boardDTO);
 
         MemberEntity memberEntity = mr.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
 
-            BoardEntity boardEntity = BoardEntity.builder()
-                    .member(memberEntity)
-                    .boardType(BoardTypeEnum.valueOf(boardDTO.getBoardType()))
-                    .title(boardDTO.getTitle())
-                    .content(boardDTO.getContent())
-                    .build();
+        if (boardDTO.getBoardType().equals(BoardTypeEnum.NOTICE) && !memberEntity.getMembershipLevel().equals((byte) 99)) {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+        BoardEntity boardEntity = BoardEntity.builder()
+                .member(memberEntity)
+                .boardType(BoardTypeEnum.valueOf(boardDTO.getBoardType()))
+                .title(boardDTO.getTitle())
+                .content(boardDTO.getContent())
+                .build();
 
             br.save(boardEntity);
 
@@ -103,10 +106,11 @@ public class BoardServiceImpl implements BoardService {
         if(!boardEntity.getMember().getMemberId().equals(userId)) {
             throw new RuntimeException("게시글 작성자만 수정할 수 있습니다.");
         }
+
         boardEntity.setTitle(boardDTO.getTitle());
         boardEntity.setContent(boardDTO.getContent());
 
-        br.save(boardEntity); // DB에 수정된 게시글 저장
+        br.save(boardEntity);
     }
 
     /**
@@ -130,4 +134,5 @@ public class BoardServiceImpl implements BoardService {
 
         br.delete(boardEntity);
     }
+
 }

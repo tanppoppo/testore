@@ -24,7 +24,6 @@ public class AuthenticatedUser implements UserDetails {
 	String password;
 	String nickname;
 	boolean status;
-	Byte MembershipLevel;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
