@@ -58,4 +58,16 @@ public interface WordBookRepository extends JpaRepository<WordBookEntity, Intege
     @Query("SELECT ep FROM WordBookEntity ep LEFT JOIN ItemLikeEntity il ON ep.wordBookId = il.itemId WHERE ep.publicOption = true AND il.createdDate BETWEEN :monday AND :sunday GROUP BY ep.wordBookId ORDER BY COUNT(il) DESC")
     List<WordBookEntity> findPopularWordsThisWeek(@Param("monday") LocalDateTime monday, @Param("sunday") LocalDateTime sunday, Pageable pageable);
 
+    // 전체 시험지 랜덤 반환 -> publicOption 고려
+    @Query("SELECT ep FROM WordBookEntity ep WHERE ep.publicOption = true ORDER BY FUNCTION('RAND')")
+    List<WordBookEntity> findRandomWordBooks(Pageable pageable);
+
+    // 시험지 공유수 순위 정렬하여 Entity 반환 -> publicOption 고려
+    @Query("SELECT ep FROM WordBookEntity ep WHERE ep.publicOption = true GROUP BY ep ORDER BY COUNT(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 END) DESC")
+    List<WordBookEntity> findSortedWordBooksByShareCount(Pageable pageable);
+
+    // 이번주 인기 시험지 추천 -> publicOption 고려
+    @Query("SELECT ep FROM WordBookEntity ep LEFT JOIN ItemLikeEntity il ON ep.wordBookId = il.itemId WHERE ep.publicOption = true AND il.createdDate BETWEEN :monday AND :sunday GROUP BY ep.wordBookId ORDER BY COUNT(il) DESC")
+    List<WordBookEntity> findPopularWordsThisWeek(@Param("monday") LocalDateTime monday, @Param("sunday") LocalDateTime sunday, Pageable pageable);
+
 }
