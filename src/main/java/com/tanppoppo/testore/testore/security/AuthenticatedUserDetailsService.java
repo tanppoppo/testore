@@ -38,6 +38,7 @@ public class AuthenticatedUserDetailsService implements UserDetailsService {
                 .email(memberEntity.getEmail())
                 .password(memberEntity.getMemberPassword())
                 .nickname(memberEntity.getNickname())
+                .membershipLevel(memberEntity.getMembershipLevel())
                 .status(memberEntity.getStatus())
                 .build();
 		
