@@ -79,6 +79,7 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         BoardDTO boardDTO = BoardDTO.builder()
+                .boardId(boardEntity.getBoardId())
                 .title(boardEntity.getTitle())
                 .content(boardEntity.getContent())
                 .memberId(boardEntity.getMember().getMemberId())
@@ -104,7 +105,7 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         if(!boardEntity.getMember().getMemberId().equals(userId)) {
-            throw new RuntimeException("게시글 작성자만 수정할 수 있습니다.");
+            throw new AccessDeniedException("게시글 작성자만 수정할 수 있습니다.");
         }
 
         boardEntity.setTitle(boardDTO.getTitle());
@@ -129,7 +130,7 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         if (!boardEntity.getMember().getMemberId().equals(userId)) {
-            throw new RuntimeException("게시글 작성자만 삭제할 수 있습니다.");
+            throw new AccessDeniedException("게시글 작성자만 삭제할 수 있습니다.");
         }
 
         br.delete(boardEntity);
