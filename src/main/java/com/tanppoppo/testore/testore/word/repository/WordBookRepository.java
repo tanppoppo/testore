@@ -43,8 +43,8 @@ public interface WordBookRepository extends JpaRepository<WordBookEntity, Intege
     Integer getShareCount(@Param("memberId") Integer memberId);
 
     // likeState : 좋아요 여부
-    @Query("SELECT COUNT(le) > 0 FROM ItemLikeEntity le WHERE le.memberId.memberId = :memberId AND le.itemId = :examPaperId")
-    Boolean getLikeState(@Param("memberId") Integer memberId, @Param("wordBookId") Integer wordBookId);
+//    @Query("SELECT COUNT(le) > 0 FROM ItemLikeEntity le WHERE le.memberId.memberId = :memberId AND le.itemId = :examPaperId")
+//    Boolean getLikeState(@Param("memberId") Integer memberId, @Param("wordBookId") Integer wordBookId);
 
     // 전체 시험지 랜덤 반환 -> publicOption 고려
     @Query("SELECT ep FROM WordBookEntity ep WHERE ep.publicOption = true ORDER BY FUNCTION('RAND')")
