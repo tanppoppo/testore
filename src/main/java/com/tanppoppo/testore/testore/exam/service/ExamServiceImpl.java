@@ -129,7 +129,7 @@ public class ExamServiceImpl implements ExamService {
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
 
-        MemberEntity memberEntity = mr.findById(examPaperEntity.getCreatorId().getMemberId())
+        MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         if (!user.getId().equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
@@ -155,7 +155,7 @@ public class ExamServiceImpl implements ExamService {
         detail.put("examPaperDTO", examPaperDTO);
         detail.put("nickname", examPaperEntity.getCreatorId().getNickname());
         detail.put("reviewCount", rr.getReviewCount(examPaperId));
-        detail.put("likeState", ilr.getLikeState(memberEntity.getMemberId(), examPaperId));
+        detail.put("likeState", ilr.getLikeState(memberEntity.getMemberId(), examPaperId, ItemTypeEnum.EXAM));
         detail.put("bookmarkState", br.getBookmarkState(memberEntity.getMemberId(), examPaperId, ItemTypeEnum.EXAM));
         return detail;
 
@@ -634,13 +634,12 @@ public class ExamServiceImpl implements ExamService {
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         Sort sort = Sort.by(Sort.Direction.DESC, "reviewId");
-        List<ReviewEntity> reviewEntityList = rr.findByItemId(examPaperId,sort);
+        List<ReviewEntity> reviewEntityList = rr.findByItemIdAndItemType(examPaperId,ItemTypeEnum.EXAM, sort);
 
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
 
         for (ReviewEntity entity : reviewEntityList) {
             ReviewDTO reviewDTO = ReviewDTO.builder()
-                    .reviewId(entity.getReviewId())
                     .memberId(entity.getMemberId().getMemberId())
                     .rating(entity.getRating())
                     .content(entity.getContent())
