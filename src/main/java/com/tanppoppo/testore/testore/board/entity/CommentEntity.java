@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -52,6 +53,7 @@ public class CommentEntity {
     @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDateTime createdDate; // 작성일
 
+    @LastModifiedDate
     @Column(name = "updated_date")
     private LocalDateTime updatedDate; // 수정일
 }

@@ -9,12 +9,14 @@
 <form class="p-10" th:action="@{${boardDTO} != null ? 'updateBoard' : 'createBoard'}" method="post">
   <input th:unless="${boardDTO}" type="hidden" name="type" th:value="${boardType != null ? boardType : 'ETC'}">
   <input th:if="${boardDTO}" type="hidden" th:name="board" th:value="${boardDTO != null ? boardDTO.boardId : ''}">
-  <th:block th:replace="~{common/fragments/input :: InputFragment('title', 'title', 'title', '게시글 제목', ${boardDTO.title})}"></th:block>
+  <th:block th:replace="~{common/fragments/input :: InputFragment('title', 'title', 'title', '게시글 제목', ${boardDTO != null ? boardDTO.title : ''})}"></th:block>
   <label for="content" class="block mt-6 mb-1 text-sm font-bold text-gray-400">게시글 내용</label>
   <textarea id="content" name="content" th:utext="${boardDTO != null ? boardDTO.content : ''}" class="w-full h-36 border-2 border-gray-300 mt-3 p-3 mx-0 rounded-lg focus:border-gray-600 focus:outline-none"></textarea>
   <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit', 'submitButton', '', ${boardDTO} != null ? '게시글 수정' : '게시글 생성', '', true)}"></th:block>
-  <th:block th:if="boardDTO">
-    <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'deleteButton', 'deleteButton', '게시글 삭제', 'deleteBoard?board='+${boardDTO.boardId}, false)}"></th:block>
+  <th:block th:if="${boardDTO}">
+    <th:block th:if="${#authentication.principal.id == boardDTO.memberId || #authentication.principal.membershipLevel == 99}">
+      <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'deleteButton', 'deleteButton', '게시글 삭제', 'deleteBoard?board='+${boardDTO.boardId}, false)}"></th:block>
+    </th:block>
   </th:block>
 </form>
 </html>

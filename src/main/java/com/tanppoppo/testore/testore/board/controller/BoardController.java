@@ -106,11 +106,15 @@ public class BoardController {
 
         try {
             BoardDTO boardDTO = bs.getBoardDetail(boardId);
+            bs.IsMyBoard(boardId, user);
             model.addAttribute("boardDTO", boardDTO);
             return "board/create-board-form";
         } catch (EntityNotFoundException e) {
             log.error("게시글 수정 페이지 이동 중 조회 오류 발생", e);
             setFlashToastMessage(redirectAttributes, false, "게시글을 찾을 수 없습니다.");
+        } catch (AccessDeniedException e) {
+            log.error("게시글 수정 페이지 이동 중 권한 오류 발생", e);
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
         } catch (Exception e) {
             log.error("게시글 수정 페이지 이동 중 오류 발생", e);
             setFlashToastMessage(redirectAttributes, false, "게시글 조회 중 문제가 발생했습니다.<br>다시 시도해주세요.");
