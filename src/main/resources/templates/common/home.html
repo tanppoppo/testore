@@ -43,7 +43,7 @@
   <div sec:authorize="not isAuthenticated()"><a th:href="@{/member/loginForm}" class="inline-block hover:underline hover:-translate-y-1 hover:scale-105 ease-in-out transition duration-700">로그인</a> 해주세요.</div>
 </div>
 <div class="p-4 text-gray-500">공지사항</div>
-<div th:if="${#lists.isEmpty(notices)}" class="text-gray-300 text-center font-bold mt-3">
+<div th:if="${#lists.isEmpty(notices)}" class="text-gray-300 text-sm text-center mt-3">
   공지사항이 없습니다.
 </div>
 <th:block th:unless="${#lists.isEmpty(notices)}">
