@@ -1,8 +1,11 @@
 package com.tanppoppo.testore.testore.board.service;
 
 import com.tanppoppo.testore.testore.board.dto.BoardDTO;
+import com.tanppoppo.testore.testore.board.dto.CommentDTO;
 import com.tanppoppo.testore.testore.board.entity.BoardEntity;
+import com.tanppoppo.testore.testore.board.entity.CommentEntity;
 import com.tanppoppo.testore.testore.board.repository.BoardRepository;
+import com.tanppoppo.testore.testore.board.repository.CommentRepository;
 import com.tanppoppo.testore.testore.common.util.BoardTypeEnum;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
@@ -11,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +29,7 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository br;
     private final MemberRepository mr;
+    private final CommentRepository cr;
 
     /**
      * 최근 5개의 공지사항을 가져오는 메서드
@@ -79,9 +84,9 @@ public class BoardServiceImpl implements BoardService {
                 .content(boardDTO.getContent())
                 .build();
 
-            br.save(boardEntity);
+        br.save(boardEntity);
 
-        }
+    }
 
     /**
      * 게시글 상세 정보를 조회하는 메서드
@@ -184,4 +189,125 @@ public class BoardServiceImpl implements BoardService {
 
     }
 
+    /**
+     * 댓글 작성
+     * @author dhkdtjs1541
+     * @param commentDTO 댓글 정보가 담긴 DTO
+     */
+    @Override
+    public void createComment(CommentDTO commentDTO) {
+        log.info("댓글을 작성합니다. 게시글 ID: {}, 작성자 ID: {}", commentDTO.getBoardId(), commentDTO.getMemberId());
+
+        BoardEntity boardEntity = br.findById(commentDTO.getBoardId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = mr.findById(commentDTO.getMemberId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다."));
+
+        CommentEntity commentEntity = CommentEntity.builder()
+                .content(commentDTO.getContent())
+                .board(boardEntity)
+                .member(memberEntity)
+                .build();
+
+        cr.save(commentEntity);
+
+        log.info("댓글이 성공적으로 저장되었습니다. 댓글 ID: {}", commentEntity.getCommentId());
+    }
+
+    /**
+     * 댓글 삭제
+     * @author dhkdtjs1541
+     * @param commentId 댓글 ID
+     * @param userId 현재 사용자 ID
+     * @throws EntityNotFoundException 해당 댓글을 찾을 수 없을 경우 발생
+     * @throws AccessDeniedException 작성자가 아닌 사용자가 댓글을 삭제하려고 할 경우 예외 발생
+     */
+    @Override
+    public void deleteComment(Integer commentId, Integer userId) {
+        log.info("댓글 삭제 요청. 댓글 ID: {}, 사용자 ID: {}", commentId, userId);
+
+        CommentEntity commentEntity = cr.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("댓글이 없습니다."));
+
+        if (!commentEntity.getMember().getMemberId().equals(userId)) {
+            log.warn("댓글 삭제 권한 없음. 댓글 작성자 ID: {}, 요청자 ID: {}", commentEntity.getMember().getMemberId(), userId);
+            throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
+        }
+
+        cr.delete(commentEntity);
+    }
+
+    /**
+     * 게시글에 달린 댓글 목록 조회
+     * @author dhkdtjs1541
+     * @param boardId 게시글 ID
+     * @return 댓글 목록
+     */
+    @Override
+    public List<CommentDTO> getCommentList(int boardId) {
+        Sort sort = Sort.by(Sort.Direction.ASC, "createdDate");
+        List<CommentEntity> commentEntityList = cr.findByBoard(boardId, sort);
+
+        List<CommentDTO> commentDTOList = new ArrayList<>();
+        for (CommentEntity entity : commentEntityList) {
+            CommentDTO dto = CommentDTO.builder()
+                    .commentId(entity.getCommentId())
+                    .boardId(entity.getBoard().getBoardId())
+                    .memberId(entity.getMember().getMemberId())
+                    .content(entity.getContent())
+                    .createdDate(entity.getCreatedDate())
+                    .updatedDate(entity.getUpdatedDate())
+                    .nickname(entity.getMember().getNickname())
+                    .build();
+            commentDTOList.add(dto);
+        }
+        return commentDTOList;
+    }
+
+    /**
+     * 댓글 ID로 댓글 정보를 조회
+     * @author dhkdtjs1541
+     * @param commentId 댓글 ID
+     * @return 조회된 댓글 정보
+     * @throws EntityNotFoundException 해당 댓글을 찾을 수 없을 경우 발생
+     */
+    @Override
+    public CommentDTO getCommentById(int commentId) {
+
+        CommentEntity commentEntity = cr.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+
+
+        return CommentDTO.builder()
+                .commentId(commentEntity.getCommentId())
+                .content(commentEntity.getContent())
+                .memberId(commentEntity.getMember().getMemberId()) // 작성자 ID
+                .nickname(commentEntity.getMember().getNickname()) // 닉네임
+                .createdDate(commentEntity.getCreatedDate())
+                .updatedDate(commentEntity.getUpdatedDate())
+                .build();
+    }
+
+    /**
+     * 댓글 수정
+     * @author dhkdtjs1541
+     * @param commentDTO 수정할 댓글 정보가 담긴 DTO
+     * @throws EntityNotFoundException 수정할 댓글을 찾을 수 없을 경우 발생
+     * @throws AccessDeniedException 댓글 작성자만 댓글을 수정할 수 있음
+     */
+
+    @Override
+    public void updateComment(CommentDTO commentDTO) {
+
+        CommentEntity commentEntity = cr.findById(commentDTO.getCommentId())
+                .orElseThrow(() -> new EntityNotFoundException("수정할 댓글이 없습니다."));
+
+        if (!commentEntity.getMember().getMemberId().equals(commentDTO.getMemberId())) {
+            throw new AccessDeniedException("댓글 수정 권한이 없습니다.");
+        }
+
+        commentEntity.setContent(commentDTO.getContent());
+        cr.save(commentEntity);
+    }
 }
