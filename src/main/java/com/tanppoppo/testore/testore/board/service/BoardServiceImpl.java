@@ -97,12 +97,17 @@ public class BoardServiceImpl implements BoardService {
         BoardEntity boardEntity = br.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
+        boardEntity.setViewCount(boardEntity.getViewCount() + 1);
+
         BoardDTO boardDTO = BoardDTO.builder()
                 .boardId(boardEntity.getBoardId())
                 .title(boardEntity.getTitle())
                 .content(boardEntity.getContent())
                 .memberId(boardEntity.getMember().getMemberId())
                 .nickname(boardEntity.getMember().getNickname())
+                .viewCount(boardEntity.getViewCount())
+                .createdDate(boardEntity.getCreatedDate())
+                .updatedDate(boardEntity.getUpdateDate())
                 .build();
 
         return boardDTO;

@@ -36,13 +36,13 @@
     </div>
   </div>
 </div>
-<div class="p-4 text-lg font-bold text-gray-600">
+<div class="p-4 text-lg text-gray-600">
   <th:block sec:authorize="isAuthenticated()">
     <th:block th:text="${#authentication.principal.nickname}"/>님 환영합니다.
   </th:block>
   <div sec:authorize="not isAuthenticated()"><a th:href="@{/member/loginForm}" class="inline-block hover:underline hover:-translate-y-1 hover:scale-105 ease-in-out transition duration-700">로그인</a> 해주세요.</div>
 </div>
-<div class="p-4 text-gray-500">공지사항</div>
+<div class="px-4 pt-4 pb-2 text-gray-500">공지사항</div>
 <div th:if="${#lists.isEmpty(notices)}" class="text-gray-300 text-sm text-center mt-3">
   공지사항이 없습니다.
 </div>
@@ -57,4 +57,14 @@
     </table>
   </div>
 </th:block>
+<div class="flex justify-center gap-4">
+  <div class="w-[48%] flex justify-center items-center gap-6 mt-8 p-8 border shadow-md rounded-xl">
+    <img class="w-14" th:src="@{/common/image/shop.png}">
+    <span class="font-bold text-lg text-gray-700">POINT SHOP</span>
+  </div>
+  <div class="w-[48%] flex justify-center items-center gap-6 mt-8 p-8 border shadow-md rounded-xl">
+    <img class="w-14" th:src="@{/common/image/ranking.png}">
+    <span class="font-bold text-lg text-gray-700">RANKING</span>
+  </div>
+</div>
 </html>
