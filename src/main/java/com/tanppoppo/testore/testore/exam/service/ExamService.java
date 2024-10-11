@@ -54,4 +54,6 @@ public interface ExamService {
     List<ExamPaperDTO> likedExamPaper(AuthenticatedUser user);
 
     List<ExamPaperDTO> muchSharedExamPaper(AuthenticatedUser user);
+
+    List<ExamPaperDTO> findExamPaperByMemberId(AuthenticatedUser user, String keyword);
 }
