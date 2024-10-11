@@ -150,6 +150,25 @@ public class WordController {
         model.addAttribute("muchSharedWordBook", muchSharedWordBook);
 
         return "word/word-search";
+
+    }
+
+    /**
+     * 단어장 찾기 기능
+     * @author KIMGEON64
+     * @param model 모델 객체를 전달합니다.
+     * @param keyword 사용자 입력 값을 전달합니다.
+     * @param user user 객체를 전달합니다.
+     * @return 찾은 시험지 페이지를 반환합니다.
+     */
+    @GetMapping("wordBookSearch")
+    public String wordBookSearch(Model model, @RequestParam(required = false) String keyword, @AuthenticationPrincipal AuthenticatedUser user){
+
+        List<WordBookDTO> wordBookDTOList = ws.findWordBookByMemberId(user, keyword);
+        model.addAttribute("items", wordBookDTOList);
+
+        return "word/word-searchWordBook";
+
     }
 
     /**

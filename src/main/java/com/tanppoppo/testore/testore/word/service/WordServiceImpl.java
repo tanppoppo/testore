@@ -46,7 +46,7 @@ public class WordServiceImpl implements WordService {
      */
     @Override
     public Integer countWordBooksByOwnerId(Integer ownerId) {
-        return wbr.countByOwnerId(ownerId);
+        return wbr.countWordBooksByOwnerId(ownerId);
     }
 
     /**
@@ -126,8 +126,7 @@ public class WordServiceImpl implements WordService {
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "wordBookId");
-        List<WordBookEntity> wordBookEntityList = wbr.findByOwnerIdWithBookmarks(memberEntity.getMemberId(), sort);
+        List<WordBookEntity> wordBookEntityList = wbr.findByOwnerIdWithBookmarks(memberEntity.getMemberId(), ItemTypeEnum.WORD);
 
         List<WordBookDTO> items = new ArrayList<>();
 
@@ -390,6 +389,7 @@ public class WordServiceImpl implements WordService {
      */
     @Override
     public List<WordBookDTO> recommendedWordBook(AuthenticatedUser user) {
+
         mr.findById(user.getId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         Pageable pageable = PageRequest.of(0, 3);
@@ -430,7 +430,7 @@ public class WordServiceImpl implements WordService {
         LocalDateTime sunday = now.with(DayOfWeek.SUNDAY).toLocalDate().atTime(23, 59, 59);
 
         Pageable pageable = PageRequest.of(0, 3);
-        List<WordBookEntity> wordBookEntity = wbr.findPopularWordsThisWeek(monday, sunday, pageable);
+        List<WordBookEntity> wordBookEntity = wbr.findPopularWordBooksThisWeek(monday, sunday, pageable);
 
         List<WordBookDTO> likedWordBook = new ArrayList<>();
 
@@ -486,5 +486,45 @@ public class WordServiceImpl implements WordService {
 
     }
 
+    /**
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @param keyword 사용자 입력 값을 가져옵니다.
+     * @return wordBookDTOS 시험 결과 dto 리스트를 반환합니다.
+     */
+    @Override
+    public List<WordBookDTO> findWordBookByMemberId(AuthenticatedUser user, String keyword) {
 
+        mr.findById(user.getId()).orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+
+        List<WordBookEntity> wordBookEntities;
+        Sort sort = Sort.by(Sort.Direction.DESC, "wordBookId");
+
+        if (keyword == null) {
+            wordBookEntities = wbr.findByPublicOption(true, sort);
+        } else {
+            wordBookEntities = wbr.findByPublicOptionAndTitleContaining(true, keyword, sort);
+        }
+
+        List<WordBookDTO> wordBookDTOS = new ArrayList<>();
+
+        for (WordBookEntity entity : wordBookEntities) {
+
+            WordBookEntity wordBookEntity = wbr.findById(entity.getWordBookId())
+                    .orElseThrow(() -> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+            WordBookDTO wordBookDTO = WordBookDTO.builder()
+                    .wordBookId(wordBookEntity.getWordBookId())
+                    .title(wordBookEntity.getTitle())
+                    .content(wordBookEntity.getContent())
+                    .imagePath(wordBookEntity.getImagePath())
+                    .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .shareCount(wbr.getShareCount(wordBookEntity.getCreatorId().getMemberId()))
+                    .isBookmarked(br.getBookmarkState(user.getId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
+                    .build();
+            wordBookDTOS.add(wordBookDTO);
+        }
+        return wordBookDTOS;
+    }
 }
