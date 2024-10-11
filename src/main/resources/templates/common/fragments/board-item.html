@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="BoardItemFragment(boardItem)">
+<tr class="border-b border-gray-200 whitespace-nowrap">
+  <td class="w-11/12 px-2 py-3 text-gray-700 cursor-pointer" th:text="${boardItem.title != null ? boardItem.title : ''}"
+      th:onclick="'location.href=\'board/boardDetail?board=' + ${boardItem.boardId} + '\''"></td>
+  <td class="py-3" th:text="${boardItem.updatedDate != null ? #temporals.format(boardItem.updatedDate, 'yyyy/MM/dd') : ''}"></td>
+</tr>
+</html>

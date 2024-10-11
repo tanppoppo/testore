@@ -76,15 +76,14 @@ public class BoardController {
      * @author dhkdtjs1541
      * @param model 모델 객체에 게시글 정보를 추가
      * @param boardId 조회할 게시글 ID
-     * @param user 현재 인증된 사용자 정보
      * @return 게시글 상세 페이지 뷰 이름
      */
-    @GetMapping("/detailBoard")
-    public String getBoardDetail(Model model, @RequestParam(name = "board") int boardId, @AuthenticationPrincipal AuthenticatedUser user) {
+    @GetMapping("/boardDetail")
+    public String boardDetail(Model model, @RequestParam(name = "board") int boardId) {
         try {
             BoardDTO boardDTO = bs.getBoardDetail(boardId);
             model.addAttribute("boardDTO", boardDTO);
-            return "board/detail";
+            return "board/board-detail";
         } catch (Exception e) {
             log.error("게시글 상세 조회 중 오류 발생", e);
             return "redirect:/";
@@ -106,11 +105,15 @@ public class BoardController {
 
         try {
             BoardDTO boardDTO = bs.getBoardDetail(boardId);
+            bs.IsMyBoard(boardId, user);
             model.addAttribute("boardDTO", boardDTO);
             return "board/create-board-form";
         } catch (EntityNotFoundException e) {
             log.error("게시글 수정 페이지 이동 중 조회 오류 발생", e);
             setFlashToastMessage(redirectAttributes, false, "게시글을 찾을 수 없습니다.");
+        } catch (AccessDeniedException e) {
+            log.error("게시글 수정 페이지 이동 중 권한 오류 발생", e);
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
         } catch (Exception e) {
             log.error("게시글 수정 페이지 이동 중 오류 발생", e);
             setFlashToastMessage(redirectAttributes, false, "게시글 조회 중 문제가 발생했습니다.<br>다시 시도해주세요.");

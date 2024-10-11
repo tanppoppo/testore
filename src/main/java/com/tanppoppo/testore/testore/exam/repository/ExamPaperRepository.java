@@ -1,5 +1,6 @@
 package com.tanppoppo.testore.testore.exam.repository;
 
+import com.tanppoppo.testore.testore.common.util.ItemTypeEnum;
 import com.tanppoppo.testore.testore.exam.entity.ExamPaperEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,8 +16,8 @@ import java.util.List;
 public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Integer> {
 
     // 북마크 여부 고려 정렬 리스트 반환
-    @Query("SELECT ep FROM ExamPaperEntity ep LEFT JOIN BookmarkEntity bm ON ep.examPaperId = bm.itemId WHERE ep.ownerId = :ownerId ORDER BY CASE WHEN bm IS NOT NULL THEN 1 ELSE 0 END DESC, ep.examPaperId DESC")
-    List<ExamPaperEntity> findByOwnerIdWithBookmarks(@Param("ownerId") Integer ownerId, Sort sort);
+    @Query("SELECT ep FROM ExamPaperEntity ep LEFT JOIN BookmarkEntity bm ON ep.examPaperId = bm.itemId AND bm.itemType = :itemType WHERE ep.ownerId = :ownerId ORDER BY CASE WHEN bm IS NOT NULL THEN 1 ELSE 0 END DESC, ep.examPaperId DESC")
+    List<ExamPaperEntity> findByOwnerIdWithBookmarks(Integer ownerId, ItemTypeEnum itemType);
 
 
     // 문제 수
@@ -42,5 +43,12 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     // 이번주 인기 시험지 추천 -> publicOption 고려
     @Query("SELECT ep FROM ExamPaperEntity ep LEFT JOIN ItemLikeEntity il ON ep.examPaperId = il.itemId WHERE ep.publicOption = true AND il.createdDate BETWEEN :monday AND :sunday GROUP BY ep.examPaperId ORDER BY COUNT(il) DESC")
     List<ExamPaperEntity> findPopularExamsThisWeek(@Param("monday") LocalDateTime monday, @Param("sunday") LocalDateTime sunday, Pageable pageable);
+
+    // 공개된 시험지 전체 반환 -> 재사용 가능
+    List<ExamPaperEntity> findByPublicOption(boolean publicOption, Sort sort);
+
+    // 키워드와 일치한 공개된 시험지 전체 반환 -> 재사용 가능
+    @Query("SELECT ep FROM ExamPaperEntity ep WHERE ep.publicOption = :publicOption AND ep.title LIKE %:title%")
+    List<ExamPaperEntity> findByPublicOptionAndTitleContaining(boolean publicOption, String title, Sort sort);
 
 }
