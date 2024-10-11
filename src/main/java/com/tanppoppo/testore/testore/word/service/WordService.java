@@ -38,4 +38,6 @@ public interface WordService {
     List<WordBookDTO> likedWordBook(AuthenticatedUser user);
 
     List<WordBookDTO> muchSharedWordBook(AuthenticatedUser user);
+
+    List<WordBookDTO> findWordBookByMemberId(AuthenticatedUser user, String keyword);
 }
