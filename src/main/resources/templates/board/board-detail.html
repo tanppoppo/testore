@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/layouts/layout}"
+      th:with="headerText='BOARD', footerText=''"
+      layout:fragment="Content"
+>
+<div class="p-10">
+  <div class="pb-4 text-sm text-gray-400"><span th:text="${boardDTO.nickname != null ? boardDTO.nickname : ''}"></span>
+    · <span th:text="${boardDTO.updatedDate != null ? #temporals.format(boardDTO.updatedDate, 'yyyy/MM/dd') : ''}"></span> · 조회 <span th:text="${boardDTO.viewCount != null ? boardDTO.viewCount : ''}"></span></div>
+  <div th:text="${boardDTO.title != null ? boardDTO.title : ''}" class="py-6 text-xl text-gray-700 font-bold"></div>
+  <div th:text="${boardDTO.content != null ? boardDTO.content : ''}" class="py-12"></div>
+  <hr class="mt-6">
+</div>
+</html>
