@@ -94,8 +94,7 @@ public class ExamServiceImpl implements ExamService {
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "examPaperId");
-        List<ExamPaperEntity> examPaperEntityList = epr.findByOwnerIdWithBookmarks(memberEntity.getMemberId(), sort);
+        List<ExamPaperEntity> examPaperEntityList = epr.findByOwnerIdWithBookmarks(memberEntity.getMemberId(), ItemTypeEnum.EXAM);
 
         List<ExamPaperDTO> items = new ArrayList<>();
 
@@ -864,6 +863,50 @@ public class ExamServiceImpl implements ExamService {
         }
 
         return muchSharedExamPaper;
+
+    }
+
+    /**
+     * 시험지 찾기 기능
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @param keyword 사용자 입력 값을 가져옵니다.
+     * @return examPaperDTOS 시험 결과 dto 리스트를 반환합니다.
+     */
+    @Override
+    public List<ExamPaperDTO> findExamPaperByMemberId(AuthenticatedUser user, String keyword) {
+
+        mr.findById(user.getId()).orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+
+        List<ExamPaperEntity> examPaperEntities;
+        Sort sort = Sort.by(Sort.Direction.DESC, "examPaperId");
+
+        if (keyword == null) {
+            examPaperEntities = epr.findByPublicOption(true, sort);
+        } else {
+            examPaperEntities = epr.findByPublicOptionAndTitleContaining(true, keyword, sort);
+        }
+
+        List<ExamPaperDTO> examPaperDTOS = new ArrayList<>();
+        
+        for (ExamPaperEntity entity : examPaperEntities) {
+
+            ExamPaperEntity examPaperEntity = epr.findById(entity.getExamPaperId())
+                    .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+            ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
+                    .examPaperId(examPaperEntity.getExamPaperId())
+                    .title(examPaperEntity.getTitle())
+                    .content(examPaperEntity.getContent())
+                    .imagePath(examPaperEntity.getImagePath())
+                    .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
+                    .shareCount(epr.getShareCount(examPaperEntity.getCreatorId().getMemberId()))
+                    .isBookmarked(br.getBookmarkState(user.getId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
+                    .build();
+            examPaperDTOS.add(examPaperDTO);
+        }
+        return examPaperDTOS;
 
     }
 
