@@ -2,6 +2,7 @@ package com.tanppoppo.testore.testore.exam.repository;
 
 import com.tanppoppo.testore.testore.common.util.ItemTypeEnum;
 import com.tanppoppo.testore.testore.exam.entity.ExamPaperEntity;
+import com.tanppoppo.testore.testore.exam.entity.ExamResultEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,7 +19,6 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     // 북마크 여부 고려 정렬 리스트 반환
     @Query("SELECT ep FROM ExamPaperEntity ep LEFT JOIN BookmarkEntity bm ON ep.examPaperId = bm.itemId AND bm.itemType = :itemType WHERE ep.ownerId = :ownerId ORDER BY CASE WHEN bm IS NOT NULL THEN 1 ELSE 0 END DESC, ep.examPaperId DESC")
     List<ExamPaperEntity> findByOwnerIdWithBookmarks(Integer ownerId, ItemTypeEnum itemType);
-
 
     // 문제 수
     @Query("SELECT COUNT(ei) FROM ExamQuestionEntity ei WHERE ei.examPaperId.examPaperId = :examPaperId")
@@ -50,5 +50,9 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     // 키워드와 일치한 공개된 시험지 전체 반환 -> 재사용 가능
     @Query("SELECT ep FROM ExamPaperEntity ep WHERE ep.publicOption = :publicOption AND ep.title LIKE %:title%")
     List<ExamPaperEntity> findByPublicOptionAndTitleContaining(boolean publicOption, String title, Sort sort);
+
+    // 가져온 파라미터의 examPaperId 시험지의 시험결과의 점수가 있는 사용자의 시험 결과만을 조회함.
+    @Query("SELECT er FROM ExamResultEntity er WHERE er.examPaperId.examPaperId = :examPaperId AND er.examScore IS NOT NULL AND er.startTime IS NOT NULL")
+    List<ExamResultEntity> findExamResultsByExamPaperId(Integer examPaperId);
 
 }
