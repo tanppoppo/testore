@@ -36,4 +36,7 @@ public class ExamResultDTO {
     private String timeTaken ;
     private Boolean passStatus;
 
+    private String nickName;
+    private Integer passScore;
+
 }

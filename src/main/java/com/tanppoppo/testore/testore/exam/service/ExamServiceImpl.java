@@ -910,4 +910,55 @@ public class ExamServiceImpl implements ExamService {
 
     }
 
+    /**
+     * 시험지 응시자 내역 조회
+     * @author KIMGEON64
+     * @param examPaperId 시험지 키값을 가져옵니다.
+     * @param user user 객체를 가져 옵니다.
+     * @return items 시험 결과 dto 리스트를 반환합니다.
+     */
+    @Override
+    public List<ExamResultDTO> selectExamHistory(Integer examPaperId, AuthenticatedUser user) {
+
+        mr.findById(user.getId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        List<ExamResultEntity> examResultEntityList = epr.findExamResultsByExamPaperId(examPaperEntity.getExamPaperId());
+
+        List<ExamResultDTO> items = new ArrayList<>();
+
+        for (ExamResultEntity entity : examResultEntityList) {
+
+            MemberEntity participant = entity.getMemberId();
+            if(participant == null) {
+                continue;
+            }
+
+            ExamResultDTO examResultDTO = ExamResultDTO.builder()
+                    .examPaperId(examPaperId)
+                    .examResultId(entity.getExamResultId())
+                    .startTime(entity.getStartTime())
+                    .endTime(entity.getEndTime())
+                    .status(String.valueOf(entity.getStatus()))
+                    .examPaperTitle(examPaperEntity.getTitle())
+                    .examPaperContent(examPaperEntity.getContent())
+                    .examPaperImagePath(examPaperEntity.getImagePath())
+                    .examPaperPassScore(examPaperEntity.getPassScore())
+                    .memberId(participant.getMemberId())
+                    .nickName(participant.getNickname())
+                    .examQuestionCount(epr.getExamItemCount(examPaperId))
+                    .passScore(examPaperEntity.getPassScore())
+                    .examScore(entity.getExamScore())
+                    .timeTaken(calculateTimeTaken(entity.getStartTime(), entity.getEndTime()))
+                    .passStatus(examPaperEntity.getPassScore() <= entity.getExamScore() ? true : false)
+                    .createdDate(entity.getCreatedDate())
+                    .build();
+            items.add(examResultDTO);
+        }
+        return items;
+
+    }
+
 }

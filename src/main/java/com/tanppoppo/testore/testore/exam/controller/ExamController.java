@@ -394,4 +394,21 @@ public class ExamController {
 
     }
 
+    /**
+     * 시험지 응시자 내역 조회 페이지 이동
+     * @author KIMGEON64
+     * @param examPaperId 시험지 ID를 전달합니다.
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @return 시험지 응시내역 페이지를 반환합니다.
+     */
+    @GetMapping("examHistory")
+    public String examHistory(@RequestParam(name = "paper") Integer examPaperId, @AuthenticationPrincipal AuthenticatedUser user, Model model){
+
+        List<ExamResultDTO> examResultDTOList = es.selectExamHistory(examPaperId, user);
+        model.addAttribute("items", examResultDTOList);
+
+        return "exam/exam-examHistory";
+
+    }
+
 }
