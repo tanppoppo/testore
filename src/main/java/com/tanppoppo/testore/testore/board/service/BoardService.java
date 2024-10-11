@@ -1,6 +1,7 @@
 package com.tanppoppo.testore.testore.board.service;
 
 import com.tanppoppo.testore.testore.board.dto.BoardDTO;
+import com.tanppoppo.testore.testore.board.dto.CommentDTO;
 import com.tanppoppo.testore.testore.board.entity.BoardEntity;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 
@@ -18,4 +19,14 @@ public interface BoardService {
     void deleteBoard(int boardId, Integer userId);
 
     void IsMyBoard(int boardId, AuthenticatedUser user);
+
+    void createComment(CommentDTO commentDTO);
+
+    void deleteComment(Integer commentId, Integer userId);
+
+    List<CommentDTO> getCommentList(int boardId);
+
+    CommentDTO getCommentById(int commentId);
+
+    void updateComment(CommentDTO commentDTO);
 }

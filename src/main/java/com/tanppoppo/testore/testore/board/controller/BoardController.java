@@ -2,6 +2,7 @@ package com.tanppoppo.testore.testore.board.controller;
 
 
 import com.tanppoppo.testore.testore.board.dto.BoardDTO;
+import com.tanppoppo.testore.testore.board.dto.CommentDTO;
 import com.tanppoppo.testore.testore.board.service.BoardService;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,19 +13,18 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 import static com.tanppoppo.testore.testore.util.MessageUtil.*;
 
 /**
  * 게시판 관련 요청을 처리하는 컨트롤러 클래스
- * @authoor dhkdtjs1541
- * @version 0.1.0
- * @since 0.1.0
+ * @author dhkdtjs1541
+ * @version 0.1.1
+ * @since 0.1.1
  */
 @Controller
 @Slf4j
@@ -72,17 +72,21 @@ public class BoardController {
     }
 
     /**
-     * 게시글의 상세 정보를 조회하는 메서드
+     * 게시글 상세 정보 조회
      * @author dhkdtjs1541
-     * @param model 모델 객체에 게시글 정보를 추가
-     * @param boardId 조회할 게시글 ID
-     * @return 게시글 상세 페이지 뷰 이름
+     * @param model 게시글과 댓글 데이터를 전달할 모델 객체
+     * @param boardId 조회활 게시글의 ID
+     * @return 게시글 상세 뷰의 이름을 반환함
      */
     @GetMapping("/boardDetail")
     public String boardDetail(Model model, @RequestParam(name = "board") int boardId) {
         try {
             BoardDTO boardDTO = bs.getBoardDetail(boardId);
             model.addAttribute("boardDTO", boardDTO);
+
+            List<CommentDTO> commentDTOList = bs.getCommentList(boardId);
+            model.addAttribute("commentDTOList", commentDTOList);
+
             return "board/board-detail";
         } catch (Exception e) {
             log.error("게시글 상세 조회 중 오류 발생", e);
@@ -173,4 +177,109 @@ public class BoardController {
         return "redirect:/";
 
     }
+
+    /**
+     * 댓글 작성
+     * @author dhkdtjs1541
+     * @param commentDTO 작성할 댓글 데이터
+     * @param user 현재 인증된 사용자 정보
+     * @param redirectAttributes 리다이렉트 시 플래시 메시지를 전달하기 위한 객체
+     * @return 홈으로 리다이렉트
+     */
+    @PostMapping("/createComment")
+    public String createComment(@ModelAttribute CommentDTO commentDTO,
+                               @AuthenticationPrincipal AuthenticatedUser user,
+                               RedirectAttributes redirectAttributes) {
+        commentDTO.setMemberId(user.getId());
+        commentDTO.setNickname(user.getNickname());
+
+        try {
+            bs.createComment(commentDTO);
+            setFlashToastMessage(redirectAttributes, true, "댓글이 성공적으로 작성되었습니다.");
+        } catch (Exception e) {
+            log.error("댓글 작성 중 오류 발생", e);
+            setFlashToastMessage(redirectAttributes, false, "댓글 작성 중 문제가 발생했습니다.<br>다시 시도해주세요.");
+        }
+
+        return "redirect:/";
+    }
+
+    /**
+     * 댓글 삭제
+     * @author dhkdtjs1541
+     * @param commentDTO 삭제할 댓글 데이터
+     * @param user 현재 인증된 사용자 정보
+     * @param redirectAttributes 리다이렉트 시 플래시 메시지를 전달하기 위한 객체
+     * @return 홈으로 리다이렉트
+     */
+    @GetMapping("/deleteComment")
+    public String deleteComment(@ModelAttribute CommentDTO commentDTO,
+                                @AuthenticationPrincipal AuthenticatedUser user,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            bs.deleteComment(commentDTO.getCommentId(), user.getId()); // 댓글 삭제 서비스 호출
+            setFlashToastMessage(redirectAttributes, true, "댓글이 성공적으로 삭제되었습니다.");
+        } catch (EntityNotFoundException e) {
+            log.error("댓글 삭제 중 오류 발생: 댓글을 찾을 수 없습니다.", e);
+            setFlashToastMessage(redirectAttributes, false, "삭제하려는 댓글을 찾을 수 없습니다.");
+        } catch (AccessDeniedException e) {
+            log.error("댓글 삭제 권한 오류 발생", e);
+            setFlashToastMessage(redirectAttributes, false, "댓글 삭제 권한이 없습니다.");
+        } catch (Exception e) {
+            log.error("댓글 삭제 중 오류 발생", e);
+            setFlashToastMessage(redirectAttributes, false, "댓글 삭제 중 문제가 발생했습니다.<br>다시 시도해주세요.");
+        }
+
+        return "redirect:/";
+    }
+
+    /**
+     * 댓글 수정 폼으로 이동
+     * @author dhkdtjs1541
+     * @param commentId 수정할 댓글의 ID
+     * @param model 댓글 정보를 뷰로 전달할 모델 객체
+     * @return 댓글 수정 폼 페이지의 뷰 이름
+     */
+    @GetMapping("/updateCommentForm")
+    public String updateCommentForm(@RequestParam(name = "commentId") int commentId, Model model) {
+        try {
+            CommentDTO commentDTO = bs.getCommentById(commentId);
+            model.addAttribute("commentDTO", commentDTO);
+            return "board/update-comment-form";
+        } catch (EntityNotFoundException e) {
+            log.error("댓글 수정 페이지 이동 중 오류 발생", e);
+            return "redirect:/";
+        }
+    }
+
+    /**
+     * 댓글 수정
+     * @author dhkdtjs1541
+     * @param commentDTO 수정할 댓글 정보가 담긴 DTO 객체
+     * @param user 현재 인증된 사용자 정보
+     * @param redirectAttributes 리다이렉트 시 플래시 메시지를 전달하기 위한 객체
+     * @return 수정 후 홈으로 리다이렉트
+     */
+    @PostMapping("/updateComment")
+    public String updateComment(@ModelAttribute CommentDTO commentDTO,
+                                @AuthenticationPrincipal AuthenticatedUser user,
+                                RedirectAttributes redirectAttributes) {
+        commentDTO.setMemberId(user.getId());
+
+        try {
+            bs.updateComment(commentDTO);
+            setFlashToastMessage(redirectAttributes, true, "댓글이 성공적으로 수정되었습니다.");
+        } catch (EntityNotFoundException e) {
+            log.error("댓글 수정 중 오류 발생: 댓글을 찾을 수 없습니다.", e);
+            setFlashToastMessage(redirectAttributes, false, "수정하려는 댓글을 찾을 수 없습니다.");
+        } catch (AccessDeniedException e) {
+            log.error("댓글 수정 권한 오류 발생", e);
+            setFlashToastMessage(redirectAttributes, false, "댓글 수정 권한이 없습니다.");
+        } catch (Exception e) {
+            log.error("댓글 수정 중 오류 발생", e);
+            setFlashToastMessage(redirectAttributes, false, "댓글 수정 중 문제가 발생했습니다.<br>다시 시도해주세요.");
+        }
+        return "redirect:/";
+    }
+
 }
