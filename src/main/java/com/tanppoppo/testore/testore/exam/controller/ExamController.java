@@ -205,6 +205,23 @@ public class ExamController {
     }
 
     /**
+     * 시험지 찾기 기능
+     * @author KIMGEON64
+     * @param model 모델 객체를 전달합니다.
+     * @param keyword 사용자 입력 값을 전달합니다.
+     * @param user user 객체를 전달합니다.
+     * @return 찾은 시험지 페이지를 반환합니다.
+     */
+    @GetMapping("examSearch")
+    public String searchExam(Model model, @RequestParam(required = false) String keyword, @AuthenticationPrincipal AuthenticatedUser user){
+
+        List<ExamPaperDTO> examPaperDTOList = es.findExamPaperByMemberId(user, keyword);
+        model.addAttribute("items", examPaperDTOList);
+        return "exam/exam-searchExam";
+
+    }
+
+    /**
      * 시험 응시 페이지 이동
      * @author gyahury
      * @param model 모델 객체를 전달합니다.
