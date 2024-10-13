@@ -131,12 +131,16 @@ public class WordController {
      */
     @GetMapping("wordBookDetail")
     public String wordBookDetail(Model model, @RequestParam(name = "book") int wordBookId, @AuthenticationPrincipal AuthenticatedUser user) {
+
         Map<String, Object> detail = ws.selectWordBookDetail(wordBookId, user);
         model.addAttribute("wordBookDTO", detail.get("wordBookDTO"));
         model.addAttribute("nickname", detail.get("nickName"));
         model.addAttribute("reviewCount", detail.get("reviewCount"));
         model.addAttribute("likeState", detail.get("likeState"));
+        model.addAttribute("bookmarkState", detail.get("bookmarkState"));
+
         return "word/word-detail";
+
     }
 
     /**
