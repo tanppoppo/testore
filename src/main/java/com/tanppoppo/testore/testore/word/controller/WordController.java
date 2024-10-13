@@ -3,8 +3,8 @@ package com.tanppoppo.testore.testore.word.controller;
 import com.tanppoppo.testore.testore.member.dto.ReviewDTO;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import com.tanppoppo.testore.testore.word.dto.WordBookDTO;
+import com.tanppoppo.testore.testore.word.dto.WordDTO;
 import com.tanppoppo.testore.testore.word.service.WordService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -82,11 +82,28 @@ public class WordController {
     }
 
     /**
+     * 단어 추가 페이지
+     * @author gyahury
+     * @return 단어장 생성 페이지를 반환합니다.
+     */
+    @GetMapping("wordAddForm")
+    public String wordAddForm(Model model, @AuthenticationPrincipal AuthenticatedUser user,
+                              @RequestParam(name = "book") int wordBookId) {
+
+        Integer nextWordNum = ws.checkWordNum(wordBookId, user.getId());
+        model.addAttribute("wordBookId", wordBookId);
+        model.addAttribute("nextWordNum", nextWordNum);
+
+        return "word/word-add-form";
+
+    }
+
+    /**
      * 단어 추가
      * @author MinCheolHa
      * @param wordBookId
      * @param user
-     * @param request
+     * @param wordDTO
      * @param redirectAttributes
      * @return
      */
@@ -94,15 +111,13 @@ public class WordController {
     public String addWords(
             @RequestParam(name = "book") int wordBookId,
             @AuthenticationPrincipal AuthenticatedUser user,
-            HttpServletRequest request,
-            RedirectAttributes redirectAttributes) {
+            WordDTO wordDTO, RedirectAttributes redirectAttributes) {
 
-        Map<String, String[]> words = request.getParameterMap();
-        // 단어를 단어장에 추가하는 서비스 호출
-        ws.addWords(words, wordBookId, user.getId());
+        Integer nextWordNum = ws.addWords(wordDTO, wordBookId, user.getId());
+        setFlashToastMessage(redirectAttributes, true, "성공적으로 추가했습니다.");
+        redirectAttributes.addFlashAttribute("nextWordNum", nextWordNum);
 
-        redirectAttributes.addFlashAttribute("wordbookId", wordBookId);
-        return "redirect:/word/wordBookDetail?book=" + wordBookId; // 단어장 상세 페이지로 리디렉션
+        return "redirect:/word/wordAddForm?book=" + wordBookId;
 
     }
 

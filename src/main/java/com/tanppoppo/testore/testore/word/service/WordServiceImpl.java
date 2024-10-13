@@ -10,6 +10,7 @@ import com.tanppoppo.testore.testore.member.repository.MemberRepository;
 import com.tanppoppo.testore.testore.member.repository.ReviewRepository;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import com.tanppoppo.testore.testore.word.dto.WordBookDTO;
+import com.tanppoppo.testore.testore.word.dto.WordDTO;
 import com.tanppoppo.testore.testore.word.entity.WordBookEntity;
 import com.tanppoppo.testore.testore.word.entity.WordEntity;
 import com.tanppoppo.testore.testore.word.repository.WordBookRepository;
@@ -78,38 +79,67 @@ public class WordServiceImpl implements WordService {
     /**
      * 단어 저장
      * @author MinCheolHa
-     * @param words 단어 정보를 입력합니다.
+     * @param wordDTO 단어 정보를 입력합니다.
      * @param wordBookId 단어장 Id를 가져옵니다.
      * @param userId 사용자 정보를 가져옵니다.
      */
     @Override
-    public void addWords(Map<String, String[]> words, Integer wordBookId, Integer userId) {
+    public Integer addWords(WordDTO wordDTO, Integer wordBookId, Integer userId) {
 
         WordBookEntity wordBookEntity = wbr.findById(wordBookId)
                 .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
 
-        int wordNum = 1;
+        MemberEntity memberEntity = mr.findById(userId)
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        while (words.containsKey("text_1_" + wordNum)) {
+        if (!wordBookEntity.getOwnerId().equals(memberEntity.getMemberId())) {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
 
-            String[] text1 = words.get("text_1_" + wordNum);
-            String[] text2 = words.get("text_2_" + wordNum);
-            String[] text3 = words.get("text_3_" + wordNum);
+        // 이미 단어가 존재하는지 체크
+        List<WordEntity> existedWordEntityList = wr.findByWordBookIdOrderByWordNumDesc(wordBookEntity);
+        if (existedWordEntityList.isEmpty()) {
+            wordDTO.setWordNum(1);
+        } else {
+            WordEntity firstWordEntity = existedWordEntityList.get(0);
+            wordDTO.setWordNum(firstWordEntity.getWordNum()+1);
+        }
 
-            if (text1 == null || text2 == null || text3 == null) {
-                throw new IllegalArgumentException("단어, 뜻, 설명의 입력이 올바르지 않습니다.");
-            }
-            WordEntity wordEntity = new WordEntity();
-            wordEntity.setWordBookId(wordBookEntity);
-            wordEntity.setWordNum(wordNum);
-            wordEntity.setText1(text1[0]);
-            wordEntity.setText2(text2[0]);
-            wordEntity.setText3(text3[0]);
+        WordEntity wordEntity = WordEntity.builder()
+                .wordNum(wordDTO.getWordNum())
+                .text1(wordDTO.getText1())
+                .text2(wordDTO.getText2())
+                .text3(wordDTO.getText3())
+                .wordBookId(wordBookEntity)
+                .build();
 
-            wr.save(wordEntity);
+        wr.save(wordEntity);
 
-            wordNum++;
+        return wordDTO.getWordNum() + 1;
 
+
+    }
+
+    @Override
+    public Integer checkWordNum(int wordBookId, Integer userId) {
+
+        WordBookEntity wordBookEntity = wbr.findById(wordBookId)
+                .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = mr.findById(userId)
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        if (!wordBookEntity.getOwnerId().equals(memberEntity.getMemberId())) {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+        // 이미 단어가 존재하는지 체크
+        List<WordEntity> existedWordEntityList = wr.findByWordBookIdOrderByWordNumDesc(wordBookEntity);
+        if (existedWordEntityList.isEmpty()) {
+            return 1;
+        } else {
+            WordEntity firstWordEntity = existedWordEntityList.get(0);
+            return firstWordEntity.getWordNum() + 1;
         }
 
     }

@@ -7,6 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 /**
  * 단어 정보를 저장하는 엔티티 클래스
@@ -19,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "word")
 public class WordEntity {
 
@@ -53,11 +59,23 @@ public class WordEntity {
     private String notes;
 
     @NotNull
-    @Column(name = "checked", nullable = false, columnDefinition = "BOOLEAN default false")
+    @Column(name = "checked", nullable = false)
     private Boolean checked;
+
+    @CreatedDate
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    @Column(name = "updated_date")
+    private LocalDateTime updatedDate;
 
     @PrePersist
     public void prePersist() {
-        checked = false;
+
+        if(checked == null) {
+            checked = false;
+        }
+
     }
 }

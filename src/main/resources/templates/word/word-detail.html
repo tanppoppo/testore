@@ -53,8 +53,13 @@
     <div class="absolute right-2 z-10 mt-1 w-32 origin-top-right rounded-md bg-white shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:w-44">
       <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
-              th:onclick="'location.href=\'updateWordBookForm?paper=' + ${wordBookDTO.wordBookId} + '\''"
-              id="correctPaperButton">단어장 수정하기
+              th:onclick="'location.href=\'wordAddForm?book=' + ${wordBookDTO.wordBookId} + '\''"
+              id="addWordButton">단어 추가하기
+      </button>
+      <button
+              class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              th:onclick="'location.href=\'updateWordBookForm?book=' + ${wordBookDTO.wordBookId} + '\''"
+              id="correctButton">단어장 수정하기
       </button>
       <button
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
