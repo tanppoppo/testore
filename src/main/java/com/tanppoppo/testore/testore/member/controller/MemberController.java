@@ -1,7 +1,9 @@
 package com.tanppoppo.testore.testore.member.controller;
 
+import com.tanppoppo.testore.testore.common.util.NotificationTypeEnum;
 import com.tanppoppo.testore.testore.exam.service.ExamService;
 import com.tanppoppo.testore.testore.member.dto.MemberDTO;
+import com.tanppoppo.testore.testore.member.dto.NotificationDTO;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.service.MemberService;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 import static com.tanppoppo.testore.testore.util.MessageUtil.*;
 
@@ -91,13 +95,23 @@ public class MemberController {
     }
 
     /**
-     * 알림 페이지 이동
+     * 알림 페이지 이동, 사용자 알림 목록 조회 후 읽음처리
      * @author dhkdtjs1541
-     * @return 알림 페이지를 반환합니다.
+     * @param model 알림 목록을 추가할 모델 객체
+     * @param user 현재 인증된 사용자
+     * @return 알림 페이지 경로를 반환
      */
     @GetMapping("notification")
-    public String notification() {
+    public String notification(Model model, @AuthenticationPrincipal AuthenticatedUser user) {
+
+        // 알림을 조회하고 읽음으로 표시
+        List<NotificationDTO> notifications = ms.getNotificationsAndMarkAsRead(user.getId());
+
+        // 알림 리스트를 모델에 추가
+        model.addAttribute("notifications", notifications);
+
         return "member/notification";
+
     }
 
     /**
@@ -218,6 +232,8 @@ public class MemberController {
                        @AuthenticationPrincipal AuthenticatedUser user){
 
         ms.createAndDeleteItemLikeByMemberId(examPaperId,user);
+        ms.saveNotification(user.getId(), examPaperId, NotificationTypeEnum.EXAMPAPER_LIKE);
+
         setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
         return"redirect:/exam/examPaperDetail?paper="+examPaperId;
 
@@ -252,9 +268,10 @@ public class MemberController {
                                @AuthenticationPrincipal AuthenticatedUser user){
 
         ms.createAndDeleteWordBookItemLikeByMemberId(wordBookId,user);
+        ms.saveNotification(user.getId(), wordBookId, NotificationTypeEnum.WORDBOOK_LIKE);
+
         setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
         return"redirect:/word/wordBookDetail?book="+wordBookId;
 
     }
-
 }
