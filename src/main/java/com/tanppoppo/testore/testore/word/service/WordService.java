@@ -3,6 +3,7 @@ package com.tanppoppo.testore.testore.word.service;
 import com.tanppoppo.testore.testore.member.dto.ReviewDTO;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import com.tanppoppo.testore.testore.word.dto.WordBookDTO;
+import com.tanppoppo.testore.testore.word.dto.WordDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,9 @@ public interface WordService {
 
     Integer countWordBooksByOwnerId(Integer ownerId);
 
-    void addWords(Map<String, String[]> words, Integer wordBookId, Integer userId);
+    Integer addWords(WordDTO wordDTO, Integer wordBookId, Integer userId);
+
+    Integer checkWordNum(int wordBookId, Integer id);
 
     int createWordBook(WordBookDTO wordBookDTO, AuthenticatedUser user);
 
