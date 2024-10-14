@@ -58,4 +58,6 @@ public interface ExamService {
     List<ExamPaperDTO> findExamPaperByMemberId(AuthenticatedUser user, String keyword);
 
     List<ExamResultDTO> selectExamHistory(Integer examPaperId, AuthenticatedUser user);
+
+    List<ExamPaperDTO> getLikedExam(AuthenticatedUser user);
 }
