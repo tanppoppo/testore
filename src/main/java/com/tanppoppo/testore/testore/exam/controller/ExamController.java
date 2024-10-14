@@ -411,4 +411,20 @@ public class ExamController {
 
     }
 
+    /**
+     * 내가 좋아요한 시험지 조회
+     * @author KIMGEON64
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 내가 좋아요한 시험지 조회 페이지를 반환합니다.
+     */
+    @GetMapping("likedExam")
+    public String likedExam(@AuthenticationPrincipal AuthenticatedUser user, Model model){
+
+        List<ExamPaperDTO> items = es.getLikedExam(user);
+        model.addAttribute("items", items);
+
+        return "exam/exam-likedExam";
+    }
+
 }

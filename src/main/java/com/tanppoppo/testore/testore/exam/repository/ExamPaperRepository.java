@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Integer> {
 
-    // 북마크 여부 고려 정렬
+    // 북마크 상위 정렬 시험지 메인 리스트
     @Query("SELECT ep FROM ExamPaperEntity ep LEFT JOIN BookmarkEntity bm ON ep.examPaperId = bm.itemId AND bm.itemType = :itemType WHERE ep.ownerId = :ownerId ORDER BY CASE WHEN bm IS NOT NULL THEN 1 ELSE 0 END DESC, ep.examPaperId DESC")
     List<ExamPaperEntity> findByOwnerIdWithBookmarks(Integer ownerId, ItemTypeEnum itemType);
 
@@ -39,7 +39,7 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     @Query("SELECT ep FROM ExamPaperEntity ep WHERE ep.publicOption = true GROUP BY ep HAVING COUNT(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 END) > 0 ORDER BY COUNT(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 END) DESC")
     List<ExamPaperEntity> findSortedExamPapersByShareCount(Pageable pageable);
 
-    // 이번주 인기 시험지 추천
+    // 이번주 인기 시험지 순위 정렬
     @Query("SELECT ep FROM ExamPaperEntity ep LEFT JOIN ItemLikeEntity il ON ep.examPaperId = il.itemId WHERE ep.publicOption = true AND il.createdDate BETWEEN :monday AND :sunday GROUP BY ep.examPaperId ORDER BY COUNT(il) DESC")
     List<ExamPaperEntity> findPopularExamsThisWeek(LocalDateTime monday, LocalDateTime sunday, Pageable pageable);
 
@@ -50,8 +50,12 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     @Query("SELECT ep FROM ExamPaperEntity ep WHERE ep.publicOption = :publicOption AND ep.title LIKE %:title%")
     List<ExamPaperEntity> findByPublicOptionAndTitleContaining(boolean publicOption, String title, Sort sort);
 
-    // 가져온 파라미터의 examPaperId 시험지의 시험결과의 점수가 있는 사용자의 시험 결과만을 조회함. 응시 시간순 정렬
+    // 응시자 내역 조회
     @Query("SELECT er FROM ExamResultEntity er WHERE er.examPaperId.examPaperId = :examPaperId AND er.examScore IS NOT NULL AND er.startTime IS NOT NULL ORDER BY er.startTime DESC")
     List<ExamResultEntity> findExamResultsByExamPaperId(Integer examPaperId);
+
+    // 내가 좋아요한 시험지 조회
+    @Query("SELECT ep FROM ExamPaperEntity ep JOIN ItemLikeEntity le ON le.itemId = ep.examPaperId WHERE le.memberId.memberId = :memberId and le.itemType = :itemType order by ep.examPaperId desc")
+    List<ExamPaperEntity> findLikedExamPapersByMemberId(Integer memberId, ItemTypeEnum itemType);
 
 }
