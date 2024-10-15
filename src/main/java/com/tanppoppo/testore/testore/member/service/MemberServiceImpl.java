@@ -1,17 +1,13 @@
 package com.tanppoppo.testore.testore.member.service;
 
 import com.tanppoppo.testore.testore.common.util.ItemTypeEnum;
+import com.tanppoppo.testore.testore.common.util.NotificationTypeEnum;
 import com.tanppoppo.testore.testore.exam.entity.ExamPaperEntity;
 import com.tanppoppo.testore.testore.exam.repository.ExamPaperRepository;
 import com.tanppoppo.testore.testore.member.dto.MemberDTO;
-import com.tanppoppo.testore.testore.member.entity.BookmarkEntity;
-import com.tanppoppo.testore.testore.member.entity.ItemLikeEntity;
-import com.tanppoppo.testore.testore.member.entity.MemberEntity;
-import com.tanppoppo.testore.testore.member.entity.PointEntity;
-import com.tanppoppo.testore.testore.member.repository.BookmarkRepository;
-import com.tanppoppo.testore.testore.member.repository.ItemLikeRepository;
-import com.tanppoppo.testore.testore.member.repository.MemberRepository;
-import com.tanppoppo.testore.testore.member.repository.PointRepository;
+import com.tanppoppo.testore.testore.member.dto.NotificationDTO;
+import com.tanppoppo.testore.testore.member.entity.*;
+import com.tanppoppo.testore.testore.member.repository.*;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import com.tanppoppo.testore.testore.word.entity.WordBookEntity;
 import com.tanppoppo.testore.testore.word.repository.WordBookRepository;
@@ -26,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,6 +40,7 @@ public class MemberServiceImpl implements MemberService {
     private final ItemLikeRepository ilr;
     private final ExamPaperRepository epr;
     private final WordBookRepository wbr;
+    private final NotificationRepository nr;
 
     @Override
     public void joinMember(MemberDTO memberDTO) {
@@ -323,9 +321,89 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    /**
+     * 알림 저장 메서드
+     * @author dhkdtjs1541
+     * @param userId 알림을 생성한 회원 ID
+     * @param itemId 좋아요가 눌린 아이템(시험지 또는 단어장) ID
+     * @param type 알림 유형
+     * @throws EntityNotFoundException 주어진 ID에 해당하는 회원
+     */
+    @Override
+    public void saveNotification(Integer userId, Integer itemId, NotificationTypeEnum type) {
 
+        ExamPaperEntity examPaperEntity;
+        WordBookEntity wordBookEntity;
+        MemberEntity recipientIdMemberEntity = new MemberEntity();
 
+        MemberEntity senderMemberEntity = mr.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
 
+        if (type.equals(NotificationTypeEnum.EXAMPAPER_LIKE)) {
 
+            examPaperEntity = epr.findById(itemId)
+                    .orElseThrow(() -> new EntityNotFoundException("시험지를 찾을 수 없습니다."));
+
+            recipientIdMemberEntity = mr.findById(examPaperEntity.getOwnerId())
+                    .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+        } else if (type.equals(NotificationTypeEnum.WORDBOOK_LIKE)) {
+
+            wordBookEntity = wbr.findById(itemId)
+                    .orElseThrow(() -> new EntityNotFoundException("단어장을 찾을 수 없습니다."));
+
+            recipientIdMemberEntity = mr.findById(wordBookEntity.getOwnerId())
+                    .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+        }
+
+        NotificationEntity notificationEntity = NotificationEntity.builder()
+                .senderId(senderMemberEntity.getMemberId())
+                .recipientId(recipientIdMemberEntity)
+                .notificationType(type)
+                .build();
+
+        nr.save(notificationEntity);
+
+    }
+
+    /**
+     * 회원의 최근 10개 알림 가져오고, 읽지 않은 알림 읽음 상태로 변경하는 메서드
+     * @author dhkdtjs1541
+     * @param memberId 알림을 조회할 회원의 ID
+     * @return 읽음 상태로 변경된 알림 리스트(DTO 형식)
+     */
+    @Override
+    public List<NotificationDTO> getNotificationsAndMarkAsRead(Integer memberId) {
+
+        // 최신 10개의 알림을 가져옴
+        List<NotificationEntity> notificationEntities = nr.findTop10ByRecipientId_MemberIdOrderByNotificationIdDesc(memberId);
+
+        boolean hasUnread = false; // 읽지 않은 알림이 있는지 체크할 변수
+        List<NotificationDTO> notificationDTOS = new ArrayList<>();
+
+        for (NotificationEntity notificationEntity : notificationEntities) {
+
+            // 읽지 않은 알림이 있으면 읽음으로 표시
+            if (!notificationEntity.getIsRead()) {
+                hasUnread = true;
+                notificationEntity.setIsRead(true);
+            }
+
+            // 알림을 DTO로 변환
+            NotificationDTO notificationDTO = NotificationDTO.builder()
+                    .notificationId(notificationEntity.getNotificationId())
+                    .senderId(notificationEntity.getSenderId())
+                    .notificationType(notificationEntity.getNotificationType().name())
+                    .isRead(notificationEntity.getIsRead())
+                    .recipientId(notificationEntity.getRecipientId().getMemberId())
+                    .build();
+            notificationDTOS.add(notificationDTO);
+
+        }
+
+        return notificationDTOS;
+
+    }
 
 }
