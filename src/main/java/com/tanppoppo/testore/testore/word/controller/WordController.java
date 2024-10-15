@@ -312,4 +312,109 @@ public class WordController {
 
     }
 
+    /**
+     * 단어장 수정 페이지 이동
+     * @author KIMGEON64
+     * @param wordbookId 단어장 키값을 전달합니다.
+     * @param user user 객체를 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 단어장 생성 페이지를 반환합니다.
+     */
+    @GetMapping("updateWordBookForm")
+    public String updateWordBookForm(@RequestParam(name = "book") int wordbookId,
+                                     @AuthenticationPrincipal AuthenticatedUser user,
+                                     Model model){
+
+        WordBookDTO wordBookDTO = ws.selectUpdatedWordbookInfo(wordbookId, user);
+
+        model.addAttribute("wordbookId", wordBookDTO.getWordBookId());
+        model.addAttribute("imagePath", wordBookDTO.getImagePath());
+        model.addAttribute("title", wordBookDTO.getTitle());
+        model.addAttribute("content", wordBookDTO.getContent());
+
+        return "word/wordbook-create-form";
+
+    }
+
+    /**
+     * 단어장 수정 페이지 입력 정보를 저장
+     * @author KIMGEON64
+     * @param user user 객체를 전달합니다.
+     * @param wordBookDTO 단어장 표제값을 전달합니다.
+     * @param redirectAttributes 오류 메세지를 전달합니다.
+     * @return 단어장 상세 페이지로 이동합니다.
+     */
+    @PostMapping("updateWordBook")
+    public String updateWordBook(@AuthenticationPrincipal AuthenticatedUser user,
+                                 WordBookDTO wordBookDTO,
+                                 RedirectAttributes redirectAttributes){
+
+        try {
+            ws.updateWordBook(wordBookDTO, user);
+            return "redirect:/word/word-detail?book=" + wordBookDTO.getWordBookId();
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
+        } catch (Exception e) {
+            setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생 했습니다.");
+        }
+
+        return "redirect:/";
+    }
+
+    /**
+     * 단어 목록 수정 페이지 이동
+     * @author KIMGEON64
+     * @param user user 객체를 전달합니다.
+     * @param wordbookId 단어장 키값을 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 단어 수정 페이지를 반환합니다.
+     */
+    @GetMapping("updateWordForm")
+    public String updateWordForm(@AuthenticationPrincipal AuthenticatedUser user,
+                                 @RequestParam(name = "book") int wordbookId, Model model){
+
+        List<WordDTO> wordDTOList = ws.getWordsForUpdate(user, wordbookId);
+        model.addAttribute("words", wordDTOList);
+
+        return "word/word-update-form";
+
+    }
+
+    /**
+     * 단어 세부 수정 페이지 이동
+     * @author KIMGEON64
+     * @param user user 객체를 전달합니다.
+     * @param wordDTO 단어 세부 값을 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 단어 세부 페이지를 반환합니다.
+     */
+    @GetMapping("wordEditForm")
+    public String wordEdit(@AuthenticationPrincipal AuthenticatedUser user,
+                           WordDTO wordDTO, Model model){
+
+        WordDTO word = ws.getWordDetails(user, wordDTO.getWordNum());
+        model.addAttribute("word", word);
+
+        return "word/word-adit-form";
+    }
+
+    /**
+     * 단어 세부 수정 사항 저장
+     * @author KIMGEON64
+     * @param user user 객체를 전달합니다.
+     * @param wordbookId 단어장 키값을 전달합니다.
+     * @param wordDTO 단어 세부 값을 전달합니다.
+     * @return 단어 수정 페이지를 반환합니다.
+     */
+    @PostMapping("wordEdit")
+    public String wordEdit(@AuthenticationPrincipal AuthenticatedUser user,
+                           @RequestParam(name = "book") int wordbookId,
+                           WordDTO wordDTO){
+
+        ws.saveEditedWord(user, wordbookId, wordDTO);
+
+        return "word/word-update-form";
+    }
+
+
 }
