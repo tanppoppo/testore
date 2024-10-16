@@ -1010,4 +1010,53 @@ public class ExamServiceImpl implements ExamService {
 
     }
 
+    /**
+     * 내가 북마크한 시험지 조회
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return items dto 리스트를 반환합니다.
+     */
+    @Override
+    public List<ExamPaperDTO> getBookmarkedExam(AuthenticatedUser user) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        List<ExamPaperEntity> examPaperEntityList = epr.findBookmarkedExamPapersByMemberId(memberEntity.getMemberId(), ItemTypeEnum.EXAM);
+
+        List<ExamPaperDTO> items = new ArrayList<>();
+
+        for (ExamPaperEntity entity : examPaperEntityList) {
+
+            ExamPaperEntity examPaperEntity = epr.findById(entity.getExamPaperId())
+                    .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+            ExamPaperDTO examPaperDTO = ExamPaperDTO.builder()
+                    .examPaperId(examPaperEntity.getExamPaperId())
+                    .title(examPaperEntity.getTitle())
+                    .content(examPaperEntity.getContent())
+                    .timeLimit(examPaperEntity.getTimeLimit())
+                    .passScore(examPaperEntity.getPassScore())
+                    .language(examPaperEntity.getLanguage())
+                    .languageLevel(Integer.valueOf(examPaperEntity.getLanguageLevel()))
+                    .membershipLevel(Integer.valueOf(examPaperEntity.getLanguageLevel()))
+                    .creatorId(examPaperEntity.getCreatorId().getMemberId())
+                    .ownerId(examPaperEntity.getOwnerId())
+                    .imagePath(examPaperEntity.getImagePath())
+                    .publicOption(examPaperEntity.getPublicOption())
+                    .studiedDate(examPaperEntity.getStudiedDate())
+                    .createdDate(examPaperEntity.getCreatedDate())
+                    .updateDate(examPaperEntity.getUpdateDate())
+                    .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
+                    .shareCount(epr.getShareCount(memberEntity.getMemberId()))
+                    .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
+                    .build();
+            items.add(examPaperDTO);
+        }
+
+        return items;
+
+    }
+
 }
