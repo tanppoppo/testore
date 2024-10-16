@@ -217,7 +217,8 @@ public class ExamController {
 
         List<ExamPaperDTO> examPaperDTOList = es.findExamPaperByMemberId(user, keyword);
         model.addAttribute("items", examPaperDTOList);
-        return "exam/exam-searchExam";
+        model.addAttribute("keyword", keyword);
+        return "exam/exam-search-keyword";
 
     }
 

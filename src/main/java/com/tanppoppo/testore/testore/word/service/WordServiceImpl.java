@@ -606,15 +606,11 @@ public class WordServiceImpl implements WordService {
         MemberEntity memberEntity = mr.findById(wordBookEntity.getCreatorId().getMemberId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        if (!memberEntity.getMemberId().equals(wordBookEntity.getOwnerId())){
+        if (!user.getId().equals(wordBookEntity.getOwnerId())){
             if (!wordBookEntity.getPublicOption()) {
                 throw new AccessDeniedException("공개된 단어장이 아닙니다.");
             }
             throw new AccessDeniedException("권한이 없습니다.");
-        }
-
-        if (!user.getId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
-            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
         }
 
         wordBookEntity.setTitle(wordBookDTO.getTitle());

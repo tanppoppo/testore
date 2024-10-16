@@ -185,8 +185,9 @@ public class WordController {
 
         List<WordBookDTO> wordBookDTOList = ws.findWordBookByMemberId(user, keyword);
         model.addAttribute("items", wordBookDTOList);
+        model.addAttribute("keyword", keyword);
 
-        return "word/word-searchWordBook";
+        return "word/word-search-keyword";
 
     }
 

@@ -551,10 +551,6 @@ public class ExamServiceImpl implements ExamService {
             throw new AccessDeniedException("권한이 없습니다.");
         }
 
-        if (!userId.equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
-            throw new AccessDeniedException("공개된 시험지가 아닙니다.");
-        }
-
         examPaperEntity.setTitle(examPaperDTO.getTitle());
         examPaperEntity.setContent(examPaperDTO.getContent());
         examPaperEntity.setPassScore(examPaperDTO.getPassScore());
