@@ -425,6 +425,24 @@ public class ExamController {
         model.addAttribute("items", items);
 
         return "exam/exam-likedExam";
+
+    }
+
+    /**
+     * 내가 북마크한 시험지 조회
+     * @author KIMGEON64
+     * @param user user 인증된 회원 정보를 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 내가 좋아요한 시험지 조회 페이지를 반환합니다.
+     */
+    @GetMapping("bookmarkedExam")
+    public String bookmarkedExam(@AuthenticationPrincipal AuthenticatedUser user, Model model){
+
+        List<ExamPaperDTO> items = es.getBookmarkedExam(user);
+        model.addAttribute("items", items);
+
+        return "exam/exam-bookmarkedExam";
+
     }
 
 }

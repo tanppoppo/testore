@@ -738,4 +738,100 @@ public class WordServiceImpl implements WordService {
 
     }
 
+    /**
+     * 내가 좋아요한 단어장 조회
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return items dto 리스트를 반환합니다.
+     */
+    @Override
+    public List<WordBookDTO> getLikedWordBook(AuthenticatedUser user) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        List<WordBookEntity> wordBookEntityList = wbr.findLikedWordBooksByMemberId(memberEntity.getMemberId(), ItemTypeEnum.WORD);
+
+        List<WordBookDTO> items = new ArrayList<>();
+
+        for (WordBookEntity entity : wordBookEntityList) {
+
+            WordBookEntity wordBookEntity = wbr.findById(entity.getWordBookId())
+                    .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+            WordBookDTO wordBookDTO = WordBookDTO.builder()
+                    .wordBookId(wordBookEntity.getWordBookId())
+                    .title(wordBookEntity.getTitle())
+                    .content(wordBookEntity.getContent())
+                    .language(wordBookEntity.getLanguage())
+                    .languageLevel(Integer.valueOf(wordBookEntity.getLanguageLevel()))
+                    .membershipLevel(Integer.valueOf(wordBookEntity.getMembershipLevel()))
+                    .creatorId(wordBookEntity.getCreatorId().getMemberId())
+                    .ownerId(wordBookEntity.getOwnerId())
+                    .imagePath(wordBookEntity.getImagePath())
+                    .publicOption(wordBookEntity.getPublicOption())
+                    .studiedDate(wordBookEntity.getStudiedDate())
+                    .createdDate(wordBookEntity.getCreatedDate())
+                    .updatedDate(wordBookEntity.getUpdatedDate())
+                    .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .shareCount(wbr.getShareCount(memberEntity.getMemberId()))
+                    .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
+                    .build();
+            items.add(wordBookDTO);
+        }
+
+        return items;
+
+    }
+
+    /**
+     * 내가 좋아요한 단어장 조회
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return items dto 리스트를 반환합니다.
+     */
+    @Override
+    public List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        List<WordBookEntity> wordBookEntityList = wbr.findBookmarkedWordBooksByMemberId(memberEntity.getMemberId(), ItemTypeEnum.WORD);
+
+        List<WordBookDTO> items = new ArrayList<>();
+
+        for (WordBookEntity entity : wordBookEntityList) {
+
+            WordBookEntity wordBookEntity = wbr.findById(entity.getWordBookId())
+                    .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+            WordBookDTO wordBookDTO = WordBookDTO.builder()
+                    .wordBookId(wordBookEntity.getWordBookId())
+                    .title(wordBookEntity.getTitle())
+                    .content(wordBookEntity.getContent())
+                    .language(wordBookEntity.getLanguage())
+                    .languageLevel(Integer.valueOf(wordBookEntity.getLanguageLevel()))
+                    .membershipLevel(Integer.valueOf(wordBookEntity.getMembershipLevel()))
+                    .creatorId(wordBookEntity.getCreatorId().getMemberId())
+                    .ownerId(wordBookEntity.getOwnerId())
+                    .imagePath(wordBookEntity.getImagePath())
+                    .publicOption(wordBookEntity.getPublicOption())
+                    .studiedDate(wordBookEntity.getStudiedDate())
+                    .createdDate(wordBookEntity.getCreatedDate())
+                    .updatedDate(wordBookEntity.getUpdatedDate())
+                    .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .shareCount(wbr.getShareCount(memberEntity.getMemberId()))
+                    .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
+                    .build();
+            items.add(wordBookDTO);
+        }
+
+        return items;
+
+    }
+
+
+
 }

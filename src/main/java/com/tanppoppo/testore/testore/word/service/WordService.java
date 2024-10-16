@@ -53,4 +53,8 @@ public interface WordService {
     WordDTO getWordDetails(AuthenticatedUser user, Integer wordNum);
 
     void saveEditedWord(AuthenticatedUser user, int wordbookId, WordDTO wordDTO);
+
+    List<WordBookDTO> getLikedWordBook(AuthenticatedUser user);
+
+    List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user);
 }

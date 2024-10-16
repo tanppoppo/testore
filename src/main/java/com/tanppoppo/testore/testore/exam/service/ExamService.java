@@ -60,4 +60,6 @@ public interface ExamService {
     List<ExamResultDTO> selectExamHistory(Integer examPaperId, AuthenticatedUser user);
 
     List<ExamPaperDTO> getLikedExam(AuthenticatedUser user);
+
+    List<ExamPaperDTO> getBookmarkedExam(AuthenticatedUser user);
 }
