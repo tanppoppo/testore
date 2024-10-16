@@ -43,4 +43,18 @@ public interface WordService {
     List<WordBookDTO> muchSharedWordBook(AuthenticatedUser user);
 
     List<WordBookDTO> findWordBookByMemberId(AuthenticatedUser user, String keyword);
+
+    WordBookDTO selectUpdatedWordbookInfo(int wordbookId, AuthenticatedUser user);
+
+    void updateWordBook(WordBookDTO wordBookDTO, AuthenticatedUser user);
+
+    List<WordDTO> getWordsForUpdate(AuthenticatedUser user, int wordbookId);
+
+    WordDTO getWordDetails(AuthenticatedUser user, Integer wordNum);
+
+    void saveEditedWord(AuthenticatedUser user, int wordbookId, WordDTO wordDTO);
+
+    List<WordBookDTO> getLikedWordBook(AuthenticatedUser user);
+
+    List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user);
 }

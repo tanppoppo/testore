@@ -517,6 +517,7 @@ public class WordServiceImpl implements WordService {
     }
 
     /**
+     * 단어장 찾기 기능
      * @author KIMGEON64
      * @param user user 객체를 가져 옵니다.
      * @param keyword 사용자 입력 값을 가져옵니다.
@@ -541,7 +542,7 @@ public class WordServiceImpl implements WordService {
         for (WordBookEntity entity : wordBookEntities) {
 
             WordBookEntity wordBookEntity = wbr.findById(entity.getWordBookId())
-                    .orElseThrow(() -> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
 
             WordBookDTO wordBookDTO = WordBookDTO.builder()
                     .wordBookId(wordBookEntity.getWordBookId())
@@ -556,5 +557,281 @@ public class WordServiceImpl implements WordService {
             wordBookDTOS.add(wordBookDTO);
         }
         return wordBookDTOS;
+
     }
+
+    /**
+     * 업데이트할 단어장 조회
+     * @author KIMGEON64
+     * @param wordbookId 단어장 키값을 가져옵니다.
+     * @param user user 객체를 가져옵니다.
+     * @return wordbookDTO를 반환합니다.
+     */
+    @Override
+    public WordBookDTO selectUpdatedWordbookInfo(int wordbookId, AuthenticatedUser user) {
+        
+        WordBookEntity wordBookEntity = wbr.findById(wordbookId)
+                .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        if (!memberEntity.getMemberId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+        }
+
+        WordBookDTO wordBookDTO = WordBookDTO.builder()
+                .wordBookId(wordBookEntity.getWordBookId())
+                .title(wordBookEntity.getTitle())
+                .content(wordBookEntity.getContent())
+                .imagePath(wordBookEntity.getImagePath())
+                .build();
+
+        return wordBookDTO;
+
+    }
+
+    /**
+     * 단어장 표제 수정
+     * @author KIMGEON64
+     * @param wordBookDTO 단어장 표제값을 가져옵니다.
+     * @param user user 객체를 가져옵니다.
+     */
+    @Override
+    public void updateWordBook(WordBookDTO wordBookDTO, AuthenticatedUser user) {
+
+        WordBookEntity wordBookEntity = wbr.findById(wordBookDTO.getWordBookId())
+                .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = mr.findById(wordBookEntity.getCreatorId().getMemberId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        if (!memberEntity.getMemberId().equals(wordBookEntity.getOwnerId())){
+            if (!wordBookEntity.getPublicOption()) {
+                throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+            }
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+        if (!user.getId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+        }
+
+        wordBookEntity.setTitle(wordBookDTO.getTitle());
+        wordBookEntity.setContent(wordBookDTO.getContent());
+        wordBookEntity.setImagePath(wordBookDTO.getImagePath());
+    }
+
+    /**
+     * 단어 세부 수정 LIST 목록 반환
+     * @author KIMGEON64
+     * @param user user 객체를 가져옵니다.
+     * @param wordbookId 단어장 키값을 가져옵니다.
+     * @return
+     */
+    @Override
+    public List<WordDTO> getWordsForUpdate(AuthenticatedUser user, int wordbookId) {
+
+        WordBookEntity wordBookEntity = wbr.findById(wordbookId)
+                .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        if (!memberEntity.getMemberId().equals(wordBookEntity.getOwnerId())){
+            if (!wordBookEntity.getPublicOption()) {
+                throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+            }
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+        if (!user.getId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+        }
+
+        List<WordEntity> wordEntityList = wr.findByWordBookIdOrderByWordNumDesc(wordBookEntity);
+
+        List<WordDTO> wordDTOList = new ArrayList<>();
+
+        for (WordEntity entity : wordEntityList) {
+
+            WordDTO wordDTO = WordDTO.builder()
+                    .wordId(entity.getWordId())
+                    .wordNum(entity.getWordNum())
+                    .text1(entity.getText1())
+                    .text2(entity.getText2())
+                    .text3(entity.getText3())
+                    .notes(entity.getNotes())
+                    .checked(entity.getChecked())
+                    .build();
+            wordDTOList.add(wordDTO);
+        }
+        return wordDTOList;
+
+    }
+
+    /**
+     * 단어 세부 값을 반환
+     * @author KIMGEON64
+     * @param user user 객체를 가져옵니다.
+     * @param wordNum 단어 고유 번호를 가져옵니다.
+     * @return WordDTO 객체를 반환합니다.
+     */
+    @Override
+    public WordDTO getWordDetails(AuthenticatedUser user, Integer wordNum) {
+
+        mr.findById(user.getId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        WordEntity wordEntity = wr.findById(wordNum)
+                .orElseThrow(()-> new EntityNotFoundException("단어 정보를 찾을 수 없습니다."));
+
+        WordDTO wordDTO = WordDTO.builder()
+                .wordbookId(wordEntity.getWordBookId().getWordBookId())
+                .wordId(wordEntity.getWordId())
+                .wordNum(wordEntity.getWordNum())
+                .text1(wordEntity.getText1())
+                .text2(wordEntity.getText2())
+                .text3(wordEntity.getText3())
+                .notes(wordEntity.getNotes())
+                .checked(wordEntity.getChecked())
+                .build();
+
+        return wordDTO;
+
+    }
+
+    /**
+     * 단어 세부 수정 사항 저장
+     * @author KIMGEON64
+     * @param user user 객체를 가져옵니다.
+     * @param wordbookId 단어장 키값을 가져옵니다.
+     * @param wordDTO wordDTO 객체를 가져옵니다.
+     */
+    @Override
+    public void saveEditedWord(AuthenticatedUser user, int wordbookId, WordDTO wordDTO) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        WordBookEntity wordBookEntity = wbr.findById(wordbookId)
+                .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+        WordEntity wordEntity = wr.findById(wordDTO.getWordNum())
+                .orElseThrow(()-> new EntityNotFoundException("단어 정보를 찾을 수 없습니다."));
+
+        if (!memberEntity.getMemberId().equals(wordBookEntity.getOwnerId())){
+            if (!wordBookEntity.getPublicOption()) {
+                throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+            }
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+        if (!user.getId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+        }
+
+        wordEntity.setText1(wordDTO.getText1());
+        wordEntity.setText2(wordDTO.getText2());
+        wordEntity.setText3(wordDTO.getText3());
+        wordEntity.setNotes(wordDTO.getNotes());
+        wordEntity.setChecked(wordDTO.getChecked());
+
+    }
+
+    /**
+     * 내가 좋아요한 단어장 조회
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return items dto 리스트를 반환합니다.
+     */
+    @Override
+    public List<WordBookDTO> getLikedWordBook(AuthenticatedUser user) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        List<WordBookEntity> wordBookEntityList = wbr.findLikedWordBooksByMemberId(memberEntity.getMemberId(), ItemTypeEnum.WORD);
+
+        List<WordBookDTO> items = new ArrayList<>();
+
+        for (WordBookEntity entity : wordBookEntityList) {
+
+            WordBookEntity wordBookEntity = wbr.findById(entity.getWordBookId())
+                    .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+            WordBookDTO wordBookDTO = WordBookDTO.builder()
+                    .wordBookId(wordBookEntity.getWordBookId())
+                    .title(wordBookEntity.getTitle())
+                    .content(wordBookEntity.getContent())
+                    .language(wordBookEntity.getLanguage())
+                    .languageLevel(Integer.valueOf(wordBookEntity.getLanguageLevel()))
+                    .membershipLevel(Integer.valueOf(wordBookEntity.getMembershipLevel()))
+                    .creatorId(wordBookEntity.getCreatorId().getMemberId())
+                    .ownerId(wordBookEntity.getOwnerId())
+                    .imagePath(wordBookEntity.getImagePath())
+                    .publicOption(wordBookEntity.getPublicOption())
+                    .studiedDate(wordBookEntity.getStudiedDate())
+                    .createdDate(wordBookEntity.getCreatedDate())
+                    .updatedDate(wordBookEntity.getUpdatedDate())
+                    .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .shareCount(wbr.getShareCount(memberEntity.getMemberId()))
+                    .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
+                    .build();
+            items.add(wordBookDTO);
+        }
+
+        return items;
+
+    }
+
+    /**
+     * 내가 좋아요한 단어장 조회
+     * @author KIMGEON64
+     * @param user user 객체를 가져 옵니다.
+     * @return items dto 리스트를 반환합니다.
+     */
+    @Override
+    public List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user) {
+
+        MemberEntity memberEntity = mr.findById(user.getId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        List<WordBookEntity> wordBookEntityList = wbr.findBookmarkedWordBooksByMemberId(memberEntity.getMemberId(), ItemTypeEnum.WORD);
+
+        List<WordBookDTO> items = new ArrayList<>();
+
+        for (WordBookEntity entity : wordBookEntityList) {
+
+            WordBookEntity wordBookEntity = wbr.findById(entity.getWordBookId())
+                    .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+            WordBookDTO wordBookDTO = WordBookDTO.builder()
+                    .wordBookId(wordBookEntity.getWordBookId())
+                    .title(wordBookEntity.getTitle())
+                    .content(wordBookEntity.getContent())
+                    .language(wordBookEntity.getLanguage())
+                    .languageLevel(Integer.valueOf(wordBookEntity.getLanguageLevel()))
+                    .membershipLevel(Integer.valueOf(wordBookEntity.getMembershipLevel()))
+                    .creatorId(wordBookEntity.getCreatorId().getMemberId())
+                    .ownerId(wordBookEntity.getOwnerId())
+                    .imagePath(wordBookEntity.getImagePath())
+                    .publicOption(wordBookEntity.getPublicOption())
+                    .studiedDate(wordBookEntity.getStudiedDate())
+                    .createdDate(wordBookEntity.getCreatedDate())
+                    .updatedDate(wordBookEntity.getUpdatedDate())
+                    .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .shareCount(wbr.getShareCount(memberEntity.getMemberId()))
+                    .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
+                    .build();
+            items.add(wordBookDTO);
+        }
+
+        return items;
+
+    }
+
+
+
 }

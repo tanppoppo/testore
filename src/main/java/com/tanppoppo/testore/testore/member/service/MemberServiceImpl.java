@@ -20,11 +20,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Transactional
@@ -41,7 +43,14 @@ public class MemberServiceImpl implements MemberService {
     private final ExamPaperRepository epr;
     private final WordBookRepository wbr;
     private final NotificationRepository nr;
+    private final ConcurrentHashMap<Integer, SseEmitter> sseMap = new ConcurrentHashMap<>();
 
+    /**
+     * 회원 가입
+     * @author gyahury
+     * @param memberDTO 멤버 전달 객체를 가져옵니다.
+     */
+    @Transactional
     @Override
     public void joinMember(MemberDTO memberDTO) {
 
@@ -84,6 +93,7 @@ public class MemberServiceImpl implements MemberService {
      * @param member 회원 엔티티
      * @return 이메일 인증 토큰
      */
+    @Transactional
     @Override
     public String generateEmailVerificationToken(MemberEntity member) {
 
@@ -138,6 +148,7 @@ public class MemberServiceImpl implements MemberService {
      * @throws IllegalArgumentException 유효하지 않은 토큰일 경우 발생
      * @throws IllegalStateException 토큰이 만료된 경우 발생
      */
+    @Transactional
     @Override
     public boolean verifyEmail(String token) {
 
@@ -163,6 +174,7 @@ public class MemberServiceImpl implements MemberService {
      * @param email 회원의 이메일
      * @throws IllegalStateException 이메일이 이미 인증된 경우 예외 발생
      */
+    @Transactional
     @Override
     public void resendVerificationEmail(String email) {
 
@@ -209,6 +221,7 @@ public class MemberServiceImpl implements MemberService {
      * @param examPaperId 시험지 아이디를 가져옵니다.
      * @param user 인증된 회원정보를 가져옵니다.
      */
+    @Transactional
     @Override
     public void createAndDeleteBookmarkByMemberId(Integer examPaperId, AuthenticatedUser user) {
 
@@ -238,6 +251,7 @@ public class MemberServiceImpl implements MemberService {
      * @param examPaperId 시험지 아이디를 가져옵니다.
      * @param user 인증된 회원정보를 가져옵니다.
      */
+    @Transactional
     @Override
     public void createAndDeleteItemLikeByMemberId(Integer examPaperId, AuthenticatedUser user) {
 
@@ -256,6 +270,11 @@ public class MemberServiceImpl implements MemberService {
                     .itemType(ItemTypeEnum.EXAM)
                     .build();
             ilr.save(itemLikeEntity);
+
+            // 알림 추가
+            if(!memberEntity.getMemberId().equals(examPaperEntity.getOwnerId())) {
+                saveNotification(memberEntity.getMemberId(), examPaperId, NotificationTypeEnum.EXAMPAPER_LIKE);
+            }
         } else {
             ilr.delete(selectItemLikeByMemberId);
         }
@@ -268,6 +287,7 @@ public class MemberServiceImpl implements MemberService {
      * @param wordBookId 단어장 아이디를 가져옵니다.
      * @param user       인증된 회원정보를 가져옵니다.
      */
+    @Transactional
     @Override
     public void createAndDeleteWordBookBookmarkByMemberId(Integer wordBookId, AuthenticatedUser user) {
 
@@ -298,6 +318,7 @@ public class MemberServiceImpl implements MemberService {
      * @param wordBookId 단어장 아이디를 가져옵니다.
      * @param user       인증된 회원정보를 가져옵니다.
      */
+    @Transactional
     @Override
     public void createAndDeleteWordBookItemLikeByMemberId(Integer wordBookId, AuthenticatedUser user) {
 
@@ -316,6 +337,10 @@ public class MemberServiceImpl implements MemberService {
                     .itemType(ItemTypeEnum.WORD)
                     .build();
             ilr.save(itemLikeEntity);
+
+            if(!memberEntity.getMemberId().equals(wordBookEntity.getOwnerId())) {
+                saveNotification(memberEntity.getMemberId(), wordBookId, NotificationTypeEnum.WORDBOOK_LIKE);
+            }
         } else {
             ilr.delete(selectItemLikeByMemberId);
         }
@@ -329,6 +354,7 @@ public class MemberServiceImpl implements MemberService {
      * @param type 알림 유형
      * @throws EntityNotFoundException 주어진 ID에 해당하는 회원
      */
+    @Transactional
     @Override
     public void saveNotification(Integer userId, Integer itemId, NotificationTypeEnum type) {
 
@@ -358,8 +384,9 @@ public class MemberServiceImpl implements MemberService {
         }
 
         NotificationEntity notificationEntity = NotificationEntity.builder()
-                .senderId(senderMemberEntity.getMemberId())
+                .senderId(senderMemberEntity)
                 .recipientId(recipientIdMemberEntity)
+                .itemId(itemId)
                 .notificationType(type)
                 .build();
 
@@ -373,30 +400,51 @@ public class MemberServiceImpl implements MemberService {
      * @param memberId 알림을 조회할 회원의 ID
      * @return 읽음 상태로 변경된 알림 리스트(DTO 형식)
      */
+    @Transactional
     @Override
     public List<NotificationDTO> getNotificationsAndMarkAsRead(Integer memberId) {
 
-        // 최신 10개의 알림을 가져옴
-        List<NotificationEntity> notificationEntities = nr.findTop10ByRecipientId_MemberIdOrderByNotificationIdDesc(memberId);
+        // 최신 20개 제외한 알람을 삭제
+        nr.deleteOldNotifications(memberId);
 
-        boolean hasUnread = false; // 읽지 않은 알림이 있는지 체크할 변수
+        // 최신 20개의 알림을 가져옴
+        List<NotificationEntity> notificationEntities = nr.findByRecipientId_MemberIdOrderByNotificationIdDesc(memberId);
+
         List<NotificationDTO> notificationDTOS = new ArrayList<>();
 
         for (NotificationEntity notificationEntity : notificationEntities) {
 
             // 읽지 않은 알림이 있으면 읽음으로 표시
             if (!notificationEntity.getIsRead()) {
-                hasUnread = true;
                 notificationEntity.setIsRead(true);
+            }
+
+            String itemNickname = "";
+
+            switch(notificationEntity.getNotificationType()) {
+                case EXAMPAPER_LIKE:
+                    ExamPaperEntity examPaperEntity = epr.findById(notificationEntity.getItemId())
+                            .orElseThrow(() -> new EntityNotFoundException("시험지를 찾을 수 없습니다."));
+                    itemNickname = examPaperEntity.getTitle();
+                    break;
+                case WORDBOOK_LIKE:
+                    WordBookEntity wordBookEntity = wbr.findById(notificationEntity.getItemId())
+                            .orElseThrow(() -> new EntityNotFoundException("단어장을 찾을 수 없습니다."));
+                    itemNickname = wordBookEntity.getTitle();
+                    break;
+                default:
+                    break;
             }
 
             // 알림을 DTO로 변환
             NotificationDTO notificationDTO = NotificationDTO.builder()
                     .notificationId(notificationEntity.getNotificationId())
-                    .senderId(notificationEntity.getSenderId())
+                    .senderId(notificationEntity.getSenderId().getMemberId())
                     .notificationType(notificationEntity.getNotificationType().name())
                     .isRead(notificationEntity.getIsRead())
                     .recipientId(notificationEntity.getRecipientId().getMemberId())
+                    .senderNickname(notificationEntity.getSenderId().getNickname())
+                    .itemTitle(itemNickname)
                     .build();
             notificationDTOS.add(notificationDTO);
 
@@ -404,6 +452,17 @@ public class MemberServiceImpl implements MemberService {
 
         return notificationDTOS;
 
+    }
+
+    /**
+     * 알림 조회
+     * @author gyahury
+     * @param userId userId를 가져옵니다.
+     * @return 알림이 존재하는지 여부를 반환합니다.
+     */
+    @Override
+    public Boolean getUnreadNotification(Integer userId) {
+        return nr.existsAnyUnreadNotifications(userId);
     }
 
 }

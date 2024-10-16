@@ -50,4 +50,12 @@ public interface WordBookRepository extends JpaRepository<WordBookEntity, Intege
     @Query("SELECT wb FROM WordBookEntity wb WHERE wb.publicOption = :publicOption AND wb.title LIKE %:title%")
     List<WordBookEntity> findByPublicOptionAndTitleContaining(boolean publicOption, String title, Sort sort);
 
+    // 내가 좋아요한 단어장 조회
+    @Query("SELECT wb FROM WordBookEntity wb JOIN ItemLikeEntity le ON le.itemId = wb.wordBookId WHERE le.memberId.memberId = :memberId and le.itemType = :itemType order by wb.wordBookId desc")
+    List<WordBookEntity> findLikedWordBooksByMemberId(Integer memberId, ItemTypeEnum itemType);
+
+    // 내가 북마크한 단어장 조회
+    @Query("SELECT wb FROM WordBookEntity wb JOIN BookmarkEntity bm ON bm.itemId = wb.wordBookId WHERE bm.memberId.memberId = :memberId and bm.itemType = :itemType order by wb.wordBookId desc")
+    List<WordBookEntity> findBookmarkedWordBooksByMemberId(Integer memberId, ItemTypeEnum itemType);
+
 }

@@ -23,4 +23,6 @@ public interface MemberService {
     void createAndDeleteWordBookItemLikeByMemberId(Integer wordBookId, AuthenticatedUser user);
     void saveNotification(Integer userId, Integer itemId, NotificationTypeEnum type);
     List<NotificationDTO> getNotificationsAndMarkAsRead(Integer id);
+    Boolean getUnreadNotification(Integer userId);
+
 }

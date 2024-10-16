@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const confirmModalButton = document.querySelector('#confirmModal');
     const cancelModalButton = document.querySelector('#cancelModal');
 
+    checkNotifications();
+    setInterval(checkNotifications, 10000);
+
     if (hideToastButton) {
         hideToastButton.addEventListener('click', hideToast);
     }
@@ -50,4 +53,18 @@ document.addEventListener('DOMContentLoaded', function () {
             modalElement.style.display = 'none';
         }, 3000)
     }
+
+    function checkNotifications() {
+        fetch('/member/notification/check')
+            .then(response => response.json())
+            .then(data => {
+                if (data === true) {
+                    document.querySelector('#noti-dot').classList.remove('hidden');
+                } else {
+                    document.querySelector('#noti-dot').classList.add('hidden');
+                }
+            })
+            .catch(error => console.error(error));
+    }
+
 })
