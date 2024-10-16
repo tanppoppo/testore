@@ -51,28 +51,3 @@
 ​	<img src="https://img.shields.io/badge/slack-4A154B?style=for-the-badge&logo=slack&logoColor=white"><img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"><img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
 
 <br />
-
-### 2. 상세 버전
-
-| OS             | Windows 10                 |                                              |
-| -------------- | -------------------------- | -------------------------------------------- |
-| **Front-End**  | HTML5                      |                                              |
-|                | CSS3                       |                                              |
-|                | JS(ES6)                    |                                              |
-|                | Tailwind CSS               |                                              |
-|                | Node js                    |                                              |
-|                | NPM                        |                                              |
-| **Back-End**   | Java                       | `17`                                         |
-|                | Spring Boot                |                                              |
-|                | Spring Data JPA            |                                              |
-|                | Thymeleaf                  |                                              |
-|                | Spring Security            |                                              |
-|                | Gradle                     |                                              |
-| **Depolyment** | Docker                     |                                              |
-|                | Treafik                    |                                              |
-|                | Git Action                 |                                              |
-| **IDE**        | IntelliJ                   |                                              |
-|                | Visual Studio Code         |                                              |
-| **Database**   | MySQL                      |                                              |
-| **Tool**       | Figma                      |                                              |
-|                | Dbeaver                    |                                              |
