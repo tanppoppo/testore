@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class BoardServiceImpl implements BoardService {
@@ -67,6 +66,7 @@ public class BoardServiceImpl implements BoardService {
      * @throws EntityNotFoundException 회원이 존재하지 않을 경우 발생
      * @throws AccessDeniedException 관리자만 공지사항을 작성할 수 있음
      */
+    @Transactional
     @Override
     public void saveBoard(BoardDTO boardDTO, Integer userId) {
 
@@ -126,6 +126,7 @@ public class BoardServiceImpl implements BoardService {
      * @throws EntityNotFoundException 해당 게시글을 찾을 수 없을 경우 발생
      * @throws RuntimeException 게시글 작성자만 수정할 수 있음.
      */
+    @Transactional
     @Override
     public void updateBoard(BoardDTO boardDTO, Integer userId) {
         log.info("게시글을 수정합니다 : {}", boardDTO);
@@ -151,6 +152,7 @@ public class BoardServiceImpl implements BoardService {
      * @throws EntityNotFoundException 해당 게시글을 찾을 수 없을 경우 발생
      * @throws RuntimeException 작성자가 아닌 사용자가 게시글을 삭제하려고 할 경우 예외 발생
      */
+    @Transactional
     @Override
     public void deleteBoard(int boardId, Integer userId) {
         log.info("게시글을 삭제합니다 : {}", boardId);
@@ -194,6 +196,7 @@ public class BoardServiceImpl implements BoardService {
      * @author dhkdtjs1541
      * @param commentDTO 댓글 정보가 담긴 DTO
      */
+    @Transactional
     @Override
     public void createComment(CommentDTO commentDTO) {
         log.info("댓글을 작성합니다. 게시글 ID: {}, 작성자 ID: {}", commentDTO.getBoardId(), commentDTO.getMemberId());
@@ -223,6 +226,7 @@ public class BoardServiceImpl implements BoardService {
      * @throws EntityNotFoundException 해당 댓글을 찾을 수 없을 경우 발생
      * @throws AccessDeniedException 작성자가 아닌 사용자가 댓글을 삭제하려고 할 경우 예외 발생
      */
+    @Transactional
     @Override
     public void deleteComment(Integer commentId, Integer userId) {
         log.info("댓글 삭제 요청. 댓글 ID: {}, 사용자 ID: {}", commentId, userId);
@@ -296,7 +300,7 @@ public class BoardServiceImpl implements BoardService {
      * @throws EntityNotFoundException 수정할 댓글을 찾을 수 없을 경우 발생
      * @throws AccessDeniedException 댓글 작성자만 댓글을 수정할 수 있음
      */
-
+    @Transactional
     @Override
     public void updateComment(CommentDTO commentDTO) {
 

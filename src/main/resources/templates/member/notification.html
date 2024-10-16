@@ -8,7 +8,13 @@
       layout:fragment="Content"
 >
 <div class="mt-6">
-  <th:block
-          th:replace="~{common/fragments/notification-item :: NotificationItemFragment()}"></th:block>
+  <div th:if="${#lists.isEmpty(notifications)}" class="text-gray-300 text-center mt-6">
+    알림이 없습니다.
+  </div>
+  <th:block th:unless="${#lists.isEmpty(notifications)}">
+    <th:block th:each="item : ${notifications}">
+      <th:block th:replace="~{common/fragments/notification-item :: NotificationItemFragment(${item})}"></th:block>
+    </th:block>
+  </th:block>
 </div>
 </html>

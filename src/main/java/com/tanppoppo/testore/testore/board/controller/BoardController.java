@@ -84,8 +84,8 @@ public class BoardController {
             BoardDTO boardDTO = bs.getBoardDetail(boardId);
             model.addAttribute("boardDTO", boardDTO);
 
-            List<CommentDTO> commentDTOList = bs.getCommentList(boardId);
-            model.addAttribute("commentDTOList", commentDTOList);
+//            List<CommentDTO> commentDTOList = bs.getCommentList(boardId);
+//            model.addAttribute("commentDTOList", commentDTOList);
 
             return "board/board-detail";
         } catch (Exception e) {
