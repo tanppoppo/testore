@@ -7,7 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -29,8 +33,13 @@ public class NotificationEntity {
     private MemberEntity recipientId;  // 알림 수신자 (회원)
 
     @NotNull
-    @Column(name = "sender_id", nullable = false)
-    private Integer senderId;  // 알림 발신자 ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", nullable = false, referencedColumnName = "member_id")
+    private MemberEntity senderId;  // 알림 발신자 ID
+
+    @NotNull
+    @Column(name = "item_id", nullable = false)
+    private Integer itemId;
 
     @NotNull
     @Column(name = "notification_type", nullable = false)
@@ -39,6 +48,14 @@ public class NotificationEntity {
 
     @Column(name = "is_read")
     private Boolean isRead;  // 알림이 읽혔는지 여부
+
+    @CreatedDate
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    @Column(name = "update_date")
+    private LocalDateTime updateDate;
 
     @PrePersist
     public void prePersist() {
