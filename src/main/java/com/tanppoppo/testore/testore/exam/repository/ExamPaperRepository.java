@@ -23,9 +23,13 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     @Query("SELECT COUNT(ei) FROM ExamQuestionEntity ei WHERE ei.examPaperId.examPaperId = :examPaperId")
     Integer getExamItemCount(Integer examPaperId);
 
-    // 공유 수
-    @Query("SELECT SUM(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 ELSE 0 END) FROM ExamPaperEntity ep WHERE ep.creatorId.memberId = :memberId")
-    Integer getShareCount(Integer memberId);
+    // 공유 수 ( 예정 )
+//    @Query("SELECT SUM(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 ELSE 0 END) FROM ExamPaperEntity ep WHERE ep.creatorId.memberId = :memberId")
+//    Integer getShareCount(Integer memberId);
+
+    // examResultEntity의 status가 COMPLETED인 경우를 count하여 Integer로 반환함 [ 응시수 ]
+    @Query("SELECT COUNT(er) FROM ExamResultEntity er WHERE er.status = 'COMPLETED' AND er.examPaperId.examPaperId = :examPaperId")
+    Integer getShareCount(Integer examPaperId);
 
     // 시험지 수
     @Query("SELECT COUNT(ep) FROM ExamPaperEntity ep WHERE ep.ownerId = :memberId")
@@ -35,8 +39,12 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     @Query("SELECT ep FROM ExamPaperEntity ep WHERE ep.publicOption = true ORDER BY FUNCTION('RAND')")
     List<ExamPaperEntity> findRandomExamPapers(Pageable pageable);
 
-    // 시험지 공유수 순위 정렬
-    @Query("SELECT ep FROM ExamPaperEntity ep WHERE ep.publicOption = true GROUP BY ep HAVING COUNT(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 END) > 0 ORDER BY COUNT(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 END) DESC")
+    // 시험지 공유수 순위 정렬 ( 예정 ) 수정중
+//    @Query("SELECT ep FROM ExamPaperEntity ep WHERE ep.publicOption = true GROUP BY ep HAVING COUNT(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 END) > 0 ORDER BY COUNT(CASE WHEN ep.ownerId != ep.creatorId.memberId THEN 1 END) DESC")
+//    List<ExamPaperEntity> findSortedExamPapersByShareCount(Pageable pageable);
+
+    // 시험지 응시수 순위 정렬
+    @Query("SELECT ep FROM ExamPaperEntity ep JOIN ExamResultEntity er ON ep.examPaperId = er.examPaperId.examPaperId WHERE ep.publicOption = true AND er.status = 'COMPLETED' GROUP BY ep HAVING COUNT(er) > 0 ORDER BY COUNT(er) DESC")
     List<ExamPaperEntity> findSortedExamPapersByShareCount(Pageable pageable);
 
     // 이번주 인기 시험지 순위 정렬
