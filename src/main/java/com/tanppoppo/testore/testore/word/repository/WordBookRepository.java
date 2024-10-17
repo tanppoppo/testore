@@ -36,7 +36,7 @@ public interface WordBookRepository extends JpaRepository<WordBookEntity, Intege
     List<WordBookEntity> findRandomWordBooks(Pageable pageable);
 
     // 많이 공유된 단어장 [ 단어장 찾기 ]
-    @Query("SELECT wb FROM WordBookEntity wb WHERE wb.publicOption = true GROUP BY wb ORDER BY COUNT(CASE WHEN wb.ownerId != wb.creatorId.memberId THEN 1 END) DESC")
+    @Query("SELECT wb FROM WordBookEntity wb WHERE wb.publicOption = true GROUP BY wb HAVING COUNT(CASE WHEN wb.ownerId != wb.creatorId.memberId THEN 1 END) > 0 ORDER BY COUNT(CASE WHEN wb.ownerId != wb.creatorId.memberId THEN 1 END) DESC")
     List<WordBookEntity> findSortedWordBooksByShareCount(Pageable pageable);
 
     // 이번주 인기 시험지 [ 단어장 찾기 ]
