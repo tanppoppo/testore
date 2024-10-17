@@ -103,6 +103,8 @@ public class MemberController {
     public String examResult(Model model, @RequestParam(required = false) String keyword, @AuthenticationPrincipal AuthenticatedUser user) {
 
         model.addAttribute("resultItems", es.findExamResultByMemberId(user, keyword));
+        model.addAttribute("keyword", keyword);
+
         return "member/exam-result";
 
     }

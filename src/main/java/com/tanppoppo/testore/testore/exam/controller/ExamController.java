@@ -101,13 +101,24 @@ public class ExamController {
 
     }
 
+    /**
+     * 시험지 수정
+     * @author gyahury
+     * @param examPaperDTO 시험지 전달 객체를 가져옵니다.
+     * @param examPaperId 시험지 ID를 가져옵니다.
+     * @param user 유저 객체를 가져옵니다.
+     * @param redirectAttributes 리다이렉트 객체를 가져옵니다.
+     * @return 메인 페이지로 리다이렉트 합니다.
+     */
     @PostMapping("updateExamPaper")
-    public String updateExamPaper(ExamPaperDTO examPaperDTO
+    public String updateExamPaper(ExamPaperDTO examPaperDTO, @RequestParam(name = "paper") int examPaperId
             , @AuthenticationPrincipal AuthenticatedUser user
             , RedirectAttributes redirectAttributes) {
 
         try {
+            examPaperDTO.setExamPaperId(examPaperId);
             es.updateExamPaper(examPaperDTO, user.getId());
+            setFlashToastMessage(redirectAttributes, true, "수정되었습니다.");
             return "redirect:/exam/examPaperDetail?paper="+examPaperDTO.getExamPaperId();
         } catch (AccessDeniedException e) {
             setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
@@ -116,6 +127,31 @@ public class ExamController {
         }
         return "redirect:/";
 
+    }
+
+    /**
+     * 시험지 삭제
+     * @author gyahury
+     * @param examPaperId 시험지 id를 가져옵니다.
+     * @param user 유저 객체를 가져옵니다.
+     * @param redirectAttributes 리다이렉트 객체를 가져옵니다.
+     * @return 시험지 페이지로 이동합니다.
+     */
+    @GetMapping("deleteExamPaper")
+    public String deleteExamPaper(@RequestParam(name = "paper") int examPaperId
+            , @AuthenticationPrincipal AuthenticatedUser user
+            , RedirectAttributes redirectAttributes) {
+
+        try {
+            es.deleteExamPaper(examPaperId, user.getId());
+            setFlashToastMessage(redirectAttributes, true, "삭제되었습니다.");
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
+        } catch (Exception e) {
+            setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생했습니다.");
+        }
+
+        return "redirect:/exam";
     }
 
     /**
@@ -217,7 +253,8 @@ public class ExamController {
 
         List<ExamPaperDTO> examPaperDTOList = es.findExamPaperByMemberId(user, keyword);
         model.addAttribute("items", examPaperDTOList);
-        return "exam/exam-searchExam";
+        model.addAttribute("keyword", keyword);
+        return "exam/exam-search-keyword";
 
     }
 
@@ -380,12 +417,12 @@ public class ExamController {
                                ,@RequestParam(name = "review") int reviewId){
 
         Integer examPaperId = 0;
-        try{
+        try {
             examPaperId = es.deleteReview(user, reviewId);
         } catch (AccessDeniedException e) {
             setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
             return "redirect:/";
-        } catch (Exception e){
+        } catch (Exception e) {
             setFlashToastMessage(redirectAttributes, false, "알 수 없는 에러가 발생했습니다.");
             return "redirect:/";
         }

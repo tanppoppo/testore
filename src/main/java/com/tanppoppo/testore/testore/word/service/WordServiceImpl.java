@@ -16,6 +16,7 @@ import com.tanppoppo.testore.testore.word.entity.WordEntity;
 import com.tanppoppo.testore.testore.word.repository.WordBookRepository;
 import com.tanppoppo.testore.testore.word.repository.WordRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,6 +58,7 @@ public class WordServiceImpl implements WordService {
      * @param user 사용자 인증 정보를 가져옵니다.
      * @return WordBookId를 반환합니다.
      */
+    @Transactional
     @Override
     public int createWordBook(WordBookDTO wordBookDTO, AuthenticatedUser user) {
 
@@ -83,6 +85,7 @@ public class WordServiceImpl implements WordService {
      * @param wordBookId 단어장 Id를 가져옵니다.
      * @param userId 사용자 정보를 가져옵니다.
      */
+    @Transactional
     @Override
     public Integer addWords(WordDTO wordDTO, Integer wordBookId, Integer userId) {
 
@@ -225,6 +228,7 @@ public class WordServiceImpl implements WordService {
      * @param wordBookId 단어장 아이디를 가져옵니다.
      * @param user       인증된 회원정보를 가져옵니다.
      */
+    @Transactional
     @Override
     public void updatePublicOptionByMemberId(Integer wordBookId, AuthenticatedUser user) {
 
@@ -290,6 +294,8 @@ public class WordServiceImpl implements WordService {
 
         for (ReviewEntity entity : reviewEntityList) {
             ReviewDTO reviewDTO = ReviewDTO.builder()
+                    .memberId(memberEntity.getMemberId())
+                    .reviewId(entity.getReviewId())
                     .rating(entity.getRating())
                     .content(entity.getContent())
                     .createdDate(entity.getCreatedDate())
@@ -312,6 +318,7 @@ public class WordServiceImpl implements WordService {
      * @param user user 객체를 가져옵니다.
      * @param wordBookId 단어장 키값을 가져옵니다.
      */
+    @Transactional
     @Override
     public void createReview(AuthenticatedUser user, int wordBookId, ReviewDTO reviewDTO) {
 
@@ -335,14 +342,11 @@ public class WordServiceImpl implements WordService {
      * 리뷰 수정 페이지 이동
      * @author MinCheolHa
      * @param user user 객체를 가져옵니다.
-     * @param wordBookId 단어장 키값을 가져옵니다.
      * @param reviewId 리뷰 키값을 가져옵니다.
      * @return reviewDTO를 반환합니다.
      */
     @Override
-    public ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int wordBookId, int reviewId) {
-
-        wbr.findById(wordBookId).orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+    public ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int reviewId) {
 
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
@@ -355,6 +359,8 @@ public class WordServiceImpl implements WordService {
         }
 
         ReviewDTO reviewDTO = ReviewDTO.builder()
+                .itemId(reviewEntity.getItemId())
+                .reviewId(reviewEntity.getReviewId())
                 .rating(reviewEntity.getRating())
                 .content(reviewEntity.getContent())
                 .build();
@@ -369,6 +375,7 @@ public class WordServiceImpl implements WordService {
      * @param user user 객체를 가져옵니다.
      * @param reviewId 리뷰 키값을 가져옵니다.
      */
+    @Transactional
     @Override
     public void updateReview(AuthenticatedUser user, int reviewId, ReviewDTO reviewDTO) {
 
@@ -393,6 +400,7 @@ public class WordServiceImpl implements WordService {
      * @param user user 객체를 가져옵니다.
      * @param reviewId 리뷰 키값을 가져옵니다.
      */
+    @Transactional
     @Override
     public void deleteReview(AuthenticatedUser user, int reviewId) {
 
@@ -597,6 +605,7 @@ public class WordServiceImpl implements WordService {
      * @param wordBookDTO 단어장 표제값을 가져옵니다.
      * @param user user 객체를 가져옵니다.
      */
+    @Transactional
     @Override
     public void updateWordBook(WordBookDTO wordBookDTO, AuthenticatedUser user) {
 
@@ -606,20 +615,39 @@ public class WordServiceImpl implements WordService {
         MemberEntity memberEntity = mr.findById(wordBookEntity.getCreatorId().getMemberId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        if (!memberEntity.getMemberId().equals(wordBookEntity.getOwnerId())){
+        if (!user.getId().equals(wordBookEntity.getOwnerId())){
             if (!wordBookEntity.getPublicOption()) {
                 throw new AccessDeniedException("공개된 단어장이 아닙니다.");
             }
             throw new AccessDeniedException("권한이 없습니다.");
         }
 
-        if (!user.getId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
-            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
-        }
-
         wordBookEntity.setTitle(wordBookDTO.getTitle());
         wordBookEntity.setContent(wordBookDTO.getContent());
-        wordBookEntity.setImagePath(wordBookDTO.getImagePath());
+
+    }
+
+    /**
+     * 시험지 삭제
+     * @author gyahury
+     * @param wordBookId 시험지 id를 가져옵니다.
+     * @param userId user id를 가져옵니다.
+     */
+    @Transactional
+    @Override
+    public void deleteWordBook(int wordBookId, Integer userId) {
+        WordBookEntity wordBookEntity = wbr.findById(wordBookId)
+                .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+        if (!userId.equals(wordBookEntity.getOwnerId())){
+            if (!wordBookEntity.getPublicOption()) {
+                throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+            }
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+        wbr.delete(wordBookEntity);
+
     }
 
     /**
@@ -707,6 +735,7 @@ public class WordServiceImpl implements WordService {
      * @param wordbookId 단어장 키값을 가져옵니다.
      * @param wordDTO wordDTO 객체를 가져옵니다.
      */
+    @Transactional
     @Override
     public void saveEditedWord(AuthenticatedUser user, int wordbookId, WordDTO wordDTO) {
 

@@ -8,16 +8,18 @@
 >
 <div class="relative">
   <div class="flex gap-[calc(0.01rem+0.5vw)] absolute top-5 left-8">
-    <button th:if="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
-      <svg class="w-6 h-6 text-yellow-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"/>
-      </svg>
-    </button>
-    <button th:unless="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
-      <svg class="w-6 h-6 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-width="1.6" d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"/>
-      </svg>
-    </button>
+    <th:block th:if="${#authentication.principal.id == wordBookDTO.ownerId}">
+      <button th:if="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
+        <svg class="w-6 h-6 text-yellow-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"/>
+        </svg>
+      </button>
+      <button th:unless="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
+        <svg class="w-6 h-6 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-width="1.6" d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"/>
+        </svg>
+      </button>
+    </th:block>
     <button th:if="${likeState != null ? likeState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/likeWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
       <svg class="w-6 h-6 text-rose-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
         <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/>
@@ -28,19 +30,21 @@
         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"/>
       </svg>
     </button>
-    <button th:if="${wordBookDTO.publicOption != null ? wordBookDTO.publicOption : false}" type="button" class="p-1" th:onclick="'location.href=\'/word/updatePublicOption?book=' + ${wordBookDTO.wordBookId} + '\''">
-      <svg class="w-6 h-6 text-teal-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-        <path fill-rule="evenodd" d="M15 7a2 2 0 1 1 4 0v4a1 1 0 1 0 2 0V7a4 4 0 0 0-8 0v3H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2V7Zm-5 6a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0v-3a1 1 0 0 1 1-1Z" clip-rule="evenodd"/>
-      </svg>
-    </button>
-    <button th:unless="${wordBookDTO.publicOption != null ? wordBookDTO.publicOption : false}" type="button" class="p-1" th:onclick="'location.href=\'/word/updatePublicOption?book=' + ${wordBookDTO.wordBookId} + '\''">
-      <svg class="w-6 h-6 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
-      </svg>
-    </button>
+    <th:block th:if="${#authentication.principal.id == wordBookDTO.ownerId}">
+      <button th:if="${wordBookDTO.publicOption != null ? wordBookDTO.publicOption : false}" type="button" class="p-1" th:onclick="'location.href=\'/word/updatePublicOption?book=' + ${wordBookDTO.wordBookId} + '\''">
+        <svg class="w-6 h-6 text-teal-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path fill-rule="evenodd" d="M15 7a2 2 0 1 1 4 0v4a1 1 0 1 0 2 0V7a4 4 0 0 0-8 0v3H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2V7Zm-5 6a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0v-3a1 1 0 0 1 1-1Z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <button th:unless="${wordBookDTO.publicOption != null ? wordBookDTO.publicOption : false}" type="button" class="p-1" th:onclick="'location.href=\'/word/updatePublicOption?book=' + ${wordBookDTO.wordBookId} + '\''">
+        <svg class="w-6 h-6 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
+        </svg>
+      </button>
+    </th:block>
   </div>
   <div class="absolute top-2 right-2 z-10 block h-12 w-9 text-left">
-    <div>
+    <div class="menu-button">
       <button type="button"
               class="inline-flex w-full justify-center rounded-xl bg-transparent px-2 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50"
               id="toggleMenuButton">
@@ -50,7 +54,7 @@
         </svg>
       </button>
     </div>
-    <div class="absolute right-2 z-10 mt-1 w-32 origin-top-right rounded-md bg-white shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:w-44">
+    <div class="hidden absolute right-2 z-10 mt-1 w-32 origin-top-right rounded-md bg-white shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none sm:w-44">
       <button
               th:if="${#authentication.principal.id == wordBookDTO.ownerId}"
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
@@ -76,6 +80,7 @@
       <button
               th:if="${#authentication.principal.id == wordBookDTO.ownerId}"
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              th:onclick="'location.href=\'deleteWordBook?book=' + ${wordBookDTO.wordBookId} + '\''"
               id="deleteButton">삭제하기
       </button>
     </div>
@@ -83,7 +88,7 @@
   </div>
 </div>
 <div class="flex flex-col items-center mt-16">
-  <img class="w-20 object-contain" th:src="@{/common/image/word-number.png}">
+  <img class="w-20 object-contain" th:src="${wordBookDTO != null ? wordBookDTO.imagePath : ''}">
   <div class="flex flex-col gap-2 w-full font-bold text-lg text-center text-gray-700 mt-10">
     <span th:text="${wordBookDTO.title}"></span>
     <div class="font-bold text-sm text-gray-400">제작자 : <span th:text="${nickname}"></span></div>
@@ -127,4 +132,5 @@
     <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'learningButton', 'learningButton', '학 습', 'examTake?paper='+${wordBookDTO.wordBookId} , true)}"></th:block>
   </div>
 </div>
+<script th:src="@{/word/js/word-detail.js}"></script>
 </html>
