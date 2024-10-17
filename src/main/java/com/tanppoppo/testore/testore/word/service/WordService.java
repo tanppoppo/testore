@@ -30,7 +30,7 @@ public interface WordService {
 
     void createReview(AuthenticatedUser user, int wordBookId, ReviewDTO reviewDTO);
 
-    ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int wordBookId, int reviewId);
+    ReviewDTO selectUpdatedReviewInfo(AuthenticatedUser user, int reviewId);
 
     void updateReview(AuthenticatedUser user, int reviewId, ReviewDTO reviewDTO);
 
@@ -57,4 +57,6 @@ public interface WordService {
     List<WordBookDTO> getLikedWordBook(AuthenticatedUser user);
 
     List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user);
+
+    void deleteWordBook(int wordBookId, Integer id);
 }

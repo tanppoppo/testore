@@ -256,27 +256,25 @@ public class WordController {
         ws.createReview(user, wordBookId, reviewDTO);
 
         return "redirect:/word/wordBookDetail?book=" + wordBookId;
+
     }
 
     /**
      * 리뷰 수정 페이지 이동
      * @author MinCheolHa
      * @param user 인증된 회원 정보를 전달합니다.
-     * @param wordBookId 단어장 ID를 전달합니다.
      * @param reviewId 리뷰 ID를 전달합니다.
      * @param model 모델 객체를 전달합니다.
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
     @GetMapping("updateReviewForm")
     public String updateReviewForm(@AuthenticationPrincipal AuthenticatedUser user,
-                                   @RequestParam(name = "book") int wordBookId,
                                    @RequestParam(name = "review") int reviewId, Model model){
 
-        ReviewDTO reviewDTO = ws.selectUpdatedReviewInfo(user, wordBookId, reviewId);
-        model.addAttribute("rating", reviewDTO.getRating());
-        model.addAttribute("content", reviewDTO.getContent());
+        ReviewDTO reviewDTO = ws.selectUpdatedReviewInfo(user, reviewId);
+        model.addAttribute("reviewDTO", reviewDTO);
 
-        return "word/word-updateReviewForm";
+        return "word/create-review-form";
 
     }
 
@@ -287,14 +285,16 @@ public class WordController {
      * @param reviewId 리뷰 ID를 전달합니다.
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
-    @GetMapping("updateReview")
+    @PostMapping("updateReview")
     public String updateReview(@AuthenticationPrincipal AuthenticatedUser user,
                                @RequestParam(name = "review") int reviewId,
+                               @RequestParam(name = "book") int wordBookId,
                                ReviewDTO reviewDTO){
 
         ws.updateReview(user, reviewId, reviewDTO);
 
-        return "word/word-updateReviewForm";
+        return "redirect:/word/review?book=" + wordBookId;
+
     }
 
     /**
@@ -328,7 +328,7 @@ public class WordController {
 
         WordBookDTO wordBookDTO = ws.selectUpdatedWordbookInfo(wordbookId, user);
 
-        model.addAttribute("wordbookId", wordBookDTO.getWordBookId());
+        model.addAttribute("wordBookId", wordBookDTO.getWordBookId());
         model.addAttribute("imagePath", wordBookDTO.getImagePath());
         model.addAttribute("title", wordBookDTO.getTitle());
         model.addAttribute("content", wordBookDTO.getContent());
@@ -347,19 +347,46 @@ public class WordController {
      */
     @PostMapping("updateWordBook")
     public String updateWordBook(@AuthenticationPrincipal AuthenticatedUser user,
+                                 @RequestParam(name = "book") int wordbookId,
                                  WordBookDTO wordBookDTO,
                                  RedirectAttributes redirectAttributes){
 
         try {
+            wordBookDTO.setWordBookId(wordbookId);
             ws.updateWordBook(wordBookDTO, user);
-            return "redirect:/word/word-detail?book=" + wordBookDTO.getWordBookId();
+            setFlashToastMessage(redirectAttributes, true, "수정되었습니다.");
+                        return "redirect:/word/wordBookDetail?book=" + wordBookDTO.getWordBookId();
         } catch (AccessDeniedException e) {
             setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
-        } catch (Exception e) {
-            setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생 했습니다.");
         }
 
         return "redirect:/";
+
+    }
+
+    /**
+     * 단어장 삭제
+     * @author gyahury
+     * @param wordBookId 단어장 Id를 가져옵니다
+     * @param user user 객체를 가져옵니다.
+     * @param redirectAttributes 리다이렉트 객체를 가져옵니다.
+     * @return 단어 페이지로 리다이렉트합니다.
+     */
+    @GetMapping("deleteWordBook")
+    public String deleteWordBook(@RequestParam(name = "book") int wordBookId
+            , @AuthenticationPrincipal AuthenticatedUser user
+            , RedirectAttributes redirectAttributes) {
+
+        try {
+            ws.deleteWordBook(wordBookId, user.getId());
+            setFlashToastMessage(redirectAttributes, true, "삭제되었습니다.");
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
+        } catch (Exception e) {
+            setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생했습니다.");
+        }
+
+        return "redirect:/word";
     }
 
     /**
@@ -377,7 +404,7 @@ public class WordController {
         List<WordDTO> wordDTOList = ws.getWordsForUpdate(user, wordbookId);
         model.addAttribute("words", wordDTOList);
 
-        return "word/word-update-form";
+        return "word/word-create-form";
 
     }
 

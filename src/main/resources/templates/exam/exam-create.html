@@ -10,7 +10,7 @@
   <div class="flex items-center justify-center pb-4">
     <img class="w-20 object-contain" th:src="@{/common/image/exam-main.png}">
     <input type="hidden" id="imagePath" name="imagePath" value="/common/image/exam-main.png">
-    <input type="hidden" th:name="${examPaperId != null ? 'examPaperId' : ''}" th:value="${examPaperId != null ? examPaperId : ''}">
+    <input type="hidden" th:name="${examPaperId != null ? 'paper' : ''}" th:value="${examPaperId != null ? examPaperId : ''}">
   </div>
   <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'title', 'title', '시험지 이름', ${examPaperTitle})}"></th:block>
   <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'content', 'content', '시험지 설명', ${examPaperContent})}"></th:block>
