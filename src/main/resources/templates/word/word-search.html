@@ -8,37 +8,37 @@
 >
 <th:block
         th:replace="~{common/fragments/twin-menu :: TwinMenuFragment('내 단어장', '단어장 찾아보기', '/word', '/word/search', 2)}"></th:block>
-<th:block th:replace="~{common/fragments/search :: SearchFragment(examSearch)}"></th:block>
+<th:block th:replace="~{common/fragments/search :: SearchFragment(wordBookSearch, ${keyword} != null ? ${keyword} : '')}"></th:block>
 <div class="pl-10 pt-3 font-bold text-gray-500">추천</div>
-<div th:if="${#lists.isEmpty(items)}" class="text-gray-300 text-center font-bold mt-10">
+<div th:if="${#lists.isEmpty(recommendedWordBook)}" class="text-gray-300 text-center font-bold mt-10">
   추천 단어장이 없습니다.
 </div>
-<div th:unless="${#lists.isEmpty(items)}">
-  <th:block th:each="item : ${items}">
+<div th:unless="${#lists.isEmpty(recommendedWordBook)}">
+  <th:block th:each="item : ${recommendedWordBook}">
     <th:block
-            th:replace="~{common/fragments/exam-item :: ExamItemFragment(${item})}">
+            th:replace="~{common/fragments/wordbook-item :: WordBookItemFragment(${item})}">
     </th:block>
   </th:block>
 </div>
 <div class="pl-10 pt-12 font-bold text-gray-500">이번주 인기 단어장</div>
-<div th:if="${#lists.isEmpty(items)}" class="text-gray-300 text-center font-bold mt-10">
+<div th:if="${#lists.isEmpty(likedWordBook)}" class="text-gray-300 text-center font-bold mt-10">
   인기 단어장이 없습니다.
 </div>
-<div th:unless="${#lists.isEmpty(items)}">
-  <th:block th:each="item : ${items}">
+<div th:unless="${#lists.isEmpty(likedWordBook)}">
+  <th:block th:each="item : ${likedWordBook}">
     <th:block
-            th:replace="~{common/fragments/exam-item :: ExamItemFragment(${item})}">
+            th:replace="~{common/fragments/wordbook-item :: WordBookItemFragment(${item})}">
     </th:block>
   </th:block>
 </div>
 <div class="pl-10 pt-12 font-bold text-gray-500">많이 공유된 단어장</div>
-<div th:if="${#lists.isEmpty(items)}" class="text-gray-300 text-center font-bold mt-10">
+<div th:if="${#lists.isEmpty(muchSharedWordBook)}" class="text-gray-300 text-center font-bold mt-10">
   많이 공유된 단어장이 없습니다.
 </div>
-<div th:unless="${#lists.isEmpty(items)}">
-  <th:block th:each="item : ${items}">
+<div th:unless="${#lists.isEmpty(muchSharedWordBook)}">
+  <th:block th:each="item : ${muchSharedWordBook}">
     <th:block
-            th:replace="~{common/fragments/exam-item :: ExamItemFragment(${item})}">
+            th:replace="~{common/fragments/wordbook-item :: WordBookItemFragment(${item})}">
     </th:block>
   </th:block>
 </div>

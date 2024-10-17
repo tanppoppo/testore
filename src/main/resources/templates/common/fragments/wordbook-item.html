@@ -2,7 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org"
       th:fragment="WordBookItemFragment(item)">
 <div class="flex gap-3 items-center min-h-[calc(6rem+4vw)] py-4 px-2 border-b-2 border-gray-100">
-  <img class="w-20 object-contain" th:src="${item.imagePath != null ? item.imagePath : ''}">
+  <div class="relative">
+    <img class="w-20 object-contain" th:src="${item.imagePath != null ? item.imagePath : ''}">
+    <svg th:if="${item.isBookmarked}" class="absolute top-[-15px] right-[-20px] w-[18px] h-[18px] text-yellow-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"/>
+    </svg>
+  </div>
   <div class="flex flex-col justify-center gap-3 w-full px-8 font-bold">
     <div class="text-[calc(0.7rem+0.3vw)] text-gray-800"
          th:text="${item.title != null ? item.title : ''}"></div>
@@ -12,7 +17,7 @@
     <div class="text-[calc(0.6rem+0.2vw)] text-gray-400 font-medium mt-2"
          th:text="${item.content != null ? item.content : ''}"></div>
   </div>
-  <a th:href="'word/wordBookDetail?book='+${item.wordBookId != null ? item.wordBookId : '1'}">
+  <a th:href="'/word/wordBookDetail?book='+${item.wordBookId != null ? item.wordBookId : '1'}">
     <svg class="w-[48px] h-[48px] text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
          height="24" fill="none" viewBox="0 0 24 24">
       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>

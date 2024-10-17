@@ -8,7 +8,7 @@
 >
 <th:block
         th:replace="~{common/fragments/twin-menu :: TwinMenuFragment('내 시험지', '시험지 찾아보기', '/exam', '/exam/search', 2)}"></th:block>
-<th:block th:replace="~{common/fragments/search :: SearchFragment(examSearch)}"></th:block>
+<th:block th:replace="~{common/fragments/search :: SearchFragment(examSearch, ${keyword} != null ? ${keyword} : '')}"></th:block>
 <div class="pl-10 pt-3 font-bold text-gray-500">추천</div>
 <div th:if="${#lists.isEmpty(recommendedExamPaper)}" class="text-gray-300 text-center font-bold mt-10">
   추천 시험지가 없습니다.
