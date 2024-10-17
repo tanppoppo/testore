@@ -15,6 +15,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 시험지 정보를 저장하는 엔티티 클래스
@@ -89,6 +90,12 @@ public class ExamPaperEntity {
     @LastModifiedDate
     @Column(name = "updated_date")
     private LocalDateTime updateDate;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "examPaperId", cascade = CascadeType.REMOVE)
+    private List<ExamQuestionEntity> examQuestions;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "examPaperId", cascade = CascadeType.REMOVE)
+    private List<ExamResultEntity> examResults;
 
     @PrePersist
     public void prePersist() {

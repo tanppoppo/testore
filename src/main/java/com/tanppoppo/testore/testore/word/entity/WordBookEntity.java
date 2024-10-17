@@ -13,6 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 단어장 정보를 저장하는 엔티티 클래스
@@ -78,6 +79,9 @@ public class WordBookEntity {
     @LastModifiedDate
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "wordBookId", cascade = CascadeType.REMOVE)
+    private List<WordEntity> words;
 
     @PrePersist
     public void prePersist() {

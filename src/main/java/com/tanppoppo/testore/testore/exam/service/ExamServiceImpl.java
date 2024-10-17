@@ -41,7 +41,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class ExamServiceImpl implements ExamService {
@@ -62,6 +61,7 @@ public class ExamServiceImpl implements ExamService {
      * @param user 사용자 인증 정보를 가져옵니다.
      * @return examPaperId를 반환합니다.
      */
+    @Transactional
     @Override
     public int examCreate(ExamPaperDTO examPaperDTO, AuthenticatedUser user) {
 
@@ -291,6 +291,7 @@ public class ExamServiceImpl implements ExamService {
      * @param user user 객체를 가져옵니다.
      * @return 시험 결과 id를 반환합니다.
      */
+    @Transactional
     @Override
     public int startExam(int examPaperId, AuthenticatedUser user) {
 
@@ -320,6 +321,7 @@ public class ExamServiceImpl implements ExamService {
      * @param score 시험 점수를 가져옵니다.
      * @param user 유저 객체를 가져옵니다.
      */
+    @Transactional
     @Override
     public void endExam(int examResultId, int score, AuthenticatedUser user) {
 
@@ -384,6 +386,7 @@ public class ExamServiceImpl implements ExamService {
      * @param paragraphs 문제 단락을 가져옵니다.
      * @param userId 계정 id를 가져옵니다.
      */
+    @Transactional
     @Override
     public void createQuestion(Map<String, String[]> paragraphs, Integer userId) {
 
@@ -535,6 +538,7 @@ public class ExamServiceImpl implements ExamService {
      * @param examPaperDTO 시험지 dto를 가져옵니다.
      * @param userId 유저 id를 가져옵니다.
      */
+    @Transactional
     @Override
     public void updateExamPaper(ExamPaperDTO examPaperDTO, Integer userId) {
 
@@ -554,6 +558,29 @@ public class ExamServiceImpl implements ExamService {
         examPaperEntity.setTitle(examPaperDTO.getTitle());
         examPaperEntity.setContent(examPaperDTO.getContent());
         examPaperEntity.setPassScore(examPaperDTO.getPassScore());
+
+    }
+
+    /**
+     * 시험지 삭제
+     * @author gyahury
+     * @param examPaperId 시험지 id를 가져옵니다.
+     * @param userId user id를 가져옵니다.
+     */
+    @Transactional
+    @Override
+    public void deleteExamPaper(int examPaperId, Integer userId) {
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        if (!userId.equals(examPaperEntity.getOwnerId())){
+            if (!examPaperEntity.getPublicOption()) {
+                throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+            }
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
+        epr.delete(examPaperEntity);
 
     }
 
@@ -595,6 +622,7 @@ public class ExamServiceImpl implements ExamService {
      * @author KIMGEON64
      * @param examPaperId 시험지 키값을 가져옵니다.
      */
+    @Transactional
     @Override
     public void controlPublicOption(int examPaperId) {
 
@@ -636,6 +664,7 @@ public class ExamServiceImpl implements ExamService {
         for (ReviewEntity entity : reviewEntityList) {
             ReviewDTO reviewDTO = ReviewDTO.builder()
                     .memberId(entity.getMemberId().getMemberId())
+                    .reviewId(entity.getReviewId())
                     .rating(entity.getRating())
                     .content(entity.getContent())
                     .createdDate(entity.getCreatedDate())
@@ -658,6 +687,7 @@ public class ExamServiceImpl implements ExamService {
      * @param user user 객체를 가져옵니다.
      * @param examPaperId 시험지 키값을 가져옵니다.
      */
+    @Transactional
     @Override
     public void createReview(AuthenticatedUser user, int examPaperId, ReviewDTO reviewDTO) {
 
@@ -713,6 +743,7 @@ public class ExamServiceImpl implements ExamService {
      * @author KIMGEON64
      * @param user user 객체를 가져옵니다.
      */
+    @Transactional
     @Override
     public void updateReview(AuthenticatedUser user, Integer reviewId, ReviewDTO reviewDTO) {
 
@@ -737,6 +768,7 @@ public class ExamServiceImpl implements ExamService {
      * @param user user 객체를 가져옵니다.
      * @param reviewId 리뷰 키값을 가져옵니다.
      */
+    @Transactional
     @Override
     public Integer deleteReview(AuthenticatedUser user, int reviewId) {
 

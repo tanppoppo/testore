@@ -37,6 +37,8 @@ public interface ExamService {
 
     void updateExamPaper(ExamPaperDTO examPaperDTO, Integer id);
 
+    void deleteExamPaper(int examPaperId, Integer userId);
+
     void controlPublicOption(int examPaperId);
 
     Map<String,Object> getListReviews(AuthenticatedUser user, int examPaperId);
@@ -62,4 +64,5 @@ public interface ExamService {
     List<ExamPaperDTO> getLikedExam(AuthenticatedUser user);
 
     List<ExamPaperDTO> getBookmarkedExam(AuthenticatedUser user);
+
 }

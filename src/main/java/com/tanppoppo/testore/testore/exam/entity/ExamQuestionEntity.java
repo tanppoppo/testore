@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * 시험 문제 정보를 저장하는 엔티티 클래스
  * @version 0.1.0
@@ -42,5 +44,8 @@ public class ExamQuestionEntity {
 
     @Column(name = "question_order")
     private Integer questionOrder;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "examQuestionId", cascade = CascadeType.REMOVE)
+    private List<QuestionParagraphEntity> questionParagraphs;
 
 }

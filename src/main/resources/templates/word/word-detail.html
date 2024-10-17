@@ -8,16 +8,18 @@
 >
 <div class="relative">
   <div class="flex gap-[calc(0.01rem+0.5vw)] absolute top-5 left-8">
-    <button th:if="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
-      <svg class="w-6 h-6 text-yellow-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"/>
-      </svg>
-    </button>
-    <button th:unless="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
-      <svg class="w-6 h-6 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-width="1.6" d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"/>
-      </svg>
-    </button>
+    <th:block th:if="${#authentication.principal.id == wordBookDTO.ownerId}">
+      <button th:if="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
+        <svg class="w-6 h-6 text-yellow-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"/>
+        </svg>
+      </button>
+      <button th:unless="${bookmarkState != null ? bookmarkState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/bookmarkWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
+        <svg class="w-6 h-6 text-gray-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-width="1.6" d="M11.083 5.104c.35-.8 1.485-.8 1.834 0l1.752 4.022a1 1 0 0 0 .84.597l4.463.342c.9.069 1.255 1.2.556 1.771l-3.33 2.723a1 1 0 0 0-.337 1.016l1.03 4.119c.214.858-.71 1.552-1.474 1.106l-3.913-2.281a1 1 0 0 0-1.008 0L7.583 20.8c-.764.446-1.688-.248-1.474-1.106l1.03-4.119A1 1 0 0 0 6.8 14.56l-3.33-2.723c-.698-.571-.342-1.702.557-1.771l4.462-.342a1 1 0 0 0 .84-.597l1.753-4.022Z"/>
+        </svg>
+      </button>
+    </th:block>
     <button th:if="${likeState != null ? likeState : false}" type="button" class="p-1" th:onclick="'location.href=\'/member/likeWordBook?book=' + ${wordBookDTO.wordBookId} + '\''">
       <svg class="w-6 h-6 text-rose-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
         <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z"/>
@@ -78,6 +80,7 @@
       <button
               th:if="${#authentication.principal.id == wordBookDTO.ownerId}"
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              th:onclick="'location.href=\'deleteWordBook?book=' + ${wordBookDTO.wordBookId} + '\''"
               id="deleteButton">삭제하기
       </button>
     </div>

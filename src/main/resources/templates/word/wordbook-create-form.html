@@ -10,7 +10,7 @@
   <div class="flex items-center justify-center pb-4">
     <img class="w-20 object-contain" th:src="${title != null} ? ${imagePath} : '/word/image/wordbook-' + ${color} + '.png'">
     <input type="hidden" id="imagePath" name="imagePath" th:value="${title != null} ? ${imagePath} : '/word/image/wordbook-' + ${color} + '.png'">
-    <input type="hidden" th:name="${wordbookId != null ? 'book' : ''}" th:value="${wordBookId != null ? wordBookId : ''}">
+    <input type="hidden" th:name="${wordBookId != null ? 'book' : ''}" th:value="${wordBookId != null ? wordBookId : ''}">
   </div>
   <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'title', 'title', '단어장 이름', ${title})}"></th:block>
   <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'content', 'content', '단어장 설명', ${content})}"></th:block>
