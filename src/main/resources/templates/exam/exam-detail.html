@@ -74,6 +74,7 @@
       <button
               th:if="${#authentication.principal.id == examPaperDTO.ownerId}"
               class="block w-full px-4 py-3 text-left text-xs text-gray-700 hover:bg-gray-100 focus:outline-none sm:text-sm"
+              th:onclick="'location.href=\'examHistory?paper=' + ${examPaperDTO.examPaperId} + '\''"
               id="historyButton">응시 내역보기
       </button>
       <button
@@ -117,7 +118,7 @@
       <div class="flex justify-center items-center w-full h-auto aspect-square">
         <img class="w-3/4 h-3/4" th:src="@{/common/image/share.png}">
       </div>
-      <span class="mt-1">공유</span>
+      <span class="mt-1">응시</span>
       <span class="mt-1" th:text="${examPaperDTO.shareCount}"></span>
     </div>
     <div class="flex flex-col w-1/4">
