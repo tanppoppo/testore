@@ -54,9 +54,9 @@ public interface WordService {
 
     void saveEditedWord(AuthenticatedUser user, int wordbookId, WordDTO wordDTO);
 
-    List<WordBookDTO> getLikedWordBook(AuthenticatedUser user);
+    List<WordBookDTO> getLikedWordBook(AuthenticatedUser user, String keyword);
 
-    List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user);
+    List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user, String keyword);
 
     void deleteWordBook(int wordBookId, Integer id);
 }

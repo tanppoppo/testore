@@ -70,4 +70,12 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     @Query("SELECT ep FROM ExamPaperEntity ep JOIN BookmarkEntity be ON be.itemId = ep.examPaperId WHERE be.memberId.memberId = :memberId and be.itemType = :itemType order by ep.examPaperId desc")
     List<ExamPaperEntity> findBookmarkedExamPapersByMemberId(Integer memberId, ItemTypeEnum itemType);
 
+    // 키워드 기준으로 내가 좋아요한 시험지 조회
+    @Query("SELECT ep FROM ExamPaperEntity ep JOIN ItemLikeEntity le ON le.itemId = ep.examPaperId WHERE le.memberId.memberId = :memberId OR ep.title LIKE %:keyword% and le.itemType = :itemType order by ep.examPaperId desc")
+    List<ExamPaperEntity> findLikedExamPapersByMemberIdAndKeyword(Integer memberId, ItemTypeEnum itemType, String keyword);
+
+    // 키워드 기준으로 내가 북마크한 시험지 조회
+    @Query("SELECT ep FROM ExamPaperEntity ep JOIN BookmarkEntity bm ON bm.itemId = ep.examPaperId WHERE bm.memberId.memberId = :memberId OR ep.title LIKE %:keyword% and bm.itemType = :itemType order by ep.examPaperId desc")
+    List<ExamPaperEntity> findBookmarkedExamPapersByMemberIdAndKeyword(Integer memberId, ItemTypeEnum itemType, String keyword);
+
 }
