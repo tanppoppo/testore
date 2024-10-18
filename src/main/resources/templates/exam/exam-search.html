@@ -31,9 +31,9 @@
     </th:block>
   </th:block>
 </div>
-<div class="pl-10 pt-12 font-bold text-gray-500">많이 공유된 시험지</div>
+<div class="pl-10 pt-12 font-bold text-gray-500">많이 응시한 시험지</div>
 <div th:if="${#lists.isEmpty(muchSharedExamPaper)}" class="text-gray-300 text-center font-bold mt-10">
-  많이 공유된 시험지가 없습니다.
+  많이 응시한 시험지가 없습니다.
 </div>
 <div th:unless="${#lists.isEmpty(muchSharedExamPaper)}">
   <th:block th:each="item : ${muchSharedExamPaper}">

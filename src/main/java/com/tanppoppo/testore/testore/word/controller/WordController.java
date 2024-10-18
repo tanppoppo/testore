@@ -445,39 +445,5 @@ public class WordController {
 
     }
 
-    /**
-     * 내가 좋아요한 단어장 조회
-     * @author KIMGEON64
-     * @param user 인증된 회원 정보를 전달합니다.
-     * @param model 모델 객체를 전달합니다.
-     * @return 내가 좋아요한 단어장 조회 페이지를 반환합니다.
-     */
-    @GetMapping("likedWordBook")
-    public String likedWordBook(@AuthenticationPrincipal AuthenticatedUser user, Model model){
-
-        List<WordBookDTO> items = ws.getLikedWordBook(user);
-        model.addAttribute("items", items);
-
-        return "word/word-likedWordBook";
-
-    }
-
-    /**
-     * 내가 북마크한 단어장 조회
-     * @author KIMGEON64
-     * @param user 인증된 회원 정보를 전달합니다.
-     * @param model 모델 객체를 전달합니다.
-     * @return 내가 북마크한 단어장 조회 페이지를 반환합니다.
-     */
-    @GetMapping("bookmarkedWordBook")
-    public String bookmarkedWordBook(@AuthenticationPrincipal AuthenticatedUser user, Model model){
-
-        List<WordBookDTO> items = ws.getBookmarkedWordBook(user);
-        model.addAttribute("items", items);
-
-        return "word/word-bookmarkedWordBook";
-
-    }
-
 
 }
