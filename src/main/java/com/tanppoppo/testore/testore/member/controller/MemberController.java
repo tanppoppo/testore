@@ -1,11 +1,13 @@
 package com.tanppoppo.testore.testore.member.controller;
 
+import com.tanppoppo.testore.testore.exam.dto.ExamPaperDTO;
 import com.tanppoppo.testore.testore.exam.service.ExamService;
 import com.tanppoppo.testore.testore.member.dto.MemberDTO;
 import com.tanppoppo.testore.testore.member.dto.NotificationDTO;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.service.MemberService;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
+import com.tanppoppo.testore.testore.word.dto.WordBookDTO;
 import com.tanppoppo.testore.testore.word.service.WordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -280,6 +282,74 @@ public class MemberController {
     @GetMapping("/notification/check")
     public ResponseEntity<?> checkNotifications(@AuthenticationPrincipal AuthenticatedUser user) {
         return ResponseEntity.ok(ms.getUnreadNotification(user.getId()));
+    }
+
+    /**
+     * 내가 좋아요한 단어장 조회
+     * @author KIMGEON64
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 내가 좋아요한 단어장 조회 페이지를 반환합니다.
+     */
+    @GetMapping("likedWordBook")
+    public String likedWordBook(@AuthenticationPrincipal AuthenticatedUser user, Model model){
+
+        List<WordBookDTO> items = ws.getLikedWordBook(user);
+        model.addAttribute("items", items);
+
+        return "word/word-liked";
+
+    }
+
+    /**
+     * 내가 북마크한 단어장 조회
+     * @author KIMGEON64
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 내가 북마크한 단어장 조회 페이지를 반환합니다.
+     */
+    @GetMapping("bookmarkedWordBook")
+    public String bookmarkedWordBook(@AuthenticationPrincipal AuthenticatedUser user, Model model){
+
+        List<WordBookDTO> items = ws.getBookmarkedWordBook(user);
+        model.addAttribute("items", items);
+
+        return "word/word-bookmarked";
+
+    }
+
+    /**
+     * 내가 좋아요한 시험지 조회
+     * @author KIMGEON64
+     * @param user 인증된 회원 정보를 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 내가 좋아요한 시험지 조회 페이지를 반환합니다.
+     */
+    @GetMapping("likedExam")
+    public String likedExam(@AuthenticationPrincipal AuthenticatedUser user, Model model){
+
+        List<ExamPaperDTO> items = es.getLikedExam(user);
+        model.addAttribute("items", items);
+
+        return "exam/exam-liked";
+
+    }
+
+    /**
+     * 내가 북마크한 시험지 조회
+     * @author KIMGEON64
+     * @param user user 인증된 회원 정보를 전달합니다.
+     * @param model 모델 객체를 전달합니다.
+     * @return 내가 좋아요한 시험지 조회 페이지를 반환합니다.
+     */
+    @GetMapping("bookmarkedExam")
+    public String bookmarkedExam(@AuthenticationPrincipal AuthenticatedUser user, Model model){
+
+        List<ExamPaperDTO> items = es.getBookmarkedExam(user);
+        model.addAttribute("items", items);
+
+        return "exam/exam-bookmarked";
+
     }
 
 }
