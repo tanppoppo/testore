@@ -59,4 +59,6 @@ public interface WordService {
     List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user);
 
     void deleteWordBook(int wordBookId, Integer id);
+
+    List<WordDTO> selectWordList(int wordBookId, Integer id);
 }

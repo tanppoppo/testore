@@ -129,7 +129,7 @@
     </div>
   </div>
   <div class="flex gap-3 w-full px-7">
-    <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'learningButton', 'learningButton', '학 습', 'examTake?paper='+${wordBookDTO.wordBookId} , true)}"></th:block>
+    <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'learningButton', 'learningButton', '학 습', 'learning?book='+${wordBookDTO.wordBookId} , true)}"></th:block>
   </div>
 </div>
 <script th:src="@{/word/js/word-detail.js}"></script>

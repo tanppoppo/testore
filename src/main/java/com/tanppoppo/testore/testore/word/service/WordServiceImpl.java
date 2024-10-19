@@ -651,6 +651,54 @@ public class WordServiceImpl implements WordService {
     }
 
     /**
+     * 단어 리스트 목록 반환
+     * @author gyahury
+     * @param wordBookId 단어장 id를 가져옵니다.
+     * @param userId 유저 id를 가져옵니다.
+     * @return 단어 리스트를 반환합니다.
+     */
+    @Override
+    public List<WordDTO> selectWordList(int wordBookId, Integer userId) {
+
+        WordBookEntity wordBookEntity = wbr.findById(wordBookId)
+                .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
+
+        MemberEntity memberEntity = mr.findById(wordBookEntity.getCreatorId().getMemberId())
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        if (!memberEntity.getMemberId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+        }
+
+        List<WordEntity> wordEntityList = wr.findAllByWordBookId(wordBookEntity);
+
+        if (wordEntityList.isEmpty()) {
+            throw new IllegalStateException("비어있는 단어장입니다.");
+        }
+
+        List<WordDTO> wordDTOList = new ArrayList<>();
+
+
+
+        for (WordEntity entity : wordEntityList) {
+
+            WordDTO wordDTO = WordDTO.builder()
+                    .wordId(entity.getWordId())
+                    .wordNum(entity.getWordNum())
+                    .text1(entity.getText1())
+                    .text2(entity.getText2())
+                    .text3(entity.getText3())
+                    .notes(entity.getNotes())
+                    .checked(entity.getChecked())
+                    .build();
+            wordDTOList.add(wordDTO);
+        }
+
+        return wordDTOList;
+
+    }
+
+    /**
      * 단어 세부 수정 LIST 목록 반환
      * @author KIMGEON64
      * @param user user 객체를 가져옵니다.

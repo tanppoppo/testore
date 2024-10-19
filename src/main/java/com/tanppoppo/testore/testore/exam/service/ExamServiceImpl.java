@@ -1087,4 +1087,25 @@ public class ExamServiceImpl implements ExamService {
 
     }
 
+    /**
+     * 접속한 사용자가 시험지 소유자인지 체크
+     * @author gyahury
+     * @param examPaperId 시험지 id를 가져옵니다.
+     * @param userId 유저 id를 가져옵니다.
+     * @return 맞다면 true, 아니라면 false를 반환합니다.
+     */
+    @Override
+    public boolean verifyUserIsExamOwner(int examPaperId, Integer userId) {
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        if(examPaperEntity.getOwnerId().equals(userId)){
+            return true;
+        }
+
+        return false;
+
+    }
+
 }
