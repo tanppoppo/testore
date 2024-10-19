@@ -134,7 +134,7 @@ public class WordController {
 
         Map<String, Object> detail = ws.selectWordBookDetail(wordBookId, user);
         model.addAttribute("wordBookDTO", detail.get("wordBookDTO"));
-        model.addAttribute("nickname", detail.get("nickName"));
+        model.addAttribute("nickname", detail.get("nickname"));
         model.addAttribute("reviewCount", detail.get("reviewCount"));
         model.addAttribute("likeState", detail.get("likeState"));
         model.addAttribute("bookmarkState", detail.get("bookmarkState"));

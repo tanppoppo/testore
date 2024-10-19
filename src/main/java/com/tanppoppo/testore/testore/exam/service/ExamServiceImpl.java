@@ -953,6 +953,10 @@ public class ExamServiceImpl implements ExamService {
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
 
+        if (!examPaperEntity.getOwnerId().equals(user.getId())) {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
         List<ExamResultEntity> examResultEntityList = epr.findExamResultsByExamPaperId(examPaperEntity.getExamPaperId());
 
         List<ExamResultDTO> items = new ArrayList<>();
@@ -975,7 +979,7 @@ public class ExamServiceImpl implements ExamService {
                     .examPaperImagePath(examPaperEntity.getImagePath())
                     .examPaperPassScore(examPaperEntity.getPassScore())
                     .memberId(participant.getMemberId())
-                    .nickName(participant.getNickname())
+                    .nickname(participant.getNickname())
                     .examQuestionCount(epr.getExamItemCount(examPaperId))
                     .passScore(examPaperEntity.getPassScore())
                     .examScore(entity.getExamScore())

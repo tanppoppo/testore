@@ -215,7 +215,7 @@ public class WordServiceImpl implements WordService {
 
         Map<String, Object> detail = new HashMap<>();
         detail.put("wordBookDTO", wordBookDTO);
-        detail.put("nickName", wordBookEntity.getCreatorId().getNickname());
+        detail.put("nickname", wordBookEntity.getCreatorId().getNickname());
         detail.put("reviewCount", rr.getReviewCount(wordBookId));
         detail.put("likeState", ilr.getLikeState(memberEntity.getMemberId(), wordBookId, ItemTypeEnum.WORD));
         detail.put("bookmarkState", br.getBookmarkState(memberEntity.getMemberId(), wordBookId, ItemTypeEnum.WORD));
