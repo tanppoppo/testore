@@ -42,7 +42,7 @@
   </th:block>
   <div sec:authorize="not isAuthenticated()"><a th:href="@{/member/loginForm}" class="inline-block hover:underline hover:-translate-y-1 hover:scale-105 ease-in-out transition duration-700">로그인</a> 해주세요.</div>
 </div>
-<div class="px-4 pt-4 pb-2 text-gray-500">공지사항</div>
+<div class="px-4 pt-4 pb-2 text-gray-500"><a th:href="@{board/getBoards?type=NOTICE}">공지사항</a></div>
 <div th:if="${#lists.isEmpty(notices)}" class="text-gray-300 text-sm text-center mt-3">
   공지사항이 없습니다.
 </div>
@@ -53,6 +53,81 @@
         <th:block th:each="item : ${notices}">
           <th:block th:replace="~{common/fragments/board-item :: BoardItemFragment(${item})}"></th:block>
         </th:block>
+      </tbody>
+    </table>
+  </div>
+</th:block>
+<div class="px-4 pt-10 pb-2 text-gray-500"><a th:href="@{board/getBoards?type=READS}">읽을거리</a></div>
+<div th:if="${#lists.isEmpty(reads)}" class="text-gray-300 text-sm text-center mt-3">
+  읽을거리 게시글이 없습니다.
+</div>
+<th:block th:unless="${#lists.isEmpty(reads)}">
+  <div class="relative px-2">
+    <table class="w-full text-sm text-left text-gray-500">
+      <tbody>
+      <th:block th:each="item : ${reads}">
+        <th:block th:replace="~{common/fragments/board-item :: BoardItemFragment(${item})}"></th:block>
+      </th:block>
+      </tbody>
+    </table>
+  </div>
+</th:block>
+<div class="px-4 pt-10 pb-2 text-gray-500"><a th:href="@{board/getBoards?type=DAILY}">일상</a></div>
+<div th:if="${#lists.isEmpty(daily)}" class="text-gray-300 text-sm text-center mt-3">
+  일상 게시글이 없습니다.
+</div>
+<th:block th:unless="${#lists.isEmpty(daily)}">
+  <div class="relative px-2">
+    <table class="w-full text-sm text-left text-gray-500">
+      <tbody>
+      <th:block th:each="item : ${daily}">
+        <th:block th:replace="~{common/fragments/board-item :: BoardItemFragment(${item})}"></th:block>
+      </th:block>
+      </tbody>
+    </table>
+  </div>
+</th:block>
+<div class="px-4 pt-10 pb-2 text-gray-500"><a th:href="@{board/getBoards?type=LEARNING_SHARE}">학습 공유</a></div>
+<div th:if="${#lists.isEmpty(learning_share)}" class="text-gray-300 text-sm text-center mt-3">
+  학습 공유 게시글이 없습니다.
+</div>
+<th:block th:unless="${#lists.isEmpty(learning_share)}">
+  <div class="relative px-2">
+    <table class="w-full text-sm text-left text-gray-500">
+      <tbody>
+      <th:block th:each="item : ${learning_share}">
+        <th:block th:replace="~{common/fragments/board-item :: BoardItemFragment(${item})}"></th:block>
+      </th:block>
+      </tbody>
+    </table>
+  </div>
+</th:block>
+<div class="px-4 pt-10 pb-2 text-gray-500"><a th:href="@{board/getBoards?type=INFO_SHARE}">정보 공유</a></div>
+<div th:if="${#lists.isEmpty(info_share)}" class="text-gray-300 text-sm text-center mt-3">
+  정보 공유 게시글이 없습니다.
+</div>
+<th:block th:unless="${#lists.isEmpty(info_share)}">
+  <div class="relative px-2">
+    <table class="w-full text-sm text-left text-gray-500">
+      <tbody>
+      <th:block th:each="item : ${info_share}">
+        <th:block th:replace="~{common/fragments/board-item :: BoardItemFragment(${item})}"></th:block>
+      </th:block>
+      </tbody>
+    </table>
+  </div>
+</th:block>
+<div class="px-4 pt-10 pb-2 text-gray-500"><a th:href="@{board/getBoards?type=ETC}">기타</a></div>
+<div th:if="${#lists.isEmpty(etc)}" class="text-gray-300 text-sm text-center mt-3">
+  기타 게시글이 없습니다.
+</div>
+<th:block th:unless="${#lists.isEmpty(etc)}">
+  <div class="relative px-2">
+    <table class="w-full text-sm text-left text-gray-500">
+      <tbody>
+      <th:block th:each="item : ${etc}">
+        <th:block th:replace="~{common/fragments/board-item :: BoardItemFragment(${item})}"></th:block>
+      </th:block>
       </tbody>
     </table>
   </div>

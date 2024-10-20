@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="CommentItemFragment(item)">
+<div class="p-2 mt-4 text-sm text-gray-500">
+  <div class="flex justify-between mx-3">
+    <span class="text-base" th:text="${item.nickname != null ? item.nickname : ''}"></span>
+    <th:block th:if="${#authentication.principal.id == item.memberId}">
+      <span>&nbsp;&nbsp;<span class="edit-comment cursor-pointer" th:data-comment-id="${item.commentId}">수정</span> | <span class="cursor-pointer" th:data-comment-id="${item.commentId}" th:onclick="'deleteComment(' + ${item.commentId} + ')'">삭제</span></span></span>
+    </th:block>
+  </div>
+  <div class="mx-3 text-gray-400">
+    <span th:text="${item.updatedDate != null ? #temporals.format(item.updatedDate, 'YYYY/MM/dd HH:mm:ss') : ''}"></span>
+    <span th:unless="${item.createdDate == item.updatedDate}" class="py-2 text-gray-400">&nbsp;&nbsp;(수정됨)</span></div>
+  <div class="p-2 mt-2 text-base" th:id="'comment-content-'+${item.commentId}" th:text="${item.content != null ? item.content : ''}"></div>
+  <hr class="mt-3">
+</div>
+</html>
