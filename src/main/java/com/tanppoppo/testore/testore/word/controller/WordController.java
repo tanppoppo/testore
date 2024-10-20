@@ -134,7 +134,7 @@ public class WordController {
 
         Map<String, Object> detail = ws.selectWordBookDetail(wordBookId, user);
         model.addAttribute("wordBookDTO", detail.get("wordBookDTO"));
-        model.addAttribute("nickname", detail.get("nickName"));
+        model.addAttribute("nickname", detail.get("nickname"));
         model.addAttribute("reviewCount", detail.get("reviewCount"));
         model.addAttribute("likeState", detail.get("likeState"));
         model.addAttribute("bookmarkState", detail.get("bookmarkState"));
@@ -149,7 +149,15 @@ public class WordController {
      * @return 단어장 학습 페이지를 반환합니다.
      */
     @GetMapping("learning")
-    public String learning() { return "word/word-learning"; }
+    public String learning(@RequestParam(name = "book") int wordBookId, Model model, @AuthenticationPrincipal AuthenticatedUser user) {
+
+        List<WordDTO> wordList = ws.selectWordList(wordBookId, user.getId());
+
+        model.addAttribute("items", wordList);
+
+        return "word/word-learning";
+
+    }
 
     /**
      * 단어장 찾아보기 페이지 이동
@@ -444,6 +452,5 @@ public class WordController {
         return "word/word-update-form";
 
     }
-
 
 }

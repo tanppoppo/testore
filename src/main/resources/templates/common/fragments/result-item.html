@@ -24,6 +24,9 @@
     <div class="text-[calc(0.7rem+0.3vw)] text-gray-800"
          th:text="${resultItem.examPaperTitle != null ? resultItem.examPaperTitle : '제목 없음'}">
     </div>
+    <div th:if="${resultItem.nickname}" class="text-[calc(0.5rem+0.2vw)] text-gray-700 font-light whitespace-nowrap">
+      닉네임 : <span th:text="${resultItem.nickname != null ? resultItem.nickname : '이름 없음'}"></span>
+    </div>
     <div class="text-[calc(0.5rem+0.2vw)] text-gray-700 font-light whitespace-nowrap">
       문제수 : <span
             th:text="${resultItem.examQuestionCount != null ? resultItem.examQuestionCount : '에러'}"></span><span

@@ -7,7 +7,7 @@
 | :smile: [정경훈](https://github.com/gyahury) | 🙂 [강왕선](https://github.com/dhkdtjs1541) | :smiley: [김건](https://github.com/KIMGEON64) | :laughing: [하민철](https://github.com/MinCheolHa) | 
 | :-------------------------------------------: | :---------------------------------: | :---------------------------------------------: | :------------------------------------------------: | 
 |                   **Front-End**                    |            **Back-End**             |                  **Back-End**                   |                                     **Back-End**                |
-|                    Thymeleaf                     |               Spring                |                     Spring                      |                                          Spring                     |
+|                    Thymeleaf 등                     |               Spring                |                     Spring                      |                                          Spring                     |
 
 
 <br />
@@ -24,7 +24,9 @@
 
 #### 		Front-End
 
-​	<img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white"><img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white"><img src="https://img.shields.io/badge/tailwindcss-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white">
+​	<img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white"><img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white"><img src="https://img.shields.io/badge/tailwindcss-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"><img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=black">
+
+
 
 #### 		Back-End
 
@@ -51,3 +53,27 @@
 ​	<img src="https://img.shields.io/badge/slack-4A154B?style=for-the-badge&logo=slack&logoColor=white"><img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"><img src="https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white">
 
 <br />
+
+## 📋프로젝트 관련 문서
+
+#### 1. 전체 문서 관리
+
+|                    **전체 문서 : TESTORE**                    |
+| :----------------------------------------------------------: |
+| ![DOC_TESTORE](README.assets/DOC_TESTORE.png) |
+| 링크 : [DOC_TESTORE - NOTION](https://cactus-hoodie-fd8.notion.site/f0bd3bfa7c9c4c19991bbc14d3c1a8e0?pvs=4) |
+
+#### 2. ERD
+
+|                    **ERD : TESTORE**                    |
+| :----------------------------------------------------------: |
+| ![ERD_TESTORE](README.assets/ERD_TESTORE.png) |
+| 링크 : [ERD_TESTORE – DBdiagram](https://dbdiagram.io/d/66d7f3a8eef7e08f0e9f45c5) |
+
+#### 3. UI 구상(Figma)
+
+|                   **UI 구상(Figma)**                    |
+| :----------------------------------------------------------: |
+| ![UI구상_TESTORE](README.assets/UI구상_TESTORE.png) |
+| 링크 :([UI – Figma](https://www.figma.com/design/kp1Yp60ZczBzE9kRv87pdJ/TESTORE?node-id=0-1&t=blfjVqE9ox53EEvv-1)) |
+
