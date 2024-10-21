@@ -294,13 +294,13 @@ public class WordServiceImpl implements WordService {
 
         for (ReviewEntity entity : reviewEntityList) {
             ReviewDTO reviewDTO = ReviewDTO.builder()
-                    .memberId(memberEntity.getMemberId())
+                    .memberId(entity.getMemberId().getMemberId())
                     .reviewId(entity.getReviewId())
                     .rating(entity.getRating())
                     .content(entity.getContent())
                     .createdDate(entity.getCreatedDate())
                     .updateDate(entity.getUpdateDate())
-                    .nickname(memberEntity.getNickname())
+                    .nickname(entity.getMemberId().getNickname())
                     .build();
             reviewDTOList.add(reviewDTO);
         }
