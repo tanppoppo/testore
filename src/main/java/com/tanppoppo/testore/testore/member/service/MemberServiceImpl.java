@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -231,6 +232,10 @@ public class MemberServiceImpl implements MemberService {
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을수 없습니다."));
 
+        if (!user.getId().equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+        }
+
         BookmarkEntity selectBookmarkByMemberId = br.selectBookmarkByMemberId(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM);
 
         if (selectBookmarkByMemberId == null) {
@@ -260,6 +265,10 @@ public class MemberServiceImpl implements MemberService {
 
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을수 없습니다."));
+
+        if (!user.getId().equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+        }
 
         ItemLikeEntity selectItemLikeByMemberId = ilr.selectItemLikeByMemberId(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM);
 
@@ -297,6 +306,10 @@ public class MemberServiceImpl implements MemberService {
         WordBookEntity wordBookEntity = wbr.findById(wordBookId)
                 .orElseThrow(() -> new EntityNotFoundException("단어장 정보를 찾을수 없습니다."));
 
+        if (!user.getId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+        }
+
         BookmarkEntity selectBookmarkByMemberId = br.selectBookmarkByMemberId(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD);
 
         if (selectBookmarkByMemberId == null) {
@@ -327,6 +340,10 @@ public class MemberServiceImpl implements MemberService {
 
         WordBookEntity wordBookEntity = wbr.findById(wordBookId)
                 .orElseThrow(() -> new EntityNotFoundException("단어장 정보를 찾을수 없습니다."));
+
+        if (!user.getId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+        }
 
         ItemLikeEntity selectItemLikeByMemberId = ilr.selectItemLikeByMemberId(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD);
 
