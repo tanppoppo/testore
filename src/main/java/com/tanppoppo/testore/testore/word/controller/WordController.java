@@ -161,6 +161,7 @@ public class WordController {
 
         try {
             List<WordDTO> wordList = ws.selectWordList(wordBookId, user.getId());
+            model.addAttribute("wordBookId", wordBookId);
             model.addAttribute("items", wordList);
             return "word/word-learning";
         } catch (IllegalStateException e) {
@@ -461,6 +462,16 @@ public class WordController {
                            WordDTO wordDTO){
 
         ws.saveEditedWord(user, wordbookId, wordDTO);
+
+        return "word/word-update-form";
+
+    }
+
+    @PostMapping("addLearningRecord")
+    public String addLearningRecord(@AuthenticationPrincipal AuthenticatedUser user,
+                           @RequestParam(name = "book") int wordbookId) {
+
+        ws.addLearningRecord(user.getId(), wordbookId);
 
         return "word/word-update-form";
 

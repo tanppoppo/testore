@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentIndex = 0;
     let showingWord = true;
 
+    setTimeout(addLearningRecord, 10000);
+
     if (words.length > 0) {
         allWordCountSpan.textContent = words.length;
         showWord(currentIndex);
@@ -65,5 +67,26 @@ document.addEventListener("DOMContentLoaded", function () {
     function showFlip() {
         showingWord = !showingWord;
         showWord(currentIndex);
+    }
+
+    function addLearningRecord() {
+        fetch('/word/addLearningRecord', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({
+                book: book
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('학습 기록 등록 성공');
+                } else {
+                    console.error('학습 기록 중 문제 발생');
+                }
+            })
+            .catch(error => console.error('학습 기록 에러:', error));
     }
 })

@@ -61,4 +61,6 @@ public interface WordService {
     void deleteWordBook(int wordBookId, Integer id);
 
     List<WordDTO> selectWordList(int wordBookId, Integer id);
+
+    void addLearningRecord(Integer id, int wordbookId);
 }

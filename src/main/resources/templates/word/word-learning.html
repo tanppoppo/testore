@@ -23,7 +23,7 @@
     <span id="curWordCount">0</span> / <span id="allWordCount">0</span>
   </div>
 </div>
-<div class="fixed bottom-32 left-1/2 z-20 inline-flex -translate-x-1/2 rounded-md shadow-sm">
+<div class="fixed bottom-32 left-1/2 z-20 inline-flex -translate-x-1/2 rounded-md shadow-sm whitespace-nowrap">
   <button type="button" id="prevButton"
           class="rounded-s-lg border border-gray-900 bg-transparent px-8 py-2 text-sm font-medium text-gray-900 hover:bg-gray-900 hover:text-white focus:z-10 focus:bg-gray-900 focus:text-white focus:ring-2 focus:ring-gray-500">
     Prev
@@ -42,6 +42,7 @@
 
 <script th:inline="javascript">
     let items = /*[[${items}]]*/ [];
+    const book = /*[[${wordBookId}]]*/ [];
 </script>
 <script th:inline="javascript" th:src="@{/word/js/word-learning.js}"></script>
 </html>
