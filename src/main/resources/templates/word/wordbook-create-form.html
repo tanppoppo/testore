@@ -6,7 +6,7 @@
       th:with="headerText='WORD', footerText='Word'"
       layout:fragment="Content"
 >
-<form class="p-10" th:action="@{${title} != null ? 'updateWordBook' : 'createWordBook'}" method="post">
+<form class="p-10" id="wordBookForm" th:action="@{${title} != null ? 'updateWordBook' : 'createWordBook'}" method="post">
   <div class="flex items-center justify-center pb-4">
     <img class="w-20 object-contain" th:src="${title != null} ? ${imagePath} : '/word/image/wordbook-' + ${color} + '.png'">
     <input type="hidden" id="imagePath" name="imagePath" th:value="${title != null} ? ${imagePath} : '/word/image/wordbook-' + ${color} + '.png'">
@@ -16,4 +16,5 @@
   <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'content', 'content', '단어장 설명', ${content})}"></th:block>
   <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit', 'submitButton', 'submitButton', ${title} != null ? '단어장 수정' : '단어장 생성', '', true)}"></th:block>
 </form>
+<script th:src="@{/word/js/wordbook-create-form.js}"></script>
 </html>
