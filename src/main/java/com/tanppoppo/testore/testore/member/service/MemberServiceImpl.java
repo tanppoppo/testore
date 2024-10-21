@@ -1,5 +1,7 @@
 package com.tanppoppo.testore.testore.member.service;
 
+import com.tanppoppo.testore.testore.board.entity.BoardEntity;
+import com.tanppoppo.testore.testore.board.repository.BoardRepository;
 import com.tanppoppo.testore.testore.common.util.ItemTypeEnum;
 import com.tanppoppo.testore.testore.common.util.NotificationTypeEnum;
 import com.tanppoppo.testore.testore.exam.entity.ExamPaperEntity;
@@ -44,6 +46,7 @@ public class MemberServiceImpl implements MemberService {
     private final ExamPaperRepository epr;
     private final WordBookRepository wbr;
     private final NotificationRepository nr;
+    private final BoardRepository bor;
     private final ConcurrentHashMap<Integer, SseEmitter> sseMap = new ConcurrentHashMap<>();
 
     /**
@@ -377,6 +380,7 @@ public class MemberServiceImpl implements MemberService {
 
         ExamPaperEntity examPaperEntity;
         WordBookEntity wordBookEntity;
+        BoardEntity boardEntity;
         MemberEntity recipientIdMemberEntity = new MemberEntity();
 
         MemberEntity senderMemberEntity = mr.findById(userId)
@@ -396,6 +400,14 @@ public class MemberServiceImpl implements MemberService {
                     .orElseThrow(() -> new EntityNotFoundException("단어장을 찾을 수 없습니다."));
 
             recipientIdMemberEntity = mr.findById(wordBookEntity.getOwnerId())
+                    .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+        } else if (type.equals(NotificationTypeEnum.BOARD_COMMENT)) {
+
+            boardEntity = bor.findById(itemId)
+                    .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+
+            recipientIdMemberEntity = mr.findById(boardEntity.getMember().getMemberId())
                     .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
 
         }
@@ -449,6 +461,10 @@ public class MemberServiceImpl implements MemberService {
                             .orElseThrow(() -> new EntityNotFoundException("단어장을 찾을 수 없습니다."));
                     itemNickname = wordBookEntity.getTitle();
                     break;
+                case BOARD_COMMENT:
+                    BoardEntity boardEntity = bor.findById(notificationEntity.getItemId())
+                            .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+                    itemNickname = boardEntity.getTitle();
                 default:
                     break;
             }
