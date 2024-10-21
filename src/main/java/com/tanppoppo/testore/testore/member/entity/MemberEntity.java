@@ -35,17 +35,17 @@ public class MemberEntity {
     private Integer memberId;
 
     @NotNull
-    @Size(max = 100)
+    @Size(min = 2, max = 100) // 문자열 길이 제한
     @Column(name = "email", unique = true, nullable = false, length = 100)
     private String email;
 
     @NotNull
-    @Size(max = 50)
+    @Size(min = 2, max = 50) // 닉네임 유효성 검사
     @Column(name = "nickname", nullable = false, length = 50)
     private String nickname;
 
     @NotNull
-    @Size(max = 100)
+    @Size(min = 8, max = 100) // 비밀번호 유효성 검사
     @Column(name = "member_password", nullable = false, length = 100)
     private String memberPassword;
 

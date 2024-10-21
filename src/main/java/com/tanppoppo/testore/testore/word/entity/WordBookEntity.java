@@ -36,12 +36,13 @@ public class WordBookEntity {
     private Integer wordBookId;
 
     @NotNull
-    @Size(max = 30)
+    @Size(min = 2, max = 30) // 단어장 이름 유효성 검사
     @Column(name = "title", nullable = false, length = 30)
     private String title;
 
-    @Size(max = 100)
-    @Column(name = "content", length = 100)
+    @NotNull
+    @Size(min = 2, max = 100) // 단어장 설명 유효성 검사
+    @Column(name = "content", nullable = false, length = 100)
     private String content;
 
     @Size(max = 10)
