@@ -2,7 +2,10 @@ package com.tanppoppo.testore.testore.member.entity;
 
 import com.tanppoppo.testore.testore.common.util.ItemTypeEnum;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -47,10 +50,15 @@ public class ReviewEntity {
     @Enumerated(EnumType.STRING)
     private ItemTypeEnum itemType;
 
-    @Column(name = "content")
+    @NotNull
+    @Size(min = 2, max = 300)
+    @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "rating", columnDefinition = "TINYINT DEFAULT 3")
+    @NotNull
+    @Min(1)
+    @Max(5)
+    @Column(name = "rating", nullable = false, columnDefinition = "TINYINT DEFAULT 3")
     private Byte rating;
 
     @CreatedDate

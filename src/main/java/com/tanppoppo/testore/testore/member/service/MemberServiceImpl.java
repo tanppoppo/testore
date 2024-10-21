@@ -128,7 +128,7 @@ public class MemberServiceImpl implements MemberService {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
-            helper.setFrom("<TESTORE> testore@gmail.com");
+            helper.setFrom("TESTORE <kws22621@gmail.com>");
             helper.setTo(email);
             helper.setSubject(subject);
             helper.setText(text, true);
