@@ -36,12 +36,12 @@ public class WordBookEntity {
     private Integer wordBookId;
 
     @NotNull
-    @Size(min = 2, max = 30) // 단어장 이름 유효성 검사
+    @Size(min = 2, max = 30, message = "단어장 이름은 2자 이상 30자 이하로 입력해 주세요.")
     @Column(name = "title", nullable = false, length = 30)
     private String title;
 
     @NotNull
-    @Size(min = 2, max = 100) // 단어장 설명 유효성 검사
+    @Size(min = 2, max = 100, message = "단어장 설명은 2자 이상 100자 이하로 입력해 주세요.")
     @Column(name = "content", nullable = false, length = 100)
     private String content;
 
