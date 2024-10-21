@@ -42,16 +42,16 @@ public class WordEntity {
     private Integer wordNum;
 
     @NotNull
-    @Size(max = 30)
-    @Column(name = "text_1", nullable = false, length = 30)
+    @Size(min = 1, max = 10) // 한자 유효성 검사
+    @Column(name = "text_1", nullable = false, length = 10)
     private String text1;
 
-    @Size(max = 30)
+    @Size(min = 1, max = 30) // 요미가나 유효성 검사
     @Column(name = "text_2", length = 30)
     private String text2;
 
-    @Size(max = 30)
-    @Column(name = "text_3", length = 30)
+    @Size(min = 1, max = 10) // 한글 유효성 검사
+    @Column(name = "text_3", length = 10)
     private String text3;
 
     @Size(max = 30)

@@ -4,6 +4,7 @@ import com.tanppoppo.testore.testore.common.util.BoardTypeEnum;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,10 +47,12 @@ public class BoardEntity {
         private BoardTypeEnum boardType; // 게시물 타입 (enum)
 
         @NotNull
-        @Column(name= "title", nullable = false, length = 30)
+        @Size(min = 2, max = 50)
+        @Column(name= "title", nullable = false, length = 50)
         private String title; // 제목
 
         @NotNull
+        @Size(min = 2, max = 300)
         @Column(name = "content", nullable = false, length = 300)
         private String content; // 내용
 
