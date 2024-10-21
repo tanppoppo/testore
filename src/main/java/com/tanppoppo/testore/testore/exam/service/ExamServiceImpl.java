@@ -105,7 +105,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(entity.getExamPaperId()))
                     .isBookmarked(br.getBookmarkState(user.getId(), entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .build();
@@ -146,7 +146,7 @@ public class ExamServiceImpl implements ExamService {
                 .ownerId(examPaperEntity.getOwnerId())
                 .publicOption(examPaperEntity.getPublicOption())
                 .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
-                .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
+                .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                 .shareCount(epr.getShareCount(examPaperEntity.getExamPaperId()))
                 .build();
 
@@ -811,7 +811,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(entity.getExamPaperId()))
                     .build();
             recommendedExamPaper.add(examPaperDTO);
@@ -849,7 +849,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(entity.getExamPaperId()))
                     .build();
             likedExamPaper.add(examPaperDTO);
@@ -883,7 +883,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(entity.getExamPaperId()))
                     .build();
             muchSharedExamPaper.add(examPaperDTO);
@@ -928,7 +928,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(examPaperEntity.getContent())
                     .imagePath(examPaperEntity.getImagePath())
                     .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(examPaperEntity.getExamPaperId()))
                     .isBookmarked(br.getBookmarkState(user.getId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .build();
@@ -1038,7 +1038,7 @@ public class ExamServiceImpl implements ExamService {
                     .createdDate(examPaperEntity.getCreatedDate())
                     .updateDate(examPaperEntity.getUpdateDate())
                     .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(examPaperEntity.getExamPaperId()))
                     .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .build();
@@ -1094,7 +1094,7 @@ public class ExamServiceImpl implements ExamService {
                     .createdDate(examPaperEntity.getCreatedDate())
                     .updateDate(examPaperEntity.getUpdateDate())
                     .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(examPaperEntity.getExamPaperId()))
                     .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .build();

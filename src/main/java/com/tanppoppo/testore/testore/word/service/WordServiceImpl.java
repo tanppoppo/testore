@@ -173,7 +173,7 @@ public class WordServiceImpl implements WordService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(entity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(entity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(user.getId(), entity.getWordBookId(), ItemTypeEnum.WORD))
                     .build();
@@ -212,7 +212,7 @@ public class WordServiceImpl implements WordService {
                 .ownerId(wordBookEntity.getOwnerId())
                 .publicOption(wordBookEntity.getPublicOption())
                 .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
-                .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                 .shareCount(lrr.countByWordBookId(wordBookEntity))
                 .build();
 
@@ -445,7 +445,7 @@ public class WordServiceImpl implements WordService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(entity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(entity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .build();
             recommendedWordBook.add(wordBookDTO);
@@ -482,7 +482,7 @@ public class WordServiceImpl implements WordService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(entity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(entity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .build();
             likedWordBook.add(wordBookDTO);
@@ -516,7 +516,7 @@ public class WordServiceImpl implements WordService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(entity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(entity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .build();
             muchSharedWordBook.add(wordBookDTO);
@@ -561,7 +561,7 @@ public class WordServiceImpl implements WordService {
                     .content(wordBookEntity.getContent())
                     .imagePath(wordBookEntity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(user.getId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .build();
@@ -886,7 +886,7 @@ public class WordServiceImpl implements WordService {
                     .createdDate(wordBookEntity.getCreatedDate())
                     .updatedDate(wordBookEntity.getUpdatedDate())
                     .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
                     .build();
@@ -940,7 +940,7 @@ public class WordServiceImpl implements WordService {
                     .createdDate(wordBookEntity.getCreatedDate())
                     .updatedDate(wordBookEntity.getUpdatedDate())
                     .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
                     .build();
