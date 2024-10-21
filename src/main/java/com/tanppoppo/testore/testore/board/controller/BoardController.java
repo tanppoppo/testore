@@ -227,7 +227,7 @@ public class BoardController {
         commentDTO.setNickname(user.getNickname());
 
         try {
-            bs.createComment(commentDTO);
+            bs.createComment(commentDTO, user.getId());
             setFlashToastMessage(redirectAttributes, true, "댓글이 성공적으로 작성되었습니다.");
             return "redirect:/board/boardDetail?board=" + boardId;
         } catch (AccessDeniedException e) {

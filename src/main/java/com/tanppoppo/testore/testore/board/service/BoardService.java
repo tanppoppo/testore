@@ -24,7 +24,7 @@ public interface BoardService {
 
     List<CommentDTO> getCommentList(int boardId);
 
-    void createComment(CommentDTO commentDTO);
+    void createComment(CommentDTO commentDTO, Integer userId);
 
     void deleteComment(Integer commentId, Integer id);
 

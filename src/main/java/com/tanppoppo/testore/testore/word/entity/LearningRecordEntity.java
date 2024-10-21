@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "learning_recode")
-public class LearningRecodeEntity {
+public class LearningRecordEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

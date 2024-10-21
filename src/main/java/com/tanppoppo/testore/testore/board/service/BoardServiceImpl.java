@@ -7,8 +7,10 @@ import com.tanppoppo.testore.testore.board.entity.CommentEntity;
 import com.tanppoppo.testore.testore.board.repository.BoardRepository;
 import com.tanppoppo.testore.testore.board.repository.CommentRepository;
 import com.tanppoppo.testore.testore.common.util.BoardTypeEnum;
+import com.tanppoppo.testore.testore.common.util.NotificationTypeEnum;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import com.tanppoppo.testore.testore.member.repository.MemberRepository;
+import com.tanppoppo.testore.testore.member.service.MemberServiceImpl;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -32,6 +34,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardRepository br;
     private final MemberRepository mr;
     private final CommentRepository cr;
+    private final MemberServiceImpl msi;
 
     /**
      * 최근 5개의 공지사항을 가져오는 메서드
@@ -206,7 +209,7 @@ public class BoardServiceImpl implements BoardService {
      */
     @Transactional
     @Override
-    public void createComment(CommentDTO commentDTO) {
+    public void createComment(CommentDTO commentDTO, Integer userId) {
         log.info("댓글을 작성합니다. 게시글 ID: {}, 작성자 ID: {}", commentDTO.getBoardId(), commentDTO.getMemberId());
 
         BoardEntity boardEntity = br.findById(commentDTO.getBoardId())
@@ -226,8 +229,11 @@ public class BoardServiceImpl implements BoardService {
                 .build();
 
         cr.save(commentEntity);
-
         log.info("댓글이 성공적으로 저장되었습니다. 댓글 ID: {}", commentEntity.getCommentId());
+
+        if(!boardEntity.getMember().getMemberId().equals(memberEntity.getMemberId())) {
+            msi.saveNotification(userId, boardEntity.getBoardId(), NotificationTypeEnum.BOARD_COMMENT);
+        }
     }
 
     /**

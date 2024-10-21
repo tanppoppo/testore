@@ -11,8 +11,10 @@ import com.tanppoppo.testore.testore.member.repository.ReviewRepository;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import com.tanppoppo.testore.testore.word.dto.WordBookDTO;
 import com.tanppoppo.testore.testore.word.dto.WordDTO;
+import com.tanppoppo.testore.testore.word.entity.LearningRecordEntity;
 import com.tanppoppo.testore.testore.word.entity.WordBookEntity;
 import com.tanppoppo.testore.testore.word.entity.WordEntity;
+import com.tanppoppo.testore.testore.word.repository.LearningRecordRepository;
 import com.tanppoppo.testore.testore.word.repository.WordBookRepository;
 import com.tanppoppo.testore.testore.word.repository.WordRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -38,6 +40,7 @@ public class WordServiceImpl implements WordService {
     private final ReviewRepository rr;
     private final ItemLikeRepository ilr;
     private final BookmarkRepository br;
+    private final LearningRecordRepository lrr;
 
 
     /**
@@ -171,7 +174,7 @@ public class WordServiceImpl implements WordService {
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
                     .likeCount(ilr.getLikeCount(entity.getWordBookId()))
-                    .shareCount(wbr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(user.getId(), entity.getWordBookId(), ItemTypeEnum.WORD))
                     .build();
             items.add(wordBookDTO);
@@ -192,7 +195,7 @@ public class WordServiceImpl implements WordService {
         WordBookEntity wordBookEntity = wbr.findById(wordBookId)
                 .orElseThrow(()-> new EntityNotFoundException("단어장 정보를 찾을 수 없습니다."));
 
-        MemberEntity memberEntity = mr.findById(wordBookEntity.getCreatorId().getMemberId())
+        MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을수 없습니다."));
 
         if (!user.getId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
@@ -210,7 +213,7 @@ public class WordServiceImpl implements WordService {
                 .publicOption(wordBookEntity.getPublicOption())
                 .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
                 .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
-                .shareCount(wbr.getShareCount(wordBookEntity.getCreatorId().getMemberId()))
+                .shareCount(lrr.countByWordBookId(wordBookEntity))
                 .build();
 
         Map<String, Object> detail = new HashMap<>();
@@ -443,7 +446,7 @@ public class WordServiceImpl implements WordService {
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
                     .likeCount(ilr.getLikeCount(entity.getWordBookId()))
-                    .shareCount(wbr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .shareCount(lrr.countByWordBookId(entity))
                     .build();
             recommendedWordBook.add(wordBookDTO);
 
@@ -480,7 +483,7 @@ public class WordServiceImpl implements WordService {
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
                     .likeCount(ilr.getLikeCount(entity.getWordBookId()))
-                    .shareCount(wbr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .shareCount(lrr.countByWordBookId(entity))
                     .build();
             likedWordBook.add(wordBookDTO);
 
@@ -502,7 +505,7 @@ public class WordServiceImpl implements WordService {
         mr.findById(user.getId()).orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         Pageable pageable = PageRequest.of(0, 3);
-        List<WordBookEntity> wordBookEntity = wbr.findSortedWordBooksByShareCount(pageable);
+        List<WordBookEntity> wordBookEntity = wbr.findWordBooksOrderByLearningCountDesc(pageable);
 
         List<WordBookDTO> muchSharedWordBook = new ArrayList<>();
 
@@ -514,7 +517,7 @@ public class WordServiceImpl implements WordService {
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
                     .likeCount(ilr.getLikeCount(entity.getWordBookId()))
-                    .shareCount(wbr.getShareCount(entity.getCreatorId().getMemberId()))
+                    .shareCount(lrr.countByWordBookId(entity))
                     .build();
             muchSharedWordBook.add(wordBookDTO);
 
@@ -559,7 +562,7 @@ public class WordServiceImpl implements WordService {
                     .imagePath(wordBookEntity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
                     .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
-                    .shareCount(wbr.getShareCount(wordBookEntity.getCreatorId().getMemberId()))
+                    .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(user.getId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .build();
             wordBookDTOS.add(wordBookDTO);
@@ -696,6 +699,31 @@ public class WordServiceImpl implements WordService {
 
         return wordDTOList;
 
+    }
+
+    /**
+     * 학습 기록 저장
+     * @author gyahury
+     * @param userId userId를 가져옵니다.
+     * @param wordbookId wordbookId를 가져옵니다.
+     */
+    @Transactional
+    @Override
+    public void addLearningRecord(Integer userId, int wordbookId) {
+
+        MemberEntity memberEntity = mr.findById(userId)
+                .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        WordBookEntity wordBookEntity = wbr.findById(wordbookId)
+                .orElseThrow(()-> new EntityNotFoundException("단어장을 찾을 수 없습니다."));
+
+        LearningRecordEntity learningRecodeEntity = LearningRecordEntity.builder()
+                .wordBookId(wordBookEntity)
+                .memberId(memberEntity)
+                .build();
+
+        lrr.save(learningRecodeEntity);
+        
     }
 
     /**
@@ -852,7 +880,7 @@ public class WordServiceImpl implements WordService {
                     .updatedDate(wordBookEntity.getUpdatedDate())
                     .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
                     .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
-                    .shareCount(wbr.getShareCount(memberEntity.getMemberId()))
+                    .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
                     .build();
             items.add(wordBookDTO);
@@ -863,7 +891,7 @@ public class WordServiceImpl implements WordService {
     }
 
     /**
-     * 내가 좋아요한 단어장 조회
+     * 내가 북마크한 단어장 조회
      * @author KIMGEON64
      * @param user user 객체를 가져 옵니다.
      * @return items dto 리스트를 반환합니다.
@@ -899,7 +927,7 @@ public class WordServiceImpl implements WordService {
                     .updatedDate(wordBookEntity.getUpdatedDate())
                     .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
                     .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
-                    .shareCount(wbr.getShareCount(memberEntity.getMemberId()))
+                    .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
                     .build();
             items.add(wordBookDTO);
