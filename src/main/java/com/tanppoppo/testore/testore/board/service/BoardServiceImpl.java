@@ -14,6 +14,9 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -33,16 +36,19 @@ public class BoardServiceImpl implements BoardService {
     /**
      * 최근 5개의 공지사항을 가져오는 메서드
      * @author dhkdtjs1541
-     * @return 최근 작성된 5개의 게시글 목록
+     * @return 최근 작성된 5개의 공지사항 목록
      */
     @Override
-    public List<BoardDTO> getRecentNotices() {
-        log.info("최근 3개의 공지사항을 가져옵니다.");
-        List<BoardEntity> boardEntities = br.findTop3ByBoardTypeOrderByCreatedDateDesc(BoardTypeEnum.NOTICE);
+    public List<BoardDTO> getRecentNotices(BoardTypeEnum boardTypeEnum) {
+        log.info("최근 5개의 {} 게시글을 가져옵니다.", boardTypeEnum);
+        List<BoardEntity> boardEntities = br.findTop5ByBoardTypeOrderByCreatedDateDesc(boardTypeEnum);
 
         List<BoardDTO> items = new ArrayList<>();
 
         for (BoardEntity entity : boardEntities) {
+
+            Integer commentsCount = cr.countByBoard(entity);
+
             BoardDTO boardDTO = BoardDTO.builder()
                     .boardId(entity.getBoardId())
                     .title(entity.getTitle())
@@ -50,6 +56,7 @@ public class BoardServiceImpl implements BoardService {
                     .nickname(entity.getMember().getNickname())
                     .createdDate(entity.getCreatedDate())
                     .updatedDate(entity.getUpdateDate())
+                    .commentsCount(commentsCount)
                     .build();
             items.add(boardDTO);
         }
@@ -68,18 +75,18 @@ public class BoardServiceImpl implements BoardService {
      */
     @Transactional
     @Override
-    public void saveBoard(BoardDTO boardDTO, Integer userId) {
+    public void saveBoard(BoardDTO boardDTO, Integer userId, BoardTypeEnum boardTypeEnum) {
 
         MemberEntity memberEntity = mr.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
 
-        if ("NOTICE".equals(boardDTO.getBoardType()) && !(memberEntity.getMembershipLevel() == 99)) {
+        if (BoardTypeEnum.NOTICE.equals(boardTypeEnum) && !(memberEntity.getMembershipLevel() == 99)) {
             throw new AccessDeniedException("권한이 없습니다.");
         }
 
         BoardEntity boardEntity = BoardEntity.builder()
                 .member(memberEntity)
-                .boardType(BoardTypeEnum.valueOf(boardDTO.getBoardType()))
+                .boardType(boardTypeEnum)
                 .title(boardDTO.getTitle())
                 .content(boardDTO.getContent())
                 .build();
@@ -95,6 +102,7 @@ public class BoardServiceImpl implements BoardService {
      * @return 게시글 상세 정보가 담긴 {@link BoardDTO}
      * @throws EntityNotFoundException 해당 게시글을 찾을 수 없을 경우 예외 발생
      */
+    @Transactional
     @Override
     public BoardDTO getBoardDetail(int boardId) {
         log.info("게시글 상세 정보를 가져옵니다 : {}", boardId);
@@ -207,6 +215,10 @@ public class BoardServiceImpl implements BoardService {
         MemberEntity memberEntity = mr.findById(commentDTO.getMemberId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다."));
 
+        if(boardEntity.getBoardType().equals(BoardTypeEnum.NOTICE) && !(memberEntity.getMembershipLevel() == 99)){
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
         CommentEntity commentEntity = CommentEntity.builder()
                 .content(commentDTO.getContent())
                 .board(boardEntity)
@@ -250,8 +262,13 @@ public class BoardServiceImpl implements BoardService {
      */
     @Override
     public List<CommentDTO> getCommentList(int boardId) {
+
         Sort sort = Sort.by(Sort.Direction.ASC, "createdDate");
-        List<CommentEntity> commentEntityList = cr.findByBoard(boardId, sort);
+
+        BoardEntity boardEntity = br.findById(boardId)
+                .orElseThrow(() -> new EntityNotFoundException("게시글이 없습니다."));
+
+        List<CommentEntity> commentEntityList = cr.findByBoard(boardEntity, sort);
 
         List<CommentDTO> commentDTOList = new ArrayList<>();
         for (CommentEntity entity : commentEntityList) {
@@ -266,7 +283,9 @@ public class BoardServiceImpl implements BoardService {
                     .build();
             commentDTOList.add(dto);
         }
+
         return commentDTOList;
+
     }
 
     /**
@@ -313,5 +332,44 @@ public class BoardServiceImpl implements BoardService {
 
         commentEntity.setContent(commentDTO.getContent());
         cr.save(commentEntity);
+    }
+
+    /**
+     * 게시글 리스트 조회
+     * @author gyahury
+     * @param page 페이지를 가져옵니다.
+     * @param pageSize 페이지당 게시글 수를 가져옵니다.
+     * @param boardType 게시글 타입을 가져옵니다.
+     * @param keyword 키워드를 가져옵니다.
+     * @return 게시글 리스트를 반환합니다.
+     */
+    @Override
+    public Page<BoardDTO> getBoards(int page, int pageSize, BoardTypeEnum boardType, String keyword) {
+
+        Pageable pageable = PageRequest.of(page - 1, pageSize, Sort.by("createdDate").descending());
+        Page<BoardEntity> boardPage ;
+
+        // 키워드가 있는 경우와 없는 경우 분기 처리
+        if (keyword != null && !keyword.isEmpty()) {
+            boardPage = br.findByBoardTypeAndTitleContaining(boardType, keyword, pageable);
+        } else {
+            boardPage = br.findByBoardType(boardType, pageable);
+        }
+
+        return boardPage.map(BoardEntity -> {
+            BoardDTO boardDTO = BoardDTO.builder()
+                    .boardId(BoardEntity.getBoardId())
+                    .title(BoardEntity.getTitle())
+                    .boardType(String.valueOf(BoardEntity.getBoardType()))
+                    .content(BoardEntity.getContent())
+                    .createdDate(BoardEntity.getCreatedDate())
+                    .updatedDate(BoardEntity.getUpdateDate())
+                    .viewCount(BoardEntity.getViewCount())
+                    .nickname(BoardEntity.getMember().getNickname())
+                    .memberId(BoardEntity.getMember().getMemberId())
+                    .build();
+
+            return boardDTO;
+        });
     }
 }

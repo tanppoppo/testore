@@ -13,6 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 게시판 엔티티 클래스
@@ -64,11 +65,16 @@ public class BoardEntity {
         @Column(name = "updated_date")
         private LocalDateTime updateDate;
 
+        @OneToMany(fetch = FetchType.LAZY, mappedBy = "board", cascade = CascadeType.REMOVE)
+        private List<CommentEntity> comments;
+
         @PrePersist
         public void prePersist() {
 
                 if(viewCount == null) {
                         viewCount = 0;
                 }
+
         }
+
     }

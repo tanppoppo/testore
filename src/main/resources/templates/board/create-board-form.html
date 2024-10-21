@@ -6,7 +6,20 @@
       th:with="headerText='BOARD', footerText=''"
       layout:fragment="Content"
 >
+
 <form class="p-10" th:action="@{${boardDTO} != null ? 'updateBoard' : 'createBoard'}" method="post">
+  <span class="font-bold text-lg text-gray-500">
+    <span th:switch="${boardType}">
+        <span th:case="'NOTICE'">공지사항</span>
+        <span th:case="'READS'">읽을거리</span>
+        <span th:case="'DAILY'">일상</span>
+        <span th:case="'LEARNING_SHARE'">학습 공유</span>
+        <span th:case="'INFO_SHARE'">정보 공유</span>
+        <span th:case="'ETC'">기타</span>
+        <span th:case="*">게시판</span>
+    </span>
+     작성
+  </span>
   <input th:unless="${boardDTO}" type="hidden" name="type" th:value="${boardType != null ? boardType : 'ETC'}">
   <input th:if="${boardDTO}" type="hidden" th:name="board" th:value="${boardDTO != null ? boardDTO.boardId : ''}">
   <th:block th:replace="~{common/fragments/input :: InputFragment('title', 'title', 'title', '게시글 제목', ${boardDTO != null ? boardDTO.title : ''})}"></th:block>

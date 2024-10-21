@@ -36,12 +36,12 @@ public class CommentEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
+    @JoinColumn(name = "board_id", nullable = false, referencedColumnName = "board_id")
     private BoardEntity board; // 게시물 (Board 엔티티와의 관계)
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false, referencedColumnName = "member_id")
     private MemberEntity member; // 작성자 (Member 엔티티와의 관계)
 
     @NotNull

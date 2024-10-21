@@ -4,10 +4,12 @@ package com.tanppoppo.testore.testore.board.controller;
 import com.tanppoppo.testore.testore.board.dto.BoardDTO;
 import com.tanppoppo.testore.testore.board.dto.CommentDTO;
 import com.tanppoppo.testore.testore.board.service.BoardService;
+import com.tanppoppo.testore.testore.common.util.BoardTypeEnum;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -55,11 +57,10 @@ public class BoardController {
      */
     @PostMapping("/createBoard")
     public String createBoard(BoardDTO boardDTO, @AuthenticationPrincipal AuthenticatedUser user,
-                              RedirectAttributes redirectAttributes, @RequestParam(name = "type") String boardType) {
+                              RedirectAttributes redirectAttributes, @RequestParam(name = "type") BoardTypeEnum boardType) {
 
         try {
-            boardDTO.setBoardType(boardType);
-            bs.saveBoard(boardDTO, user.getId());
+            bs.saveBoard(boardDTO, user.getId(), boardType);
             setFlashToastMessage(redirectAttributes, true, "게시글이 성공적으로 작성되었습니다.");
         } catch (AccessDeniedException e) {
             setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
@@ -84,8 +85,10 @@ public class BoardController {
             BoardDTO boardDTO = bs.getBoardDetail(boardId);
             model.addAttribute("boardDTO", boardDTO);
 
-//            List<CommentDTO> commentDTOList = bs.getCommentList(boardId);
-//            model.addAttribute("commentDTOList", commentDTOList);
+            List<CommentDTO> commentDTOList = bs.getCommentList(boardId);
+            model.addAttribute("commentDTOList", commentDTOList);
+            model.addAttribute("commentCount", commentDTOList.size());
+
 
             return "board/board-detail";
         } catch (Exception e) {
@@ -179,6 +182,34 @@ public class BoardController {
     }
 
     /**
+     * 게시글 페이징 조회
+     * @author gyahury
+     * @param page 페이지 파라미터를 가져옵니다.
+     * @param boardType 게시글 타입을 가져옵니다.
+     * @param keyword 키워드를 가졉옵니다.
+     * @param model 모델 객체를 가져옵니다.
+     * @return 게시글 리스트로 반환합니다.
+     */
+    @GetMapping("/getBoards")
+    public String getBoards(@RequestParam(defaultValue = "1") int page,
+                            @RequestParam(name = "type") BoardTypeEnum boardType,
+                            @RequestParam(required = false) String keyword,
+                            Model model) {
+
+        int pageSize = 20;
+        Page<BoardDTO> boardDTOPage = bs.getBoards(page, pageSize, boardType, keyword);
+
+        model.addAttribute("boardType", String.valueOf(boardType));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("boardDTOPage", boardDTOPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", boardDTOPage.getTotalPages());
+
+        return "board/board-list";
+
+    }
+
+    /**
      * 댓글 작성
      * @author dhkdtjs1541
      * @param commentDTO 작성할 댓글 데이터
@@ -188,14 +219,20 @@ public class BoardController {
      */
     @PostMapping("/createComment")
     public String createComment(@ModelAttribute CommentDTO commentDTO,
+                                @RequestParam(name = "board") int boardId,
                                 @AuthenticationPrincipal AuthenticatedUser user,
                                 RedirectAttributes redirectAttributes) {
+        commentDTO.setBoardId(boardId);
         commentDTO.setMemberId(user.getId());
         commentDTO.setNickname(user.getNickname());
 
         try {
             bs.createComment(commentDTO);
             setFlashToastMessage(redirectAttributes, true, "댓글이 성공적으로 작성되었습니다.");
+            return "redirect:/board/boardDetail?board=" + boardId;
+        } catch (AccessDeniedException e) {
+            log.error("댓글 작성 중 비정상적인 접근", e);
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
         } catch (Exception e) {
             log.error("댓글 작성 중 오류 발생", e);
             setFlashToastMessage(redirectAttributes, false, "댓글 작성 중 문제가 발생했습니다.<br>다시 시도해주세요.");
@@ -212,8 +249,8 @@ public class BoardController {
      * @param redirectAttributes 리다이렉트 시 플래시 메시지를 전달하기 위한 객체
      * @return 홈으로 리다이렉트
      */
-    @GetMapping("/deleteComment")
-    public String deleteComment(@ModelAttribute CommentDTO commentDTO,
+    @PostMapping("/deleteComment")
+    public String deleteComment(@RequestBody CommentDTO commentDTO,
                                 @AuthenticationPrincipal AuthenticatedUser user,
                                 RedirectAttributes redirectAttributes) {
         try {
@@ -261,14 +298,13 @@ public class BoardController {
      * @return 수정 후 홈으로 리다이렉트
      */
     @PostMapping("/updateComment")
-    public String updateComment(@ModelAttribute CommentDTO commentDTO,
+    public String updateComment(@RequestBody CommentDTO commentDTO,
                                 @AuthenticationPrincipal AuthenticatedUser user,
                                 RedirectAttributes redirectAttributes) {
         commentDTO.setMemberId(user.getId());
 
         try {
             bs.updateComment(commentDTO);
-            setFlashToastMessage(redirectAttributes, true, "댓글이 성공적으로 수정되었습니다.");
         } catch (EntityNotFoundException e) {
             log.error("댓글 수정 중 오류 발생: 댓글을 찾을 수 없습니다.", e);
             setFlashToastMessage(redirectAttributes, false, "수정하려는 댓글을 찾을 수 없습니다.");

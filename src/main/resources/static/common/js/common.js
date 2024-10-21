@@ -13,12 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (hideToastButton) {
         hideToastButton.addEventListener('click', hideToast);
     }
-    if (confirmModalButton) {
-        confirmModalButton.addEventListener('click', hideModal);
-    }
-    if (cancelModalButton) {
-        cancelModalButton.addEventListener('click', hideModal);
-    }
 
     if (toastElement && window.getComputedStyle(toastElement).display === 'flex') {
         setTimeout(function () {
@@ -30,11 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
         toastElement.style.display = 'none';
     }
 
-    function hideModal() {
-        modalElement.style.display = 'none';
-    }
-
-    function showToast(content) {
+    window.showToast = function showToast(content) {
         let toastContent = document.querySelector('#toastContent');
         toastElement.style.display = 'flex';
         toastContent.textContent = content;
@@ -44,14 +34,74 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 3000)
     }
 
-    function showModal(content) {
-        let modalContent = document.querySelector('#modalContent');
-        modalElement.style.display = 'flex';
-        modalContent.textContent = content;
+    window.showModal = function showModal(content, canCancel = true, link = null) {
+        return new Promise((resolve, reject) => {
 
-        setTimeout(function () {
-            modalElement.style.display = 'none';
-        }, 3000)
+            const modal = document.getElementById('customModal');
+            const modalContent = document.getElementById('modalContent');
+            const confirmButton = document.getElementById('confirmModal');
+            const cancelButton = document.getElementById('cancelModal');
+            const linkButton = document.getElementById('linkButton');
+
+            if (!modal || !modalContent) {
+                console.error('모달 요소를 찾을 수 없습니다.');
+                reject('모달 요소가 없음');
+                return;
+            }
+
+            modalContent.innerHTML = content != null ? content : '내용 없음';
+
+            if (link) {
+                if (linkButton) {
+                    linkButton.style.display = 'inline-flex';
+                    linkButton.setAttribute('onclick', `location.href='${link}'`);
+                }
+                if (confirmButton) {
+                    confirmButton.style.display = 'none';
+                }
+            } else {
+                if (linkButton) {
+                    linkButton.style.display = 'none';
+                }
+                if (confirmButton) {
+                    confirmButton.style.display = 'inline-flex';
+                }
+            }
+
+            if (canCancel) {
+                if (cancelButton) {
+                    cancelButton.style.display = 'inline-flex';
+                    cancelButton.onclick = function () {
+                        closeModal();
+                        resolve(false);
+                    };
+                }
+            } else {
+                if (cancelButton) {
+                    cancelButton.style.display = 'none';
+                }
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            if (confirmButton) {
+
+                confirmButton.replaceWith(confirmButton.cloneNode(true));
+                const newConfirmButton = document.getElementById('confirmModal');
+
+                newConfirmButton.onclick = function () {
+                    closeModal();
+                    resolve(true);
+                };
+            }
+        });
+    }
+
+    window.closeModal = function closeModal() {
+        const modal = document.getElementById('customModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     }
 
     function checkNotifications() {
