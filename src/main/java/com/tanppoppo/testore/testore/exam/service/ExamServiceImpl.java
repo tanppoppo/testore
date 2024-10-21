@@ -669,7 +669,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .createdDate(entity.getCreatedDate())
                     .updateDate(entity.getUpdateDate())
-                    .nickname(memberEntity.getNickname())
+                    .nickname(entity.getMemberId().getNickname())
                     .build();
             reviewDTOList.add(reviewDTO);
         }
