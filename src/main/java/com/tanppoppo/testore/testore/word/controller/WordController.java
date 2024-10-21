@@ -77,7 +77,7 @@ public class WordController {
 
         int wordbookId = ws.createWordBook(wordBookDTO, user);
         model.addAttribute("wordbookId", wordbookId);
-        return "word/create-word-book";
+        return "word/word-add-form";
 
     }
 
@@ -130,17 +130,24 @@ public class WordController {
      * @return 단어장 상세 페이지를 반환합니다.
      */
     @GetMapping("wordBookDetail")
-    public String wordBookDetail(Model model, @RequestParam(name = "book") int wordBookId, @AuthenticationPrincipal AuthenticatedUser user) {
+    public String wordBookDetail(Model model, RedirectAttributes redirectAttributes,
+                                 @RequestParam(name = "book") int wordBookId, @AuthenticationPrincipal AuthenticatedUser user) {
 
-        Map<String, Object> detail = ws.selectWordBookDetail(wordBookId, user);
-        model.addAttribute("wordBookDTO", detail.get("wordBookDTO"));
-        model.addAttribute("nickname", detail.get("nickName"));
-        model.addAttribute("reviewCount", detail.get("reviewCount"));
-        model.addAttribute("likeState", detail.get("likeState"));
-        model.addAttribute("bookmarkState", detail.get("bookmarkState"));
-
-        return "word/word-detail";
-
+        try{
+            Map<String, Object> detail = ws.selectWordBookDetail(wordBookId, user);
+            model.addAttribute("wordBookDTO", detail.get("wordBookDTO"));
+            model.addAttribute("nickname", detail.get("nickname"));
+            model.addAttribute("reviewCount", detail.get("reviewCount"));
+            model.addAttribute("likeState", detail.get("likeState"));
+            model.addAttribute("bookmarkState", detail.get("bookmarkState"));
+            return "word/word-detail";
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "공개된 단어장이 아닙니다.");
+        } catch (Exception e) {
+            setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생했습니다.");
+        }
+        return "redirect:/";
+        
     }
 
     /**
@@ -149,7 +156,22 @@ public class WordController {
      * @return 단어장 학습 페이지를 반환합니다.
      */
     @GetMapping("learning")
-    public String learning() { return "word/word-learning"; }
+    public String learning(@RequestParam(name = "book") int wordBookId, Model model, RedirectAttributes redirectAttributes,
+                           @AuthenticationPrincipal AuthenticatedUser user) {
+
+        try {
+            List<WordDTO> wordList = ws.selectWordList(wordBookId, user.getId());
+            model.addAttribute("wordBookId", wordBookId);
+            model.addAttribute("items", wordList);
+            return "word/word-learning";
+        } catch (IllegalStateException e) {
+            setFlashModalMessage(redirectAttributes, "단어가 없습니다.<br>추가하시겠습니까?", true, "/word/wordAddForm?book="+wordBookId);
+        } catch (Exception e) {
+            setFlashToastMessage(redirectAttributes, false, "알 수 없는 오류가 발생했습니다.");
+        }
+        return "redirect:/";
+
+    }
 
     /**
      * 단어장 찾아보기 페이지 이동
@@ -445,5 +467,14 @@ public class WordController {
 
     }
 
+    @PostMapping("addLearningRecord")
+    public String addLearningRecord(@AuthenticationPrincipal AuthenticatedUser user,
+                           @RequestParam(name = "book") int wordbookId) {
+
+        ws.addLearningRecord(user.getId(), wordbookId);
+
+        return "word/word-update-form";
+
+    }
 
 }

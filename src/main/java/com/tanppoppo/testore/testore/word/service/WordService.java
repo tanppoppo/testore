@@ -59,4 +59,8 @@ public interface WordService {
     List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user, String keyword);
 
     void deleteWordBook(int wordBookId, Integer id);
+
+    List<WordDTO> selectWordList(int wordBookId, Integer id);
+
+    void addLearningRecord(Integer id, int wordbookId);
 }

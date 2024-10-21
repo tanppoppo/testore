@@ -1,5 +1,6 @@
 package com.tanppoppo.testore.testore.board.repository;
 
+import com.tanppoppo.testore.testore.board.entity.BoardEntity;
 import com.tanppoppo.testore.testore.board.entity.CommentEntity;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,5 +10,8 @@ import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
-    List<CommentEntity> findByBoard(int boardId, Sort sort);
+    List<CommentEntity> findByBoard(BoardEntity boardEntity, Sort sort);
+
+    Integer countByBoard(BoardEntity boardEntity);
+
 }

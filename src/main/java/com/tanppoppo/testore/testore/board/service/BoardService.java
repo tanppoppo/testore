@@ -2,15 +2,17 @@ package com.tanppoppo.testore.testore.board.service;
 
 import com.tanppoppo.testore.testore.board.dto.BoardDTO;
 import com.tanppoppo.testore.testore.board.dto.CommentDTO;
-import com.tanppoppo.testore.testore.board.entity.BoardEntity;
+import com.tanppoppo.testore.testore.common.util.BoardTypeEnum;
 import com.tanppoppo.testore.testore.security.AuthenticatedUser;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface BoardService {
-    List<BoardDTO> getRecentNotices();
 
-    void saveBoard(BoardDTO boardDTO, Integer userId);
+    List<BoardDTO> getRecentNotices(BoardTypeEnum boardTypeEnum);
+
+    void saveBoard(BoardDTO boardDTO, Integer userId, BoardTypeEnum boardTypeEnum);
 
     BoardDTO getBoardDetail(int boardId);
 
@@ -22,11 +24,13 @@ public interface BoardService {
 
     List<CommentDTO> getCommentList(int boardId);
 
-    void createComment(CommentDTO commentDTO);
+    void createComment(CommentDTO commentDTO, Integer userId);
 
     void deleteComment(Integer commentId, Integer id);
 
     CommentDTO getCommentById(int commentId);
 
     void updateComment(CommentDTO commentDTO);
+
+    Page<BoardDTO> getBoards(int page, int pageSize, BoardTypeEnum boardType, String keyword);
 }

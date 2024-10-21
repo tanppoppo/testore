@@ -29,4 +29,5 @@ public class BoardDTO {
     private LocalDateTime updatedDate; // 수정일
 
     private String nickname;
+    private int commentsCount;
 }

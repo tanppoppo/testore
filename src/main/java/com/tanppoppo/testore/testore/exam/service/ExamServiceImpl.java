@@ -669,7 +669,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .createdDate(entity.getCreatedDate())
                     .updateDate(entity.getUpdateDate())
-                    .nickname(memberEntity.getNickname())
+                    .nickname(entity.getMemberId().getNickname())
                     .build();
             reviewDTOList.add(reviewDTO);
         }
@@ -953,6 +953,10 @@ public class ExamServiceImpl implements ExamService {
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
 
+        if (!examPaperEntity.getOwnerId().equals(user.getId())) {
+            throw new AccessDeniedException("권한이 없습니다.");
+        }
+
         List<ExamResultEntity> examResultEntityList = epr.findExamResultsByExamPaperId(examPaperEntity.getExamPaperId());
 
         List<ExamResultDTO> items = new ArrayList<>();
@@ -975,7 +979,7 @@ public class ExamServiceImpl implements ExamService {
                     .examPaperImagePath(examPaperEntity.getImagePath())
                     .examPaperPassScore(examPaperEntity.getPassScore())
                     .memberId(participant.getMemberId())
-                    .nickName(participant.getNickname())
+                    .nickname(participant.getNickname())
                     .examQuestionCount(epr.getExamItemCount(examPaperId))
                     .passScore(examPaperEntity.getPassScore())
                     .examScore(entity.getExamScore())
@@ -1098,6 +1102,27 @@ public class ExamServiceImpl implements ExamService {
         }
 
         return items;
+
+    }
+
+    /**
+     * 접속한 사용자가 시험지 소유자인지 체크
+     * @author gyahury
+     * @param examPaperId 시험지 id를 가져옵니다.
+     * @param userId 유저 id를 가져옵니다.
+     * @return 맞다면 true, 아니라면 false를 반환합니다.
+     */
+    @Override
+    public boolean verifyUserIsExamOwner(int examPaperId, Integer userId) {
+
+        ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
+                .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을 수 없습니다."));
+
+        if(examPaperEntity.getOwnerId().equals(userId)){
+            return true;
+        }
+
+        return false;
 
     }
 

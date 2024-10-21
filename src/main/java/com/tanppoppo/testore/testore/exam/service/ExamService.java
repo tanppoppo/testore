@@ -65,4 +65,5 @@ public interface ExamService {
 
     List<ExamPaperDTO> getBookmarkedExam(AuthenticatedUser user, String keyword);
 
+    boolean verifyUserIsExamOwner(int examPaperId, Integer id);
 }

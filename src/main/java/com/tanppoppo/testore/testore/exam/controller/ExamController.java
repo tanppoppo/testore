@@ -165,7 +165,12 @@ public class ExamController {
     public String createQuestionForm(@RequestParam(name = "paper") int examPaperId, RedirectAttributes redirectAttributes, Model model, @AuthenticationPrincipal AuthenticatedUser user) {
 
         if(es.checkQuestionExist(examPaperId, user)) {
-            setFlashModalMessage(redirectAttributes, "시험 문제가 이미 존재합니다.<br>수정하시겠습니까?", true, "/exam/correctQuestionForm?paper="+examPaperId);
+            setFlashToastMessage(redirectAttributes, false,"문제가 이미 존재합니다.");
+            return "redirect:/";
+        }
+
+        if(!es.verifyUserIsExamOwner(examPaperId, user.getId())) {
+            setFlashToastMessage(redirectAttributes, false,"시험지 소유자가 아닙니다.");
             return "redirect:/";
         }
 

@@ -1,5 +1,7 @@
 package com.tanppoppo.testore.testore.member.service;
 
+import com.tanppoppo.testore.testore.board.entity.BoardEntity;
+import com.tanppoppo.testore.testore.board.repository.BoardRepository;
 import com.tanppoppo.testore.testore.common.util.ItemTypeEnum;
 import com.tanppoppo.testore.testore.common.util.NotificationTypeEnum;
 import com.tanppoppo.testore.testore.exam.entity.ExamPaperEntity;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -43,6 +46,7 @@ public class MemberServiceImpl implements MemberService {
     private final ExamPaperRepository epr;
     private final WordBookRepository wbr;
     private final NotificationRepository nr;
+    private final BoardRepository bor;
     private final ConcurrentHashMap<Integer, SseEmitter> sseMap = new ConcurrentHashMap<>();
 
     /**
@@ -231,6 +235,10 @@ public class MemberServiceImpl implements MemberService {
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을수 없습니다."));
 
+        if (!user.getId().equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+        }
+
         BookmarkEntity selectBookmarkByMemberId = br.selectBookmarkByMemberId(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM);
 
         if (selectBookmarkByMemberId == null) {
@@ -260,6 +268,10 @@ public class MemberServiceImpl implements MemberService {
 
         ExamPaperEntity examPaperEntity = epr.findById(examPaperId)
                 .orElseThrow(()-> new EntityNotFoundException("시험지 정보를 찾을수 없습니다."));
+
+        if (!user.getId().equals(examPaperEntity.getOwnerId()) && !examPaperEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 시험지가 아닙니다.");
+        }
 
         ItemLikeEntity selectItemLikeByMemberId = ilr.selectItemLikeByMemberId(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM);
 
@@ -297,6 +309,10 @@ public class MemberServiceImpl implements MemberService {
         WordBookEntity wordBookEntity = wbr.findById(wordBookId)
                 .orElseThrow(() -> new EntityNotFoundException("단어장 정보를 찾을수 없습니다."));
 
+        if (!user.getId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+        }
+
         BookmarkEntity selectBookmarkByMemberId = br.selectBookmarkByMemberId(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD);
 
         if (selectBookmarkByMemberId == null) {
@@ -327,6 +343,10 @@ public class MemberServiceImpl implements MemberService {
 
         WordBookEntity wordBookEntity = wbr.findById(wordBookId)
                 .orElseThrow(() -> new EntityNotFoundException("단어장 정보를 찾을수 없습니다."));
+
+        if (!user.getId().equals(wordBookEntity.getOwnerId()) && !wordBookEntity.getPublicOption()){
+            throw new AccessDeniedException("공개된 단어장이 아닙니다.");
+        }
 
         ItemLikeEntity selectItemLikeByMemberId = ilr.selectItemLikeByMemberId(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD);
 
@@ -360,6 +380,7 @@ public class MemberServiceImpl implements MemberService {
 
         ExamPaperEntity examPaperEntity;
         WordBookEntity wordBookEntity;
+        BoardEntity boardEntity;
         MemberEntity recipientIdMemberEntity = new MemberEntity();
 
         MemberEntity senderMemberEntity = mr.findById(userId)
@@ -379,6 +400,14 @@ public class MemberServiceImpl implements MemberService {
                     .orElseThrow(() -> new EntityNotFoundException("단어장을 찾을 수 없습니다."));
 
             recipientIdMemberEntity = mr.findById(wordBookEntity.getOwnerId())
+                    .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+        } else if (type.equals(NotificationTypeEnum.BOARD_COMMENT)) {
+
+            boardEntity = bor.findById(itemId)
+                    .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+
+            recipientIdMemberEntity = mr.findById(boardEntity.getMember().getMemberId())
                     .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
 
         }
@@ -432,6 +461,10 @@ public class MemberServiceImpl implements MemberService {
                             .orElseThrow(() -> new EntityNotFoundException("단어장을 찾을 수 없습니다."));
                     itemNickname = wordBookEntity.getTitle();
                     break;
+                case BOARD_COMMENT:
+                    BoardEntity boardEntity = bor.findById(notificationEntity.getItemId())
+                            .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+                    itemNickname = boardEntity.getTitle();
                 default:
                     break;
             }
