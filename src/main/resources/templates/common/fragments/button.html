@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       th:fragment="ButtonFragment(type, id, name, text, link, isBlack)">
 <button
-        th:if="${link}"
+        th:if="${link != null and link != ''}"
         th:type="${type != null ? type : 'button'}"
         th:id="${id != null ? id : ''}"
         th:name="${name != null ? name : ''}"
@@ -12,7 +12,7 @@
                        + (${isBlack} ? ' text-white bg-gray-800 hover:bg-gray-900 ' : ' text-gray-500 bg-white border-2 border-gray-300 hover:bg-gray-100')">
 </button>
 <button
-        th:unless="${link}"
+        th:unless="${link != null and link != ''}"
         th:type="${type != null ? type : 'button'}"
         th:id="${id != null ? id : ''}"
         th:name="${name != null ? name : ''}"
