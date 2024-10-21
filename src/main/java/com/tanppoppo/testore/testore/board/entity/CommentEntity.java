@@ -1,9 +1,9 @@
 package com.tanppoppo.testore.testore.board.entity;
 
-import com.tanppoppo.testore.testore.board.entity.BoardEntity;
 import com.tanppoppo.testore.testore.member.entity.MemberEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -45,7 +45,8 @@ public class CommentEntity {
     private MemberEntity member; // 작성자 (Member 엔티티와의 관계)
 
     @NotNull
-    @Column(name = "content", nullable = false, length = 100)
+    @Size(min = 2, max = 300)
+    @Column(name = "content", nullable = false, length = 300)
     private String content; // 내용
 
     @NotNull
