@@ -22,7 +22,7 @@ public interface ItemLikeRepository extends JpaRepository<ItemLikeEntity, Intege
     Boolean getLikeState(Integer memberId, Integer itemId, ItemTypeEnum itemType);
 
     // 좋아요 수
-    @Query("SELECT COUNT(l) FROM ItemLikeEntity l WHERE l.itemId = :itemId")
-    Integer getLikeCount(Integer itemId);
+    @Query("SELECT COUNT(l) FROM ItemLikeEntity l WHERE l.itemId = :itemId and l.itemType = :itemTypeEnum")
+    Integer getLikeCount(Integer itemId, ItemTypeEnum itemTypeEnum);
 
 }

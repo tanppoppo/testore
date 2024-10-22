@@ -173,7 +173,7 @@ public class WordServiceImpl implements WordService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(entity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(entity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(user.getId(), entity.getWordBookId(), ItemTypeEnum.WORD))
                     .build();
@@ -212,7 +212,7 @@ public class WordServiceImpl implements WordService {
                 .ownerId(wordBookEntity.getOwnerId())
                 .publicOption(wordBookEntity.getPublicOption())
                 .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
-                .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                 .shareCount(lrr.countByWordBookId(wordBookEntity))
                 .build();
 
@@ -445,7 +445,7 @@ public class WordServiceImpl implements WordService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(entity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(entity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .build();
             recommendedWordBook.add(wordBookDTO);
@@ -482,7 +482,7 @@ public class WordServiceImpl implements WordService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(entity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(entity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .build();
             likedWordBook.add(wordBookDTO);
@@ -516,7 +516,7 @@ public class WordServiceImpl implements WordService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(entity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(entity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(entity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .build();
             muchSharedWordBook.add(wordBookDTO);
@@ -561,7 +561,7 @@ public class WordServiceImpl implements WordService {
                     .content(wordBookEntity.getContent())
                     .imagePath(wordBookEntity.getImagePath())
                     .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(user.getId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .build();
@@ -847,15 +847,22 @@ public class WordServiceImpl implements WordService {
      * 내가 좋아요한 단어장 조회
      * @author KIMGEON64
      * @param user user 객체를 가져 옵니다.
+     * @param keyword 사용자 입력값은 가져 옵니다.
      * @return items dto 리스트를 반환합니다.
      */
     @Override
-    public List<WordBookDTO> getLikedWordBook(AuthenticatedUser user) {
+    public List<WordBookDTO> getLikedWordBook(AuthenticatedUser user, String keyword) {
 
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        List<WordBookEntity> wordBookEntityList = wbr.findLikedWordBooksByMemberId(memberEntity.getMemberId(), ItemTypeEnum.WORD);
+        List<WordBookEntity> wordBookEntityList;
+
+        if (keyword == null) {
+            wordBookEntityList = wbr.findLikedWordBooksByMemberId(memberEntity.getMemberId(), ItemTypeEnum.WORD);
+        } else {
+            wordBookEntityList = wbr.findWordBooksLikedByMemberAndKeyword(memberEntity.getMemberId(), ItemTypeEnum.WORD, keyword);
+        }
 
         List<WordBookDTO> items = new ArrayList<>();
 
@@ -879,7 +886,7 @@ public class WordServiceImpl implements WordService {
                     .createdDate(wordBookEntity.getCreatedDate())
                     .updatedDate(wordBookEntity.getUpdatedDate())
                     .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
                     .build();
@@ -894,15 +901,22 @@ public class WordServiceImpl implements WordService {
      * 내가 북마크한 단어장 조회
      * @author KIMGEON64
      * @param user user 객체를 가져 옵니다.
+     * @param keyword 사용자 입력값은 가져 옵니다.
      * @return items dto 리스트를 반환합니다.
      */
     @Override
-    public List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user) {
+    public List<WordBookDTO> getBookmarkedWordBook(AuthenticatedUser user, String keyword) {
 
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        List<WordBookEntity> wordBookEntityList = wbr.findBookmarkedWordBooksByMemberId(memberEntity.getMemberId(), ItemTypeEnum.WORD);
+        List<WordBookEntity> wordBookEntityList;
+
+        if (keyword == null) {
+            wordBookEntityList = wbr.findBookmarkedWordBooksByMemberId(memberEntity.getMemberId(), ItemTypeEnum.WORD);
+        } else {
+            wordBookEntityList = wbr.findWordBooksBookmarkedByMemberAndKeyword(memberEntity.getMemberId(), ItemTypeEnum.WORD, keyword);
+        }
 
         List<WordBookDTO> items = new ArrayList<>();
 
@@ -926,7 +940,7 @@ public class WordServiceImpl implements WordService {
                     .createdDate(wordBookEntity.getCreatedDate())
                     .updatedDate(wordBookEntity.getUpdatedDate())
                     .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
-                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId()))
+                    .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
                     .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
                     .build();
