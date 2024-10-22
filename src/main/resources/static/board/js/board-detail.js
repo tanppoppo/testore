@@ -1,4 +1,21 @@
 document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('submitButton').addEventListener('click', async function(event) {
+        event.preventDefault();
+
+        try {
+            const content = document.getElementById("content").value;
+            if (!content || content.length < 2 || content.length > 300) {
+                await window.showModal("댓글 내용은 2자 이상 300자 이하로 <br>입력하세요.", false);
+                return false;
+            }
+
+            document.getElementById('commentForm').submit();
+
+        } catch (error) {
+            console.error('유효성 검사 도중 오류가 발생했습니다:', error);
+        }
+    });
+
     document.querySelectorAll(".edit-comment").forEach(function(editButton) {
         editButton.addEventListener("click", function(event) {
             event.preventDefault();

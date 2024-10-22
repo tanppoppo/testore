@@ -6,8 +6,7 @@
       th:with="headerText='LOGIN', footerText=''"
       layout:fragment="Content"
 >
-<body>
-<form class="max-w-lg mx-auto mt-10 px-6" th:action="@{login}" method="post">
+<form id="loginForm" class="max-w-lg mx-auto mt-10 px-6" th:action="@{login}" method="post">
   <th:block th:replace="~{common/fragments/input :: InputFragment('email', 'email', 'email', '이메일', '')}"></th:block>
   <th:block th:replace="~{common/fragments/input :: InputFragment('password', 'memberPassword', 'memberPassword', '비밀번호', '')}"></th:block>
   <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit', 'submitButton', 'submitButton', '로그인', false, true)}"></th:block>
@@ -16,5 +15,5 @@
     <a th:href="@{joinForm}" class="cursor-pointer text-neutral-600 inline-block hover:underline hover:scale-105 ease-in-out transition duration-700">회원가입</a>
   </div>
 </form>
-</body>
+<script th:src="@{/member/js/loginForm.js}"></script>
 </html>

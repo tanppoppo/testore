@@ -6,7 +6,7 @@
       th:with="headerText='EXAM', footerText='Exam'"
       layout:fragment="Content"
 >
-<form class="p-10" th:action="@{${examPaperTitle} != null ? 'updateExamPaper' : 'createExamPaper'}" method="post">
+<form id="examForm" class="p-10" th:action="@{${examPaperTitle} != null ? 'updateExamPaper' : 'createExamPaper'}" method="post">
   <div class="flex items-center justify-center pb-4">
     <img class="w-20 object-contain" th:src="@{/common/image/exam-main.png}">
     <input type="hidden" id="imagePath" name="imagePath" value="/common/image/exam-main.png">
@@ -17,4 +17,5 @@
   <th:block th:replace="~{common/fragments/input :: InputFragment('text', 'passScore', 'passScore', '합격 점수 (100점 기준)', ${examPaperPassScore})}"></th:block>
   <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit', 'submitButton', 'submitButton', ${examPaperTitle} != null ? '시험지 수정' : '시험지 생성', '', true)}"></th:block>
 </form>
+<script th:src="@{/exam/js/exam-create.js}"></script>
 </html>
