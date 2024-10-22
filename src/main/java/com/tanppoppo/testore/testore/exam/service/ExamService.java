@@ -61,9 +61,9 @@ public interface ExamService {
 
     List<ExamResultDTO> selectExamHistory(Integer examPaperId, AuthenticatedUser user);
 
-    List<ExamPaperDTO> getLikedExam(AuthenticatedUser user);
+    List<ExamPaperDTO> getLikedExam(AuthenticatedUser user, String keyword);
 
-    List<ExamPaperDTO> getBookmarkedExam(AuthenticatedUser user);
+    List<ExamPaperDTO> getBookmarkedExam(AuthenticatedUser user, String keyword);
 
     boolean verifyUserIsExamOwner(int examPaperId, Integer id);
 }
