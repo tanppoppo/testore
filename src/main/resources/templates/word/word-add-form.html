@@ -6,7 +6,7 @@
       th:with="headerText='WORD', footerText='Word'"
       layout:fragment="Content"
 >
-<form th:action="@{addWords}" method="post">
+<form id="wordForm" th:action="@{addWords}" method="post">
   <input th:if="${wordBookId}" type="hidden" name="book" th:value="${wordBookId != null ? wordBookId : ''}">
   <div class="block mt-8 mb-2 ml-2 text-sm font-medium text-gray-600">단어 <span th:text="${nextWordNum != null ? nextWordNum : '1'}"></span></div>
   <div class="border border-gray-400 border-2 rounded-lg px-12 pb-10 pt-3 mt-6">
@@ -17,4 +17,5 @@
   <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit', 'submitButton', '', '단어 추가하기', '', true)}"></th:block>
   <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'completeButton', 'completeButton', '돌아가기', '/word' , false)}"></th:block>
 </form>
+<script th:src="@{/word/js/word-add-form.js}"></script>
 </html>

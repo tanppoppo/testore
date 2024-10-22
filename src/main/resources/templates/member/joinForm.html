@@ -14,4 +14,5 @@
   <th:block th:replace="~{common/fragments/input :: InputFragment('password', 'confirmPassword', '', '비밀번호 확인', '')}"></th:block>
   <th:block th:replace="~{common/fragments/button :: ButtonFragment('submit' ,'submitButton', 'submitButton', '회원가입', false, true)}"></th:block>
 </form>
+<script th:src="@{/member/js/joinForm.js}"></script>
 </html>

@@ -1,24 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('submitButton').addEventListener('click', async function (event) {
-        // 폼 제출 이벤트 막기 !
         event.preventDefault();
 
         try {
-            // 첫 번째 유효성 검사: 제목 입력 확인
             const name = document.getElementById('title').value;
-            if (!name) {
-                await window.showModal("제목을 입력해 주세요.", false);
+            if (!name || name.length < 2 || name.length > 30) {
+                await window.showModal("단어장 이름은 2자 이상 30자 이하로 <br>입력하세요.", false);
                 return false;
             }
 
-            // 두 번째 유효성 검사: 내용 입력 확인
-            const email = document.getElementById('content').value;
-            if (!email) {
-                await window.showModal("내용을 입력해 주세요.", false);
+            const content = document.getElementById('content').value;
+            if (!content || content.length < 2 || content.length > 100) {
+                await window.showModal("단어장 설명은 2자 이상 100자 이하로 <br>입력하세요", false);
                 return false;
             }
 
-            // 모든 유효성 검사가 통과한 경우 폼 제출 (form 태그의 id값 넣어야 됨)
             document.getElementById('wordBookForm').submit();
 
         } catch (error) {
