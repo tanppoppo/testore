@@ -105,7 +105,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(entity.getExamPaperId()))
                     .isBookmarked(br.getBookmarkState(user.getId(), entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .build();
@@ -146,7 +146,7 @@ public class ExamServiceImpl implements ExamService {
                 .ownerId(examPaperEntity.getOwnerId())
                 .publicOption(examPaperEntity.getPublicOption())
                 .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
-                .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
+                .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                 .shareCount(epr.getShareCount(examPaperEntity.getExamPaperId()))
                 .build();
 
@@ -811,7 +811,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(entity.getExamPaperId()))
                     .build();
             recommendedExamPaper.add(examPaperDTO);
@@ -849,7 +849,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(entity.getExamPaperId()))
                     .build();
             likedExamPaper.add(examPaperDTO);
@@ -883,7 +883,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(entity.getContent())
                     .imagePath(entity.getImagePath())
                     .examItemCount(epr.getExamItemCount(entity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(entity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(entity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(entity.getExamPaperId()))
                     .build();
             muchSharedExamPaper.add(examPaperDTO);
@@ -928,7 +928,7 @@ public class ExamServiceImpl implements ExamService {
                     .content(examPaperEntity.getContent())
                     .imagePath(examPaperEntity.getImagePath())
                     .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(examPaperEntity.getExamPaperId()))
                     .isBookmarked(br.getBookmarkState(user.getId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .build();
@@ -997,15 +997,22 @@ public class ExamServiceImpl implements ExamService {
      * 내가 좋아요한 시험지 조회
      * @author KIMGEON64
      * @param user user 객체를 가져 옵니다.
+     * @param keyword 사용자 입력값은 가져 옵니다.
      * @return items dto 리스트를 반환합니다.
      */
     @Override
-    public List<ExamPaperDTO> getLikedExam(AuthenticatedUser user) {
+    public List<ExamPaperDTO> getLikedExam(AuthenticatedUser user, String keyword) {
 
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("사용자 정보를 찾을 수 없습니다."));
 
-        List<ExamPaperEntity> examPaperEntityList = epr.findLikedExamPapersByMemberId(memberEntity.getMemberId(), ItemTypeEnum.EXAM);
+        List<ExamPaperEntity> examPaperEntityList;
+
+        if (keyword == null) {
+            examPaperEntityList = epr.findLikedExamPapersByMemberId(memberEntity.getMemberId(), ItemTypeEnum.EXAM);
+        } else {
+            examPaperEntityList = epr.findLikedExamPapersByMemberIdAndKeyword(memberEntity.getMemberId(), ItemTypeEnum.EXAM, keyword);
+        }
 
         List<ExamPaperDTO> items = new ArrayList<>();
 
@@ -1031,7 +1038,7 @@ public class ExamServiceImpl implements ExamService {
                     .createdDate(examPaperEntity.getCreatedDate())
                     .updateDate(examPaperEntity.getUpdateDate())
                     .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(examPaperEntity.getExamPaperId()))
                     .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .build();
@@ -1046,15 +1053,22 @@ public class ExamServiceImpl implements ExamService {
      * 내가 북마크한 시험지 조회
      * @author KIMGEON64
      * @param user user 객체를 가져 옵니다.
+     * @param keyword 사용자 입력값은 가져 옵니다.
      * @return items dto 리스트를 반환합니다.
      */
     @Override
-    public List<ExamPaperDTO> getBookmarkedExam(AuthenticatedUser user) {
+    public List<ExamPaperDTO> getBookmarkedExam(AuthenticatedUser user, String keyword) {
 
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
-        List<ExamPaperEntity> examPaperEntityList = epr.findBookmarkedExamPapersByMemberId(memberEntity.getMemberId(), ItemTypeEnum.EXAM);
+        List<ExamPaperEntity> examPaperEntityList;
+
+        if (keyword == null) {
+            examPaperEntityList = epr.findBookmarkedExamPapersByMemberId(memberEntity.getMemberId(), ItemTypeEnum.EXAM);
+        } else {
+            examPaperEntityList = epr.findBookmarkedExamPapersByMemberIdAndKeyword(memberEntity.getMemberId(), ItemTypeEnum.EXAM, keyword);
+        }
 
         List<ExamPaperDTO> items = new ArrayList<>();
 
@@ -1080,7 +1094,7 @@ public class ExamServiceImpl implements ExamService {
                     .createdDate(examPaperEntity.getCreatedDate())
                     .updateDate(examPaperEntity.getUpdateDate())
                     .examItemCount(epr.getExamItemCount(examPaperEntity.getExamPaperId()))
-                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId()))
+                    .likeCount(ilr.getLikeCount(examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .shareCount(epr.getShareCount(examPaperEntity.getExamPaperId()))
                     .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), examPaperEntity.getExamPaperId(), ItemTypeEnum.EXAM))
                     .build();
