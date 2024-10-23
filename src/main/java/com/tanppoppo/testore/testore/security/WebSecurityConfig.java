@@ -59,6 +59,11 @@ public class WebSecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable);
 
+        http    
+                .requiresChannel()
+                .anyRequest()
+                .requiresSecure();
+
         return http.build();
 
     }
