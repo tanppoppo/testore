@@ -299,7 +299,7 @@ public class MemberController {
         model.addAttribute("likeWordBookDTOList", ws.getLikedWordBook(user, keyword));
         model.addAttribute("keyword", keyword);
 
-        return "word/word-liked";
+        return "member/word-liked";
 
     }
 
@@ -318,7 +318,7 @@ public class MemberController {
         model.addAttribute("bookmarkedWordBookDTOList", ws.getBookmarkedWordBook(user, keyword));
         model.addAttribute("keyword", keyword);
 
-        return "word/word-bookmarked";
+        return "member/word-bookmarked";
 
     }
 
@@ -337,7 +337,7 @@ public class MemberController {
         model.addAttribute("likeExamPaperDTOList", es.getLikedExam(user, keyword));
         model.addAttribute("keyword", keyword);
 
-        return "exam/exam-liked";
+        return "member/exam-liked";
 
     }
 
@@ -356,7 +356,7 @@ public class MemberController {
         model.addAttribute("bookmarkedExamPaperDTOList", es.getBookmarkedExam(user, keyword));
         model.addAttribute("keyword", keyword);
 
-        return "exam/exam-bookmarked";
+        return "member/exam-bookmarked";
 
     }
 
