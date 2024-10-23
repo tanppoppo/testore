@@ -471,7 +471,7 @@ public class WordServiceImpl implements WordService {
         LocalDateTime sunday = now.with(DayOfWeek.SUNDAY).toLocalDate().atTime(23, 59, 59);
 
         Pageable pageable = PageRequest.of(0, 3);
-        List<WordBookEntity> wordBookEntity = wbr.findPopularWordBooksThisWeek(monday, sunday, pageable);
+        List<WordBookEntity> wordBookEntity = wbr.findPopularWordBooksThisWeek(monday, sunday, pageable, ItemTypeEnum.WORD);
 
         List<WordBookDTO> likedWordBook = new ArrayList<>();
 

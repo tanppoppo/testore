@@ -43,8 +43,8 @@ public interface WordBookRepository extends JpaRepository<WordBookEntity, Intege
     List<WordBookEntity> findWordBooksOrderByLearningCountDesc(Pageable pageable);
 
     // 이번주 인기 시험지 [ 단어장 찾기 ]
-    @Query("SELECT wb FROM WordBookEntity wb LEFT JOIN ItemLikeEntity il ON wb.wordBookId = il.itemId WHERE wb.publicOption = true AND il.createdDate BETWEEN :monday AND :sunday GROUP BY wb.wordBookId ORDER BY COUNT(il) DESC")
-    List<WordBookEntity> findPopularWordBooksThisWeek(LocalDateTime monday, LocalDateTime sunday, Pageable pageable);
+    @Query("SELECT wb FROM WordBookEntity wb INNER JOIN ItemLikeEntity il ON wb.wordBookId = il.itemId WHERE wb.publicOption = true AND il.createdDate BETWEEN :monday AND :sunday AND il.itemType = :itemTypeEnum GROUP BY wb.wordBookId ORDER BY COUNT(il) DESC")
+    List<WordBookEntity> findPopularWordBooksThisWeek(LocalDateTime monday, LocalDateTime sunday, Pageable pageable, ItemTypeEnum itemTypeEnum);
 
     // 공개된 시험지 전체 반환 [ 단어장 찾기 ]
     List<WordBookEntity> findByPublicOption(boolean publicOption, Sort sort);
