@@ -4,8 +4,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             const email = document.getElementById('email').value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!email || email.length < 2 || email.length > 100) {
                 await window.showModal("이메일은 2자 이상 100자 이하로 입력하세요.", false);
+                return false;
+            } else if (!emailRegex.test(email)) {
+                await window.showModal("올바른 이메일 형식으로 적어주세요.", false);
                 return false;
             }
 
@@ -27,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return false;
             }
 
-            document.querySelector('form').submit();
+            document.getElementById('joinForm').submit();
 
         } catch (error) {
             console.error('유효성 검사 도중 오류가 발생했습니다:', error);
