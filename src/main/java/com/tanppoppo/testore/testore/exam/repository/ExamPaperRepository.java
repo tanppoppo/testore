@@ -48,8 +48,8 @@ public interface ExamPaperRepository extends JpaRepository<ExamPaperEntity, Inte
     List<ExamPaperEntity> findSortedExamPapersByShareCount(Pageable pageable);
 
     // 이번주 인기 시험지 순위 정렬
-    @Query("SELECT ep FROM ExamPaperEntity ep LEFT JOIN ItemLikeEntity il ON ep.examPaperId = il.itemId WHERE ep.publicOption = true AND il.createdDate BETWEEN :monday AND :sunday GROUP BY ep.examPaperId ORDER BY COUNT(il) DESC")
-    List<ExamPaperEntity> findPopularExamsThisWeek(LocalDateTime monday, LocalDateTime sunday, Pageable pageable);
+    @Query("SELECT ep FROM ExamPaperEntity ep LEFT JOIN ItemLikeEntity il ON ep.examPaperId = il.itemId WHERE ep.publicOption = true AND il.createdDate BETWEEN :monday AND :sunday AND il.itemType = :itemTypeEnum GROUP BY ep.examPaperId ORDER BY COUNT(il) DESC")
+    List<ExamPaperEntity> findPopularExamsThisWeek(LocalDateTime monday, LocalDateTime sunday, Pageable pageable, ItemTypeEnum itemTypeEnum);
 
     // 공개된 시험지 전체 반환
     List<ExamPaperEntity> findByPublicOption(boolean publicOption, Sort sort);
