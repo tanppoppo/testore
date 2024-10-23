@@ -838,7 +838,7 @@ public class ExamServiceImpl implements ExamService {
         LocalDateTime sunday = now.with(DayOfWeek.SUNDAY).toLocalDate().atTime(23, 59, 59);
 
         Pageable pageable = PageRequest.of(0, 3);
-        List<ExamPaperEntity> examPaperEntity = epr.findPopularExamsThisWeek(monday, sunday, pageable);
+        List<ExamPaperEntity> examPaperEntity = epr.findPopularExamsThisWeek(monday, sunday, pageable, ItemTypeEnum.EXAM);
 
         List<ExamPaperDTO> likedExamPaper = new ArrayList<>();
 
