@@ -118,7 +118,7 @@ public class MemberServiceImpl implements MemberService {
     public void sendEmailVerification(String email, String token) {
 
         try {
-            String verificationUrl = "https://testore/member/verify-email?token=" + token;
+            String verificationUrl = "https://gyahury.com/member/verify-email?token=" + token;
             log.info("Verification URL: {}", verificationUrl);
 
             String subject = "TESTORE 계정 이메일 인증";
