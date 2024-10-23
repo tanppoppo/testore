@@ -131,9 +131,6 @@
   </div>
   <div class="flex gap-3 w-full px-7">
     <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'examTakeButton', 'examTakeButton', '응 시', 'examTake?paper='+${examPaperDTO.examPaperId} , true)}"></th:block>
-    <th:block th:if="${#authentication.principal.id == examPaperDTO.ownerId}">
-      <th:block th:replace="~{common/fragments/button :: ButtonFragment('button', 'button', 'button', '방 생성', '', true)}"></th:block>
-    </th:block>
   </div>
 </div>
 <script th:src="@{/exam/js/exam-detail.js}"></script>

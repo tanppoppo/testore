@@ -70,10 +70,12 @@ public class WordController {
      * @return 단어장 페이지를 반환합니다.
      */
     @PostMapping("createWordBook")
-    public String createWordBook(WordBookDTO wordBookDTO
+    public String createWordBook(WordBookDTO wordBookDTO, RedirectAttributes redirectAttributes
             , @AuthenticationPrincipal AuthenticatedUser user) {
 
         int wordbookId = ws.createWordBook(wordBookDTO, user);
+        setFlashToastMessage(redirectAttributes, true, "단어장을 생성했습니다.");
+
         return "redirect:/word/wordAddForm?book="+wordbookId;
 
     }
@@ -269,10 +271,11 @@ public class WordController {
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
     @PostMapping("createReview")
-    public String createReview(@AuthenticationPrincipal AuthenticatedUser user,
+    public String createReview(@AuthenticationPrincipal AuthenticatedUser user, RedirectAttributes redirectAttributes,
                                @RequestParam(name = "book") int wordBookId, ReviewDTO reviewDTO){
 
         ws.createReview(user, wordBookId, reviewDTO);
+        setFlashToastMessage(redirectAttributes, true, "리뷰가 저장되었습니다.");
 
         return "redirect:/word/wordBookDetail?book=" + wordBookId;
 
@@ -305,12 +308,13 @@ public class WordController {
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
     @PostMapping("updateReview")
-    public String updateReview(@AuthenticationPrincipal AuthenticatedUser user,
+    public String updateReview(@AuthenticationPrincipal AuthenticatedUser user, RedirectAttributes redirectAttributes,
                                @RequestParam(name = "review") int reviewId,
                                @RequestParam(name = "book") int wordBookId,
                                ReviewDTO reviewDTO){
 
         ws.updateReview(user, reviewId, reviewDTO);
+        setFlashToastMessage(redirectAttributes, true, "리뷰가 수정되었습니다.");
 
         return "redirect:/word/review?book=" + wordBookId;
 
@@ -323,12 +327,18 @@ public class WordController {
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
     @GetMapping("deleteReview")
-    public String deleteReview(@AuthenticationPrincipal AuthenticatedUser user,
+    public String deleteReview(@AuthenticationPrincipal AuthenticatedUser user, RedirectAttributes redirectAttributes,
                                @RequestParam(name = "review") int reviewId){
-
-        ws.deleteReview(user, reviewId);
-
-        return "word/word-reviewForm";
+        try {
+            setFlashToastMessage(redirectAttributes, true, "리뷰가 삭제되었습니다.");
+            return "redirect:/word/review?book=" + ws.deleteReview(user, reviewId);
+        } catch (AccessDeniedException e) {
+            setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
+            return "redirect:/";
+        } catch (Exception e) {
+            setFlashToastMessage(redirectAttributes, false, "알 수 없는 에러가 발생했습니다.");
+            return "redirect:/";
+        }
 
     }
 
@@ -470,7 +480,7 @@ public class WordController {
 
         ws.addLearningRecord(user.getId(), wordbookId);
 
-        return "word/word-update-form";
+        return "";
 
     }
 

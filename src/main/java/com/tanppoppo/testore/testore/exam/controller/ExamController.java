@@ -96,6 +96,7 @@ public class ExamController {
             , Model model) {
 
         int examPaperId = es.examCreate(examPaperDTO, user);
+        setModelToastMessage(model, true, "시험지가 생성되었습니다.");
         model.addAttribute("examPaperId", examPaperId);
         return "/exam/create-question-form";
 
@@ -186,11 +187,13 @@ public class ExamController {
      * @return 홈화면으로 리다이렉트합니다.
      */
     @PostMapping("createQuestion")
-    public String createQuestion(HttpServletRequest request, @AuthenticationPrincipal AuthenticatedUser user) {
+    public String createQuestion(HttpServletRequest request, @AuthenticationPrincipal AuthenticatedUser user, RedirectAttributes redirectAttributes) {
 
         Map<String, String[]> paragraphs = request.getParameterMap();
 
         es.createQuestion(paragraphs, user.getId());
+
+        setFlashToastMessage(redirectAttributes, true, "시험 문제가 생성되었습니다.");
 
         return "redirect:/";
 
@@ -281,6 +284,7 @@ public class ExamController {
             model.addAttribute("items", questionParagraphDTOS);
             model.addAttribute("examPaperId", examPaperId);
             model.addAttribute("examResultId", examResultId);
+            setModelToastMessage(model, true, "시험을 시작합니다.");
             return "/exam/exam-take";
         } catch (AccessDeniedException e) {
             setFlashToastMessage(redirectAttributes, false, "공개된 시험지가 아닙니다.");
@@ -318,9 +322,11 @@ public class ExamController {
      * @return 시험지 상세 페이지를 반환합니다.
      */
     @GetMapping("controlPublicOption")
-    public String controlPublicOption(@RequestParam(name = "paper") int examPaperId){
+    public String controlPublicOption(@RequestParam(name = "paper") int examPaperId, RedirectAttributes redirectAttributes){
 
         es.controlPublicOption(examPaperId);
+        setFlashToastMessage(redirectAttributes, true, "요청 성공했습니다.");
+
         return "redirect:/exam/examPaperDetail?paper=" + examPaperId;
 
     }
@@ -365,10 +371,11 @@ public class ExamController {
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
     @PostMapping("createReview")
-    public String createReview(@AuthenticationPrincipal AuthenticatedUser user,
+    public String createReview(@AuthenticationPrincipal AuthenticatedUser user, RedirectAttributes redirectAttributes,
                                @RequestParam(name = "paper") int examPaperId, ReviewDTO reviewDTO){
 
         es.createReview(user, examPaperId, reviewDTO);
+        setFlashToastMessage(redirectAttributes, true, "리뷰가 저장되었습니다.");
 
         return "redirect:/exam/examPaperDetail?paper=" + examPaperId;
     }
@@ -400,12 +407,13 @@ public class ExamController {
      * @return 시험지 리뷰 목록 페이지를 반환합니다.
      */
     @PostMapping("updateReview")
-    public String updateReview(@AuthenticationPrincipal AuthenticatedUser user,
+    public String updateReview(@AuthenticationPrincipal AuthenticatedUser user, RedirectAttributes redirectAttributes,
                                @RequestParam(name = "review") int reviewId,
                                @RequestParam(name = "paper") int examPaperId,
                                ReviewDTO reviewDTO){
 
         es.updateReview(user, reviewId, reviewDTO);
+        setFlashToastMessage(redirectAttributes, true, "리뷰가 수정되었습니다.");
 
         return "redirect:/exam/review?paper=" + examPaperId;
 
@@ -424,6 +432,7 @@ public class ExamController {
         Integer examPaperId = 0;
         try {
             examPaperId = es.deleteReview(user, reviewId);
+            setFlashToastMessage(redirectAttributes, true, "리뷰가 삭제되었습니다.");
         } catch (AccessDeniedException e) {
             setFlashToastMessage(redirectAttributes, false, "권한이 없습니다.");
             return "redirect:/";
