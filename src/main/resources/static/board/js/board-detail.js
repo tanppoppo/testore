@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
         event.preventDefault();
 
         try {
-            const content = document.getElementById("content").value;
+            const content = document.getElementById("content").value.trim();
             if (!content || content.length < 2 || content.length > 300) {
                 await window.showModal("댓글 내용은 2자 이상 300자 이하로 <br>입력하세요.", false);
                 return false;
