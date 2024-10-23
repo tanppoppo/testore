@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
 
         try {
-            const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
             const passScore = document.getElementById('passScore').value;
 
             if (!title || title.length < 2 || title.length > 30) {
