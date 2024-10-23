@@ -39,7 +39,7 @@ public interface WordBookRepository extends JpaRepository<WordBookEntity, Intege
 //    @Query("SELECT wb FROM WordBookEntity wb WHERE wb.publicOption = true GROUP BY wb HAVING COUNT(CASE WHEN wb.ownerId != wb.creatorId.memberId THEN 1 END) > 0 ORDER BY COUNT(CASE WHEN wb.ownerId != wb.creatorId.memberId THEN 1 END) DESC")
 //    List<WordBookEntity> findSortedWordBooksByShareCount(Pageable pageable);
 
-    @Query("SELECT wb FROM WordBookEntity wb LEFT JOIN LearningRecordEntity lr ON wb.wordBookId = lr.wordBookId.wordBookId GROUP BY wb ORDER BY COUNT(lr) DESC")
+    @Query("SELECT wb FROM WordBookEntity wb LEFT JOIN LearningRecordEntity lr ON wb.wordBookId = lr.wordBookId.wordBookId WHERE wb.publicOption = true GROUP BY wb ORDER BY COUNT(lr) DESC")
     List<WordBookEntity> findWordBooksOrderByLearningCountDesc(Pageable pageable);
 
     // 이번주 인기 시험지 [ 단어장 찾기 ]
