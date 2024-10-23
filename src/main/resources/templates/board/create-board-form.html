@@ -7,7 +7,7 @@
       layout:fragment="Content"
 >
 
-<form class="p-10" th:action="@{${boardDTO} != null ? 'updateBoard' : 'createBoard'}" method="post">
+<form id="boardForm" class="p-10" th:action="@{${boardDTO} != null ? 'updateBoard' : 'createBoard'}" method="post">
   <span class="font-bold text-lg text-gray-500">
     <span th:switch="${boardType}">
         <span th:case="'NOTICE'">공지사항</span>

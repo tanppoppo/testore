@@ -13,13 +13,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 return false;
             }
 
-            const nickname = document.getElementById('nickname').value;
+            const nickname = document.getElementById('nickname').value.trim();
             if (!nickname || nickname.length < 2 || nickname.length > 50) {
                 await window.showModal("닉네임은 2자 이상 50자 이하로 입력하세요.", false);
                 return false;
             }
 
-            const password = document.getElementById('memberPassword').value;
+            const password = document.getElementById('memberPassword').value.trim();
             if (!password || password.length < 8 || password.length > 20) {
                 await window.showModal("비밀번호는 8자 이상 20자 이하로 입력하세요.", false);
                 return false;
