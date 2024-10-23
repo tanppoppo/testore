@@ -3,13 +3,13 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
 
         try {
-            const name = document.getElementById('title').value;
+            const name = document.getElementById('title').value.trim();
             if (!name || name.length < 2 || name.length > 30) {
                 await window.showModal("단어장 이름은 2자 이상 30자 이하로 <br>입력하세요.", false);
                 return false;
             }
 
-            const content = document.getElementById('content').value;
+            const content = document.getElementById('content').value.trim();
             if (!content || content.length < 2 || content.length > 100) {
                 await window.showModal("단어장 설명은 2자 이상 100자 이하로 <br>입력하세요", false);
                 return false;
