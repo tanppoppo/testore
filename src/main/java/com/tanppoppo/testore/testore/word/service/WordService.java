@@ -34,7 +34,7 @@ public interface WordService {
 
     void updateReview(AuthenticatedUser user, int reviewId, ReviewDTO reviewDTO);
 
-    void deleteReview(AuthenticatedUser user, int reviewId);
+    Integer deleteReview(AuthenticatedUser user, int reviewId);
 
     List<WordBookDTO> recommendedWordBook(AuthenticatedUser user);
 

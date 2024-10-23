@@ -405,7 +405,7 @@ public class WordServiceImpl implements WordService {
      */
     @Transactional
     @Override
-    public void deleteReview(AuthenticatedUser user, int reviewId) {
+    public Integer deleteReview(AuthenticatedUser user, int reviewId) {
 
         MemberEntity memberEntity = mr.findById(user.getId())
                 .orElseThrow(()-> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
@@ -418,6 +418,8 @@ public class WordServiceImpl implements WordService {
         }
 
         rr.delete(reviewEntity);
+
+        return reviewEntity.getItemId();
 
     }
 
