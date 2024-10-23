@@ -1,4 +1,28 @@
 document.addEventListener('DOMContentLoaded', function () {
+
+    document.getElementById('submitButton').addEventListener('click', async function (event) {
+        event.preventDefault();
+
+        try {
+            const rating = document.getElementById('rating-value').value;
+            if (!rating || rating < 1 || rating > 5) {
+                await window.showModal("별점은 1점에서 5점 사이로 입력하세요.", false);
+                return false;
+            }
+
+            const content = document.getElementById('content').value;
+            if (!content || content.length < 2 || content.length > 300) {
+                await window.showModal("내용은 2자 이상 300자 이하로 입력하세요.", false);
+                return false;
+            }
+
+            document.getElementById('reviewForm').submit();
+
+        } catch (error) {
+            console.error('유효성 검사 도중 오류가 발생했습니다:', error);
+        }
+    });
+
     const stars = document.querySelectorAll('#star-container .star');
     const ratingInput = document.getElementById('rating-value');
 

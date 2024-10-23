@@ -38,19 +38,19 @@ public class ExamPaperEntity {
     private Integer examPaperId;
 
     @NotNull
-    @Size(min = 2, max = 30)// 시험지 이름 유효성 검사
+    @Size(min = 2, max = 30)
     @Column(name = "title", nullable = false, length = 30)
     private String title;
 
     @NotNull
-    @Size(min = 2, max = 100) // 시험지 설명 유효성 검사
+    @Size(min = 2, max = 100)
     @Column(name = "content", nullable = false, length = 100)
     private String content;
 
     @Column(name = "time_limit")
     private Integer timeLimit;
 
-    @Min(0)
+    @Min(10)
     @Max(100)
     @Column(name = "pass_score")
     private Integer passScore;

@@ -67,17 +67,14 @@ public class WordController {
      * @author MinCheolHa
      * @param wordBookDTO 단어장 정보를 입력합니다.
      * @param user 사용자 인증정보를 가져옵니다.
-     * @param model wordbookId 를 반환합니다.
      * @return 단어장 페이지를 반환합니다.
      */
     @PostMapping("createWordBook")
     public String createWordBook(WordBookDTO wordBookDTO
-            , @AuthenticationPrincipal AuthenticatedUser user
-            , Model model) {
+            , @AuthenticationPrincipal AuthenticatedUser user) {
 
         int wordbookId = ws.createWordBook(wordBookDTO, user);
-        model.addAttribute("wordbookId", wordbookId);
-        return "word/word-add-form";
+        return "redirect:/word/wordAddForm?book="+wordbookId;
 
     }
 

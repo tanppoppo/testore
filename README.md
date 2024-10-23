@@ -6,7 +6,7 @@
 
 | :smile: [정경훈](https://github.com/gyahury) | 🙂 [강왕선](https://github.com/dhkdtjs1541) | :smiley: [김건](https://github.com/KIMGEON64) | :laughing: [하민철](https://github.com/MinCheolHa) | 
 | :-------------------------------------------: | :---------------------------------: | :---------------------------------------------: | :------------------------------------------------: | 
-|                   **Front-End**                    |            **Back-End**             |                  **Back-End**                   |                                     **Back-End**                |
+|                   **PM, Front-End**                    |            **Back-End**             |                  **Back-End**                   |                                     **Back-End**                |
 |                    Thymeleaf 등                     |               Spring                |                     Spring                      |                                          Spring                     |
 
 

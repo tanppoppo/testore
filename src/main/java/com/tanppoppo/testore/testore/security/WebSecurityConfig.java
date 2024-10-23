@@ -16,6 +16,7 @@ public class WebSecurityConfig {
     private static final String[] PUBLIC_URLS = {
             "/"
             , "/common/**"
+            , "/member/js/**"
             , "/member/loginForm"
             , "/member/joinForm"
             , "/member/join"
