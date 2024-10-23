@@ -54,7 +54,7 @@ public interface WordBookRepository extends JpaRepository<WordBookEntity, Intege
     List<WordBookEntity> findByPublicOptionAndTitleContaining(boolean publicOption, String title, Sort sort);
 
     // 내가 좋아요한 단어장 조회
-    @Query("SELECT wb FROM WordBookEntity wb JOIN ItemLikeEntity le ON le.itemId = wb.wordBookId WHERE le.memberId.memberId = :memberId and le.itemType = :itemType order by wb.wordBookId desc")
+    @Query("SELECT wb FROM WordBookEntity wb JOIN ItemLikeEntity le ON le.itemId = wb.wordBookId WHERE le.memberId.memberId = :memberId AND le.itemType = :itemType AND wb.publicOption = true ORDER BY wb.wordBookId DESC")
     List<WordBookEntity> findLikedWordBooksByMemberId(Integer memberId, ItemTypeEnum itemType);
 
     // 내가 북마크한 단어장 조회
@@ -62,11 +62,11 @@ public interface WordBookRepository extends JpaRepository<WordBookEntity, Intege
     List<WordBookEntity> findBookmarkedWordBooksByMemberId(Integer memberId, ItemTypeEnum itemType);
 
     // 키워드 기준으로 내가 좋아요한 단어장 찾기
-    @Query("SELECT wb FROM WordBookEntity wb JOIN ItemLikeEntity le ON le.itemId = wb.wordBookId WHERE le.memberId.memberId = :memberId OR wb.title LIKE %:keyword% and le.itemType = :itemType order by wb.wordBookId desc")
+    @Query("SELECT wb FROM WordBookEntity wb JOIN ItemLikeEntity le ON le.itemId = wb.wordBookId WHERE le.memberId.memberId = :memberId and wb.title LIKE %:keyword% and le.itemType = :itemType and wb.publicOption = true order by wb.wordBookId desc")
     List<WordBookEntity> findWordBooksLikedByMemberAndKeyword(Integer memberId, ItemTypeEnum itemType, String keyword);
 
     // 키워드 기준으로 내가 북마크한 단어장 찾기
-    @Query("SELECT wb FROM WordBookEntity wb JOIN BookmarkEntity bm ON bm.itemId = wb.wordBookId WHERE bm.memberId.memberId = :memberId OR wb.title LIKE %:keyword% and bm.itemType = :itemType order by wb.wordBookId desc")
+    @Query("SELECT wb FROM WordBookEntity wb JOIN BookmarkEntity bm ON bm.itemId = wb.wordBookId WHERE bm.memberId.memberId = :memberId and wb.title LIKE %:keyword% and bm.itemType = :itemType order by wb.wordBookId desc")
     List<WordBookEntity> findWordBooksBookmarkedByMemberAndKeyword(Integer memberId, ItemTypeEnum itemType, String keyword);
 
 }

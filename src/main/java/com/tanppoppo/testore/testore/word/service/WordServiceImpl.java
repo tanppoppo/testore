@@ -942,7 +942,7 @@ public class WordServiceImpl implements WordService {
                     .wordItemCount(wbr.getWordItemCount(wordBookEntity.getWordBookId()))
                     .likeCount(ilr.getLikeCount(wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .shareCount(lrr.countByWordBookId(entity))
-                    .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.EXAM))
+                    .isBookmarked(br.getBookmarkState(memberEntity.getMemberId(), wordBookEntity.getWordBookId(), ItemTypeEnum.WORD))
                     .build();
             items.add(wordBookDTO);
         }
