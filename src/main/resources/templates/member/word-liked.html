@@ -8,13 +8,13 @@
 >
 <th:block th:replace="~{common/fragments/search :: SearchFragment('examResult', ${keyword} != null ? ${keyword} : '')}"></th:block>
 <div class="pl-5 pt-3 font-bold text-gray-500">내가 좋아요한 단어장</div>
-<div th:if="${#lists.isEmpty(resultItems)}" class="text-gray-300 text-center font-bold mt-10">
+<div th:if="${#lists.isEmpty(likeWordBookDTOList)}" class="text-gray-300 text-center font-bold mt-10">
   단어장이 없습니다.
 </div>
-<div th:unless="${#lists.isEmpty(resultItems)}">
-  <th:block th:each="item : ${resultItems}">
+<div th:unless="${#lists.isEmpty(likeWordBookDTOList)}">
+  <th:block th:each="item : ${likeWordBookDTOList}">
     <th:block
-            th:replace="~{common/fragments/result-item :: ResultItemFragment(${item})}"></th:block>
+            th:replace="~{common/fragments/wordbook-item :: WordBookItemFragment(${item})}"></th:block>
   </th:block>
 </div>
 </html>
