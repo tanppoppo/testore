@@ -9,7 +9,7 @@
     </th:block>
   </div>
   <div class="mx-3 text-gray-400">
-    <span th:text="${item.updatedDate != null ? #temporals.format(item.updatedDate, 'YYYY/MM/dd HH:mm:ss') : ''}"></span>
+    <span th:text="${item.createdDate != null ? #temporals.format(item.createdDate, 'YYYY/MM/dd HH:mm:ss') : ''}"></span>
     <span th:unless="${item.createdDate == item.updatedDate}" class="py-2 text-gray-400">&nbsp;&nbsp;(수정됨)</span></div>
   <div class="p-2 mt-2 text-base" th:id="'comment-content-'+${item.commentId}" th:text="${item.content != null ? item.content : ''}"></div>
   <hr class="mt-3">

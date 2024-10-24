@@ -45,6 +45,13 @@ async function saveComment(commentId) {
     if (confirmed) {
         const editedContent = document.getElementById(`edit-content-${commentId}`).value;
 
+        const validateContent = editedContent.trim()
+
+        if (!validateContent || validateContent.length < 2 || validateContent.length > 300) {
+            await window.showModal("댓글 내용은 2자 이상 300자 이하로 <br>입력하세요.", false);
+            return false;
+        }
+
         const requestData = {
             commentId: commentId,
             content: editedContent
