@@ -174,8 +174,12 @@ public class BoardServiceImpl implements BoardService {
         BoardEntity boardEntity = br.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
-        if (!boardEntity.getMember().getMemberId().equals(userId) || !(memberEntity.getMembershipLevel() == 99)) {
+        if (!boardEntity.getMember().getMemberId().equals(userId)) {
             throw new AccessDeniedException("게시글 작성자만 삭제할 수 있습니다.");
+        }
+
+        if (boardEntity.getBoardType().equals(BoardTypeEnum.NOTICE) && !(memberEntity.getMembershipLevel() == 99)) {
+            throw new AccessDeniedException("관리자만 삭제할 수 있습니다.");
         }
 
         br.delete(boardEntity);
