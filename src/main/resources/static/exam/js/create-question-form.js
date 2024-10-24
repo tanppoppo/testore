@@ -12,7 +12,15 @@ document.addEventListener('DOMContentLoaded', function () {
             addedTypes = {};
             addNewQuestionSet(problemCount);
         } else {
-            alert('문제 질문 1개, 선택지는 최소 2개 이상 추가해야 합니다.');
+            window.showModal("문제 질문 1개, 선택지는 최소 2개 이상<br/>추가해야 합니다.", false);
+            return false;
+        }
+    });
+
+    submitButton.addEventListener('click', function (event) {
+        if (!validateAllQuestions()) {
+            event.preventDefault();
+            window.showModal("문제 질문 1개, 선택지는 최소 2개 이상<br/>추가하고 답을 입력해주세요.", false);
         }
     });
 
@@ -144,14 +152,24 @@ document.addEventListener('DOMContentLoaded', function () {
     function validateCurrentInputs(number) {
         const inputsContainer = document.querySelector(`.inputs-container-${number}`);
         const inputs = inputsContainer.querySelectorAll('input');
-        let questionCount = 0, choiceCount = 0;
+        let questionCount = 0, choiceCount = 0, checkboxChecked = false;
 
         inputs.forEach(input => {
             if (input.name.startsWith('question')) questionCount++;
             if (input.name.startsWith('choice')) choiceCount++;
+            if (input.type === 'checkbox' && input.checked) checkboxChecked = true;
         });
 
-        return questionCount >= 1 && choiceCount >= 2;
+        return questionCount >= 1 && choiceCount >= 2 && checkboxChecked;
+    }
+
+    function validateAllQuestions() {
+        for (let i = 1; i <= problemCount; i++) {
+            if (!validateCurrentInputs(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     function updatechoiceOrder(container, number) {

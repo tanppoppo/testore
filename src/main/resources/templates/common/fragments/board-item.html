@@ -6,6 +6,6 @@
     <span class="cursor-pointer" th:text="${boardItem.title != null ? boardItem.title : ''}" th:onclick="'location.href=\'/board/boardDetail?board=' + ${boardItem.boardId} + '\''"></span>
     <span th:text="${boardItem.commentsCount == 0 ? '' : '[' + boardItem.commentsCount + ']'}" class="ml-1 text-gray-400 text-sm"></span>
   </td>
-  <td class="py-3" th:text="${boardItem.updatedDate != null ? #temporals.format(boardItem.updatedDate, 'yyyy/MM/dd') : ''}"></td>
+  <td class="py-3" th:text="${boardItem.createdDate != null ? #temporals.format(boardItem.createdDate, 'YYYY/MM/dd HH:mm') : ''}"></td>
 </tr>
 </html>
