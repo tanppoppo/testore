@@ -10,7 +10,7 @@
   <div class="pb-4 text-sm text-gray-400"><span th:text="${boardDTO.nickname != null ? boardDTO.nickname : ''}"></span>
     · <span th:text="${boardDTO.createdDate != null ? #temporals.format(boardDTO.createdDate, 'YYYY/MM/dd HH:mm') : ''}"></span> · 조회 <span th:text="${boardDTO.viewCount != null ? boardDTO.viewCount : ''}"></span><span th:unless="${boardDTO.createdDate == boardDTO.updatedDate}" class="py-2 text-gray-400"> · 수정됨</span></div>
   <div th:text="${boardDTO.title != null ? boardDTO.title : ''}" class="py-6 text-xl text-gray-700 font-bold"></div>
-  <div th:text="${boardDTO.content != null ? boardDTO.content : ''}" class="py-12"></div>
+  <pre th:text="${boardDTO.content != null ? boardDTO.content : ''}" class="py-12" style="font-family: NotoSans;"></pre>
   <th:block th:if="${#authentication.principal.id == boardDTO.memberId}">
     <div class="mt-3 mr-2 text-right text-sm text-gray-500"><a th:href="'updateBoardForm?board='+${boardDTO.boardId}">수정하기</a></div>
   </th:block>
