@@ -153,7 +153,7 @@ public class ExamServiceImpl implements ExamService {
         Map<String, Object> detail = new HashMap<>();
         detail.put("examPaperDTO", examPaperDTO);
         detail.put("nickname", examPaperEntity.getCreatorId().getNickname());
-        detail.put("reviewCount", rr.getReviewCount(examPaperId));
+        detail.put("reviewCount", rr.getReviewCount(examPaperId, ItemTypeEnum.EXAM));
         detail.put("likeState", ilr.getLikeState(memberEntity.getMemberId(), examPaperId, ItemTypeEnum.EXAM));
         detail.put("bookmarkState", br.getBookmarkState(memberEntity.getMemberId(), examPaperId, ItemTypeEnum.EXAM));
         return detail;

@@ -60,20 +60,17 @@
 
 |                    **전체 문서 : TESTORE**                    |
 | :----------------------------------------------------------: |
-| ![DOC_TESTORE](README.assets/DOC_TESTORE.png) |
 | 링크 : [DOC_TESTORE - NOTION](https://cactus-hoodie-fd8.notion.site/f0bd3bfa7c9c4c19991bbc14d3c1a8e0?pvs=4) |
 
 #### 2. ERD
 
 |                    **ERD : TESTORE**                    |
 | :----------------------------------------------------------: |
-| ![ERD_TESTORE](README.assets/ERD_TESTORE.png) |
 | 링크 : [ERD_TESTORE – DBdiagram](https://dbdiagram.io/d/66d7f3a8eef7e08f0e9f45c5) |
 
 #### 3. UI 구상(Figma)
 
 |                   **UI 구상(Figma)**                    |
 | :----------------------------------------------------------: |
-| ![UI구상_TESTORE](README.assets/UI구상_TESTORE.png) |
 | 링크 :([UI – Figma](https://www.figma.com/design/kp1Yp60ZczBzE9kRv87pdJ/TESTORE?node-id=0-1&t=blfjVqE9ox53EEvv-1)) |
 

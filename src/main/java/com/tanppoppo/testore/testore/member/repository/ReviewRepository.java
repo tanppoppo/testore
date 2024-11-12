@@ -17,8 +17,8 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Integer> {
 
     // 리뷰 수
-    @Query("SELECT COUNT(r) FROM ReviewEntity r WHERE r.itemId = :itemId")
-    Integer getReviewCount(Integer itemId);
+    @Query("SELECT COUNT(r) FROM ReviewEntity r WHERE r.itemId = :itemId AND r.itemType = :itemType")
+    Integer getReviewCount(Integer itemId, ItemTypeEnum itemType);
 
     // examPaper 소속 리뷰 전체 정렬 반환
     @Query("SELECT r FROM ReviewEntity r WHERE r.itemId = :itemId AND r.itemType = :itemType")
